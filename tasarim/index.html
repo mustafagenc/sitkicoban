@@ -71,6 +71,10 @@
   footer .side { text-align:right; line-height:1.5; }
   footer .side .credit { display:block; font-size:12px; margin-top:2px; opacity:.85; }
   footer .credit a { color:var(--ink); border-bottom:1px solid var(--line); transition:.2s; }
+  footer .social-ic { display:flex; gap:10px; justify-content:flex-end; margin-bottom:12px; }
+  footer .social-ic a { width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; color:var(--ink-soft); transition:.2s; }
+  footer .social-ic a:hover { color:var(--gold); border-color:var(--gold); }
+  footer .social-ic svg { width:16px; height:16px; }
   footer .credit a:hover { color:var(--gold); border-color:var(--gold); }
 
   /* Hero */
@@ -210,6 +214,12 @@
     footer .links { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 18px; }
     footer .links a { margin-right:0; }
     footer .side { text-align:center; }
+    footer .social-ic { justify-content:center; }
+    /* Mobilde kolaj ilk ekranı doldurur: eser yüksekliği ekran genişliğine değil yüksekliğine göre */
+    .hero { min-height:calc(100svh - 72px); }
+    .hero .collage { gap:16px; }
+    .hero .row { gap:16px; }
+    .hero .row img { height:19svh; outline-width:5px; }
   }
 </style>
 </head>
@@ -353,6 +363,7 @@
     <img src="img/imza.png" alt="">
     <div class="links"><a href="#">Eserler</a><a href="#">Yazılar</a><a href="#">Kitaplar</a><a href="#">Videolar</a><a href="#">Hayatı</a><a href="#">İletişim</a></div>
     <div class="side">
+      <div class="social-ic"><a href="https://www.instagram.com/hattatstkcoban/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a><a href="https://www.facebook.com/s.tk.coban.619408" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M14.5 21v-7.5h2.6l.4-3.2h-3V8.4c0-.9.3-1.6 1.6-1.6h1.6V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.4H8.9v3.2h2.6V21"/></svg></a></div>
       <small>© 2026 Sıtkı Çoban · sitkicoban.com</small>
       <small class="credit">Tasarım ve geliştirme: <a href="https://mustafagenc.info" target="_blank" rel="noopener">Mustafa Genç</a></small>
     </div>

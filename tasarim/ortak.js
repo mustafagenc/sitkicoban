@@ -29,7 +29,7 @@
     <footer><div class="wrap">
       <img src="img/imza.png" alt="">
       <div class="links">${pages.map(([h, t]) => `<a href="${h}">${t}</a>`).join('')}</div>
-      <div class="side"><small>© 2026 Sıtkı Çoban · sitkicoban.com</small><small class="credit">Tasarım ve geliştirme: <a href="https://mustafagenc.info" target="_blank" rel="noopener">Mustafa Genç</a></small></div>
+      <div class="side"><div class="social-ic"><a href="https://www.instagram.com/hattatstkcoban/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a><a href="https://www.facebook.com/s.tk.coban.619408" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M14.5 21v-7.5h2.6l.4-3.2h-3V8.4c0-.9.3-1.6 1.6-1.6h1.6V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.4H8.9v3.2h2.6V21"/></svg></a></div><small>© 2026 Sıtkı Çoban · sitkicoban.com</small><small class="credit">Tasarım ve geliştirme: <a href="https://mustafagenc.info" target="_blank" rel="noopener">Mustafa Genç</a></small></div>
     </div></footer>`);
 
   const mnav = document.getElementById('mnav'), mbtn = document.getElementById('mbtn');
