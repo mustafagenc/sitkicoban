@@ -121,7 +121,7 @@
 
   /* Seçme eserler */
   .works { display:grid; grid-template-columns:1.25fr 1fr 1fr; grid-template-rows:auto auto; gap:26px; }
-  .work { display:block; }
+  .work { display:block; cursor:zoom-in; }
   .work .frame { background:var(--paper); padding:10px; outline:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; }
   /* Eser hiç kırpılmaz: oranı ne olursa olsun çerçevenin içine tamamı sığar */
   .work img { width:100%; height:100%; object-fit:contain; display:block; transition:transform .5s; }
@@ -249,6 +249,8 @@
     .hero .row img { height:19svh; outline-width:5px; }
   }
 </style>
+<link rel="stylesheet" href="eser-lb.css">
+<link rel="stylesheet" href="kitap-lb.css">
 </head>
 <body>
 
@@ -435,7 +437,17 @@
 
 <div class="note">Fotoğraflar ve yazılar örnektir</div>
 
+<script src="eser-lb.js"></script>
+<script src="kitap-lb.js"></script>
 <script>
+  // Kitaplar: tıklanan kitap, Kitaplar sayfasındaki ayrıntı penceresinde açılır; oklar bu üç kitap arasında gezer
+  const anaKitaplar = [...document.querySelectorAll('.books .book')];
+  const kitapSira = anaKitaplar.map(a => KITAPLAR.findIndex(b => b.img && a.querySelector('img').src.endsWith('/' + b.img)));
+  anaKitaplar.forEach((a, k) => a.addEventListener('click', e => { e.preventDefault(); kitapAc(kitapSira, kitapSira[k]); }));
+  // Seçme Eserler: tıklanan eser, Eserler sayfasındaki görüntüleyicide açılır; oklar bu beş eser arasında gezer
+  const secme = [...document.querySelectorAll('.works .work')];
+  const sira = secme.map(a => ESERLER.findIndex(w => a.querySelector('img').src.endsWith('/' + w.f)));
+  secme.forEach((a, k) => a.addEventListener('click', e => { e.preventDefault(); eserAc(sira, sira[k]); }));
   // Dersler: bitiş tarihi geçmiş kartlar gizlenir, kart kalmazsa bölüm hiç görünmez
   const bugun = new Date().toISOString().slice(0, 10);
   document.querySelectorAll('.ders').forEach(d => { if (d.dataset.bitis < bugun) d.remove(); });
