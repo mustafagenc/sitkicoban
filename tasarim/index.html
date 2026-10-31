@@ -161,6 +161,9 @@
   .afis-lb[hidden] { display:none; }
   .icazet { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .silsile { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:40px; text-align:center; }
+  /* Hocaların imzaları: aynı yükseklikte bir alanda ortalı, Sıtkı Bey'in imzasından küçük */
+  .hoca-imza { height:84px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hoca-imza img { max-height:100%; max-width:150px; filter:var(--logo-filter); opacity:.8; }
   .hoca h3 { font-size:28px; } .hoca .hat { margin-top:6px; color:var(--gold); letter-spacing:.12em; text-transform:uppercase; font-size:14px; }
   .hoca p { margin:8px auto 0; max-width:30ch; color:var(--ink-soft); font-size:15px; }
   .center-sig img { width:150px; filter:var(--logo-filter); opacity:.9; }
@@ -320,9 +323,9 @@
     <div class="orn" style="margin-bottom:10px">❖</div>
     <div style="text-align:center;margin-bottom:50px"><div class="eyebrow">İcazet Silsilesi</div><h2 style="font-size:40px;margin-top:6px">Dört kalemde icazet</h2></div>
     <div class="silsile">
-      <div class="hoca"><h3>Hasan Çelebi</h3><div class="hat">Rik'a · Ta'lik</div><p>Hat sanatının yaşayan efsanesinden rik'a ve ta'lik icazeti.</p></div>
+      <div class="hoca"><div class="hoca-imza"><img src="img/imza-hasan-celebi.png" alt="Hasan Çelebi'nin imzası"></div><h3>Hasan Çelebi</h3><div class="hat">Rik'a · Ta'lik</div><p>Hat sanatının yaşayan efsanesinden rik'a ve ta'lik icazeti.</p></div>
       <div class="center-sig"><img src="img/imza.png" alt=""><div class="lbl">SITKI ÇOBAN</div></div>
-      <div class="hoca"><h3>Abdulhadi Erol Dönmez</h3><div class="hat">Sülüs · Nesih</div><p>Sülüs ve nesih kalemlerinde rehberliğinde olgunlaştı.</p></div>
+      <div class="hoca"><div class="hoca-imza"><img src="img/imza-erol-donmez.png" alt="Abdulhadi Erol Dönmez'in imzası"></div><h3>Abdulhadi Erol Dönmez</h3><div class="hat">Sülüs · Nesih</div><p>Sülüs ve nesih kalemlerinde rehberliğinde olgunlaştı.</p></div>
     </div>
   </div>
 </section>
