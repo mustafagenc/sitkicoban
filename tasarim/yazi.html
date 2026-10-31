@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İhlâs'ın İlk Âyeti ve Üç Mertebe · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  /* Okuma ilerleme çizgisi */
+  .progress { position:fixed; top:0; left:0; height:2px; width:100%; background:var(--gold); transform:scaleX(0); transform-origin:left; z-index:20; }
+
+  .art-head { text-align:center; padding:70px 0 34px; }
+  .crumb { font-size:14px; color:var(--ink-soft); margin-bottom:22px; }
+  .crumb a { border-bottom:1px solid var(--line); }
+  .art-head h1 { font-size:clamp(38px,5vw,60px); line-height:1.1; max-width:18ch; margin:10px auto 18px; }
+  .art-head .lead { max-width:56ch; margin:0 auto 20px; font-size:20px; font-style:italic; color:var(--ink-soft); }
+  .meta { font-size:14px; color:var(--ink-soft); }
+  .meta .dot { color:var(--gold); margin:0 7px; }
+  .orn { color:var(--gold); letter-spacing:.7em; text-align:center; font-size:14px; margin:30px 0; }
+
+  /* Metin sütunu: rahat okuma için ~66 karakter */
+  .prose { max-width:680px; margin:0 auto; font-size:19px; line-height:1.8; }
+  .prose p { margin:0 0 1.25em; }
+  .prose > p:first-of-type::first-letter { float:left; font-family:'Playfair Display', serif; font-size:4.1em; line-height:.8; padding:.08em .1em 0 0; color:var(--gold); }
+  .prose h2 { font-size:28px; margin:1.8em 0 .6em; }
+  .prose strong { color:var(--head); font-weight:600; }
+
+  /* Âyet / hadis bloğu: Arapça metin, anlamı ve kaynağı */
+  .ayet { margin:2em -40px; padding:28px 40px; background:var(--paper); outline:1px solid var(--line); text-align:center; position:relative; }
+  .ayet::before { content:''; position:absolute; inset:6px; border:1px solid var(--line); pointer-events:none; }
+  .ayet .ar { font-family:'Amiri', serif; font-size:34px; line-height:1.9; direction:rtl; color:var(--head); }
+  .ayet .tr { font-style:italic; color:var(--ink-soft); margin-top:6px; }
+  .ayet .src { font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-top:10px; }
+
+  .pull { margin:1.8em 0; padding-left:24px; border-left:2px solid var(--gold); font-family:'Playfair Display', serif; font-style:italic; font-size:26px; line-height:1.4; color:var(--head); }
+
+  .sources { max-width:680px; margin:50px auto 0; padding-top:24px; border-top:1px solid var(--line); font-size:15px; color:var(--ink-soft); }
+  .sources h3 { font-size:14px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-family:'Source Serif 4', serif; font-weight:500; margin-bottom:10px; }
+  .sources ol { margin:0; padding-left:20px; }
+
+  .author { max-width:680px; margin:46px auto 0; display:flex; gap:22px; align-items:center; padding:24px; background:var(--bg-2); outline:1px solid var(--line); }
+  .author img { height:64px; filter:var(--logo-filter); }
+  .author b { font-family:'Playfair Display', serif; font-weight:400; font-size:21px; color:var(--head); display:block; }
+  .author span { font-size:15px; color:var(--ink-soft); }
+
+  .pn { max-width:900px; margin:70px auto 100px; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .pn a { padding:22px 24px; border:1px solid var(--line); transition:.2s; }
+  .pn a:hover { border-color:var(--gold); }
+  .pn a:hover b { color:var(--gold); }
+  .pn small { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+  .pn b { display:block; font-family:'Playfair Display', serif; font-weight:400; font-size:21px; color:var(--head); margin-top:4px; transition:.2s; }
+  .pn .next { text-align:right; }
+
+  .sample { max-width:680px; margin:0 auto 30px; font-size:14px; font-style:italic; color:var(--ink-soft); text-align:center; }
+
+  @media (max-width: 860px) {
+    .art-head { padding:44px 0 20px; }
+    .prose { font-size:18px; }
+    .ayet { margin:1.6em 0; padding:22px 18px; }
+    .ayet .ar { font-size:28px; }
+    .pull { font-size:22px; }
+    .pn { grid-template-columns:1fr; }
+    .pn .next { text-align:left; }
+  }
+</style>
+</head>
+<body data-page="Yazılar">
+<div class="progress" id="progress"></div>
+
+<article class="wrap">
+  <div class="art-head">
+    <div class="crumb"><a href="yazilar.html">Yazılar</a> · Tefsir</div>
+    <h1>İhlâs'ın İlk Âyeti ve Üç Mertebe</h1>
+    <p class="lead">Kısa bir âyetin içinde tevhidin bütün derinliği gizlidir.</p>
+    <div class="meta">Sıtkı Çoban<span class="dot">❖</span>Mart 2025<span class="dot">❖</span>9 dk okuma</div>
+  </div>
+  <div class="orn">❖ ❖ ❖</div>
+
+  <p class="sample">Aşağıdaki metin, sayfa düzenini göstermek için yazılmış örnek bir metindir.</p>
+
+  <div class="prose">
+    <p>Kur'ân-ı Kerîm'in en kısa sûrelerinden biri olan İhlâs, dört âyetlik bir hacmin içine bütün bir inanç dünyasını sığdırır. Âlimlerimiz bu sûreyi Kur'ân'ın üçte birine denk tutmuş, onu okuyanın tevhidin özünü dile getirmiş olacağını söylemişlerdir.</p>
+    <p>Sûrenin ilk âyeti bir emirle başlar: <strong>"De ki."</strong> Bu hitap, söylenecek sözün insanın kendi icadı olmadığını, ona bildirilen bir hakikati dile getirdiğini hatırlatır. Ardından gelen kelimeler ise bu hakikatin ta kendisidir.</p>
+
+    <div class="ayet">
+      <div class="ar" lang="ar">قُلْ هُوَ اللّٰهُ أَحَدٌ</div>
+      <div class="tr">De ki: O Allah birdir.</div>
+      <div class="src">İhlâs Sûresi · 1</div>
+    </div>
+
+    <p>Ehl-i tasavvuf bu birliği anlatırken üç mertebeden söz eder. Birincisi bilgi mertebesidir: insan, aklı ve nakille Allah'ın bir olduğunu öğrenir ve kabul eder. Bu, yolun başıdır ve kıymetlidir; fakat yolun sonu değildir.</p>
+
+    <h2>Bilmekten görmeye</h2>
+    <p>İkinci mertebe görme mertebesidir. Burada bilgi, kalpte bir şahitliğe dönüşür. İnsan, kâinattaki her şeyin bir isme ayna olduğunu, her güzelliğin bir Güzel'den haber verdiğini sezmeye başlar.</p>
+
+    <blockquote class="pull">Bilgi kapıyı gösterir; görmek kapıdan içeri girmektir.</blockquote>
+
+    <p>Üçüncü mertebe ise oluş mertebesidir. Bu mertebede kul, bildiği ve gördüğü hakikate göre yaşar; ahlâkı, sözü ve ameli tevhidin bir tercümesi hâline gelir. Hat sanatında da böyledir: harfin ölçüsünü bilmek bir şeydir, onu görmek başka, kalemin ucunda yaşatmak bambaşka.</p>
+    <p>İhlâs'ın ilk âyeti, işte bu üç mertebeyi bir arada taşır. Onu her okuyuşumuzda, hangi mertebede durduğumuzu kendimize sormak belki de en güzel tefsirdir.</p>
+  </div>
+
+  <div class="sources">
+    <h3>Faydalanılan Kaynaklar</h3>
+    <ol><li>Kaynak 1 (örnek)</li><li>Kaynak 2 (örnek)</li><li>Kaynak 3 (örnek)</li></ol>
+  </div>
+
+  <div class="author">
+    <img src="img/imza.png" alt="">
+    <div><b>Sıtkı Çoban</b><span>Hattat, yazar ve edebiyat öğretmeni. Rik'a, ta'lik, sülüs ve nesih hatlarında icazetli.</span></div>
+  </div>
+
+  <nav class="pn" aria-label="Diğer yazılar">
+    <a href="yazi.html"><small>← Önceki yazı</small><b>Herkes O'na Muhtaç</b></a>
+    <a class="next" href="yazilar.html"><small>Tüm yazılar →</small><b>Yazılar sayfasına dön</b></a>
+  </nav>
+</article>
+
+<script src="ortak.js"></script>
+<script>
+  const bar = document.getElementById('progress'), art = document.querySelector('.prose');
+  addEventListener('scroll', () => {
+    const r = art.getBoundingClientRect(), total = r.height - innerHeight * .6;
+    bar.style.transform = `scaleX(${Math.min(1, Math.max(0, -r.top / total))})`;
+  }, { passive:true });
+</script>
+</body>
+</html>

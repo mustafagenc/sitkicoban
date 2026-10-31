@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yazılar · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  .wrap.narrow { max-width:1080px; }
+  .cats { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 46px; }
+  .chip { white-space:nowrap; border:1px solid var(--line); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  .chip:hover { border-color:var(--gold); color:var(--gold); }
+  .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
+  .chip .n { font-size:12px; opacity:.7; margin-left:4px; }
+
+  /* Öne çıkan (en son) yazı */
+  .featured { display:grid; grid-template-columns:1.1fr 1fr; gap:52px; align-items:center; padding-bottom:56px; border-bottom:1px solid var(--line); margin-bottom:12px; }
+  .featured .art { background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:16px; aspect-ratio:4/3; display:grid; place-items:center; }
+  .featured .art img { max-width:100%; max-height:100%; display:block; }
+  .featured h2 { font-size:clamp(32px,3.4vw,44px); line-height:1.15; margin:10px 0 16px; transition:color .2s; }
+  .featured:hover h2 { color:var(--gold); }
+  .featured p { margin:0 0 18px; color:var(--ink-soft); font-size:18px; }
+  .meta { font-size:14px; color:var(--ink-soft); }
+  .meta .dot { color:var(--gold); margin:0 7px; }
+  .more { display:inline-block; margin-top:18px; border-bottom:1px solid var(--gold); color:var(--gold); font-size:15px; }
+
+  /* Liste */
+  .post { display:grid; grid-template-columns:110px 1fr auto; gap:30px; align-items:baseline; padding:30px 0; border-bottom:1px solid var(--line); }
+  .post .num { font-family:'Playfair Display', serif; font-size:40px; color:var(--line); line-height:1; transition:color .3s; }
+  .post:hover .num { color:var(--gold); }
+  .post h3 { font-size:28px; line-height:1.2; margin:6px 0 8px; transition:color .2s; }
+  .post:hover h3 { color:var(--gold); }
+  .post p { margin:0; color:var(--ink-soft); max-width:62ch; }
+  .post .arrow { color:var(--gold); font-size:22px; transform:translateX(-6px); opacity:0; transition:.3s; }
+  .post:hover .arrow { transform:none; opacity:1; }
+  .post.hide { display:none; }
+  .list { margin-bottom:110px; }
+  .note { text-align:center; color:var(--ink-soft); font-size:14px; font-style:italic; margin:-70px 0 90px; }
+
+  @media (max-width: 860px) {
+    .featured { grid-template-columns:1fr; gap:24px; }
+    .post { grid-template-columns:1fr; gap:4px; padding:24px 0; }
+    .post .num { font-size:26px; } .post .arrow { display:none; }
+    .post h3 { font-size:23px; }
+  }
+</style>
+</head>
+<body data-page="Yazılar">
+
+<div class="page-head wrap">
+  <div class="orn">❖</div>
+  <h1>Yazılar</h1>
+  <p>Kur'ânî hakikatlere tasavvufî bir pencereden bakan tefsir yazıları, edebiyat ve sanat üzerine denemeler.</p>
+</div>
+
+<main class="wrap narrow">
+  <div class="cats" id="cats"></div>
+
+  <a class="featured" href="yazi.html">
+    <div class="art"><img src="img/e-emrolundugun.jpg" alt=""></div>
+    <div>
+      <div class="eyebrow">Tefsir · Son yazı</div>
+      <h2>İhlâs'ın İlk Âyeti ve Üç Mertebe</h2>
+      <p>"De ki: O Allah birdir." Kısa bir âyetin içinde tevhidin bütün derinliği gizlidir. Bu yazıda âyeti, ehl-i tasavvufun üç mertebe hâlinde anlattığı bilgi, görme ve oluş üzerinden okuyoruz.</p>
+      <div class="meta">Mart 2025<span class="dot">❖</span>9 dk okuma</div>
+      <span class="more">Yazıyı oku →</span>
+    </div>
+  </a>
+
+  <div class="list" id="list"></div>
+  <p class="note">Tefsir başlıkları gerçek; Sanat ve Edebiyat yazıları ile bütün özet, tarih ve okuma süreleri taslak için yazılmış örneklerdir.</p>
+</main>
+
+<script src="ortak.js"></script>
+<script>
+  // Örnek veri: başlıklar gerçek, özet / tarih / süre taslak için uydurulmuş
+  const posts = [
+    { t:'Herkes O\'na Muhtaç', c:'Tefsir', d:'Şubat 2025', m:7, x:'"Allahu\'s-Samed" âyetinde her şeyin O\'na yöneldiği, O\'nun ise hiçbir şeye ihtiyaç duymadığı hakikati.' },
+    { t:'Zikir, Fikir, Dua', c:'Tefsir', d:'Ocak 2025', m:8, x:'Kulun Rabbine yönelişinin üç hâli: dilin anması, aklın tefekkürü, kalbin yakarışı.' },
+    { t:'Söyleyip de Yapmayanlar', c:'Tefsir', d:'Aralık 2024', m:6, x:'Sözle amel arasındaki mesafe üzerine Saf Sûresi\'nden bir uyarı ve bir davet.' },
+    { t:'İnciten Kırıp Döken Var ya!', c:'Tefsir', d:'Kasım 2024', m:9, x:'Dil ve gönül üzerine: incitmeden konuşmanın edebi.' },
+    { t:'Hattın Sessiz Dili', c:'Sanat', d:'Ekim 2024', m:5, x:'Bir harfin ölçüsünde saklı terbiye: meşk, sabır ve usta-çırak ilişkisi üzerine.' },
+    { t:'Divan Şiirinde Bir Beyit, Bir Ömür', c:'Edebiyat', d:'Eylül 2024', m:6, x:'Klasik şiirimizden bir beytin peşinde, kelimelerin ve hayatın izinde.' },
+  ];
+  const list = document.getElementById('list');
+  list.innerHTML = posts.map((p, i) => `
+    <a class="post" href="yazi.html" data-c="${p.c}">
+      <div class="num">${String(i + 2).padStart(2, '0')}</div>
+      <div><div class="eyebrow">${p.c}</div><h3>${p.t}</h3><p>${p.x}</p><div class="meta" style="margin-top:10px">${p.d}<span class="dot">❖</span>${p.m} dk okuma</div></div>
+      <div class="arrow">→</div>
+    </a>`).join('');
+
+  // Kategori çipleri, yazıların kategorilerinden üretilir
+  const counts = posts.reduce((a, p) => (a[p.c] = (a[p.c] || 0) + 1, a), { Tefsir:1 });
+  const cats = document.getElementById('cats');
+  ['Tümü', ...Object.keys(counts)].forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (c === 'Tümü' ? ' on' : '');
+    b.innerHTML = c + `<span class="n">${c === 'Tümü' ? posts.length + 1 : counts[c]}</span>`;
+    b.onclick = () => {
+      cats.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b));
+      list.querySelectorAll('.post').forEach(p => p.classList.toggle('hide', c !== 'Tümü' && p.dataset.c !== c));
+      document.querySelector('.featured').hidden = !(c === 'Tümü' || c === 'Tefsir');
+    };
+    cats.appendChild(b);
+  });
+</script>
+</body>
+</html>
