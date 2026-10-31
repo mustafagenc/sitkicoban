@@ -97,7 +97,7 @@
   const p = new URLSearchParams(location.search).get('p') || 'eserler';
   document.getElementById('title').textContent = pages[p] || '';
   document.title = (pages[p] || '') + ' · Sıtkı Çoban';
-  document.getElementById('nav').innerHTML = Object.entries(pages).map(([k,v]) => `<a href="${({eserler:"eserler.html", yazilar:"yazilar.html"})[k] || "sayfa.html?p=" + k}" class="${k===p?'on':''}">${v}</a>`).join('');
+  document.getElementById('nav').innerHTML = Object.entries(pages).map(([k,v]) => `<a href="${({eserler:"eserler.html", yazilar:"yazilar.html", kitaplar:"kitaplar.html"})[k] || "sayfa.html?p=" + k}" class="${k===p?'on':''}">${v}</a>`).join('');
   document.getElementById('mlinks').innerHTML = document.getElementById('nav').innerHTML;
   const mnav = document.getElementById('mnav'), mbtn = document.getElementById('mbtn');
   function setMenu(o){ mnav.classList.toggle('open', o); mbtn.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; }

@@ -1,7 +1,7 @@
 // Taslak sayfaların ortak parçaları: üst bilgi, mobil menü, alt bilgi, tema
 (function () {
   const pages = [
-    ['eserler-v1.html', 'Eserler'], ['yazilar-v1.html', 'Yazılar'], ['sayfa.html?p=kitaplar', 'Kitaplar'],
+    ['eserler.html', 'Eserler'], ['yazilar.html', 'Yazılar'], ['kitaplar.html', 'Kitaplar'],
     ['sayfa.html?p=videolar', 'Videolar'], ['sayfa.html?p=hayati', 'Hayatı'], ['sayfa.html?p=iletisim', 'İletişim'],
   ];
   const active = document.body.dataset.page;

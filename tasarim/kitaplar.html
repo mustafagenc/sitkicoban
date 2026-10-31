@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitaplar · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  .cats { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 50px; }
+  .chip { white-space:nowrap; border:1px solid var(--line); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  .chip:hover { border-color:var(--gold); color:var(--gold); }
+  .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
+
+  /* Raf: kapaklar üstten hizalı, başlık iki satır yer kaplar */
+  .shelf { display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:54px 36px; margin-bottom:110px; align-items:start; }
+  .book { display:block; cursor:pointer; background:none; border:0; padding:0; text-align:left; font:inherit; color:inherit; }
+  .book.hide { display:none; }
+  .cover { aspect-ratio:2/3; background:var(--paper); outline:1px solid var(--line); box-shadow:0 12px 26px rgba(40,25,10,.18), var(--shadow); transition:transform .35s ease, box-shadow .35s ease; overflow:hidden; display:grid; place-items:center; }
+  .cover img { width:100%; height:100%; object-fit:cover; display:block; }
+  .cover img.contain { object-fit:contain; padding:8px; }
+  .book:hover .cover { transform:translateY(-8px); box-shadow:0 22px 38px rgba(40,25,10,.26), var(--shadow); }
+  .book h3 { font-size:19px; line-height:1.3; margin:16px 0 4px; min-height:calc(2 * 1.3em); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; transition:color .2s; }
+  .book:hover h3 { color:var(--gold); }
+  .book .role { font-size:14px; color:var(--ink-soft); }
+  .book .role b { font-weight:500; color:var(--gold); }
+
+  /* Kapağı olmayan kitaplar için yazı tipiyle yapılmış kapak */
+  .tcover { width:100%; height:100%; position:relative; display:flex; flex-direction:column; justify-content:space-between; align-items:center; text-align:center; padding:26px 16px 18px; background:linear-gradient(160deg, var(--paper), color-mix(in srgb, var(--paper) 80%, var(--line))); }
+  .tcover::before { content:''; position:absolute; inset:8px; border:1px solid var(--line); }
+  .tcover .o { color:var(--gold); letter-spacing:.5em; font-size:12px; }
+  .tcover .t { font-family:'Playfair Display', serif; font-size:19px; line-height:1.25; color:var(--head); }
+  .tcover .a { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+
+  /* Kitap ayrıntısı penceresi */
+  .modal { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:30px; background:rgba(15,12,8,.55); backdrop-filter:blur(4px); opacity:0; visibility:hidden; transition:.3s; }
+  .modal.open { opacity:1; visibility:visible; }
+  .sheet { position:relative; width:min(940px, 100%); max-height:calc(100vh - 60px); overflow:auto; background:var(--bg); outline:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.35); display:grid; grid-template-columns:340px 1fr; transform:translateY(12px); transition:transform .3s; }
+  .modal.open .sheet { transform:none; }
+  .sheet .left { background:var(--bg-2); padding:44px 40px; display:grid; place-items:center; border-right:1px solid var(--line); }
+  .sheet .left .cover { width:100%; }
+  .sheet .right { padding:44px 44px 40px; }
+  .sheet h2 { font-size:34px; line-height:1.15; margin:8px 0 6px; }
+  .sheet .by { color:var(--ink-soft); font-style:italic; margin-bottom:22px; }
+  .sheet .desc { margin:0 0 26px; }
+  .sheet dl { display:grid; grid-template-columns:auto 1fr; gap:10px 20px; margin:0 0 30px; font-size:15px; padding-top:20px; border-top:1px solid var(--line); }
+  .sheet dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
+  .sheet dd { margin:0; } .sheet dd.none { color:var(--ink-soft); font-style:italic; }
+  .btn { display:inline-block; border:1px solid var(--line); padding:10px 22px; font-size:15px; letter-spacing:.04em; transition:.2s; margin-right:10px; }
+  .btn.primary { background:var(--head); color:var(--bg); border-color:var(--head); }
+  .btn:hover { border-color:var(--gold); color:var(--gold); } .btn.primary:hover { background:var(--gold); color:var(--bg); }
+  .x { position:absolute; top:14px; right:14px; z-index:2; }
+  .sheet-nav { display:flex; justify-content:space-between; margin-top:34px; padding-top:18px; border-top:1px solid var(--line); font-size:14px; }
+  .sheet-nav button { background:none; border:0; font:inherit; color:var(--ink-soft); cursor:pointer; padding:0; }
+  .sheet-nav button:hover { color:var(--gold); }
+
+  .note { text-align:center; color:var(--ink-soft); font-size:14px; font-style:italic; margin:-70px 0 90px; }
+
+  @media (max-width: 860px) {
+    .shelf { grid-template-columns:repeat(2, 1fr); gap:36px 18px; }
+    .book h3 { font-size:16px; }
+    .modal { padding:0; place-items:end stretch; }
+    .sheet { grid-template-columns:1fr; max-height:92vh; width:100%; }
+    .sheet .left { padding:28px 70px; border-right:0; border-bottom:1px solid var(--line); }
+    .sheet .right { padding:26px 22px 30px; }
+    .sheet h2 { font-size:27px; }
+  }
+</style>
+</head>
+<body data-page="Kitaplar">
+
+<div class="page-head wrap">
+  <div class="orn">❖</div>
+  <h1>Kitaplar</h1>
+  <p>Klasik şiirimizden derlemeler, tasavvuf klasiklerinin sadeleştirmeleri ve çocuklar için hikmetli hikâyeler.</p>
+</div>
+
+<main class="wrap">
+  <div class="cats" id="cats"></div>
+  <div class="shelf" id="shelf"></div>
+  <p class="note">Kitapların rolleri, yayınevleri, yılları ve tanıtım metinleri taslak için yazılmış örneklerdir; teyit edilmesi gerekir.</p>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="sheet">
+    <button class="circle x" id="m-close" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="left"><div class="cover" id="m-cover"></div></div>
+    <div class="right" id="m-body"></div>
+  </div>
+</div>
+
+<script src="ortak.js"></script>
+<script>
+  // role: Sıtkı Bey'in kitaptaki rolü · a: asıl yazar (Sıtkı Bey değilse) · img: kapak (yoksa yazı kapak)
+  const books = [
+    { t:'Eskimeyen Şiirimizden Hoş Bir Sada', sub:'Beyitler · Hikmetler · Mısralar', role:'Yazar', img:'kitap-eskimeyen.jpg', pub:'Semerkand',
+      d:'Klasik şiirimizin hafızalarda yer etmiş beyitlerini, hikmetli mısralarını ve bunların hikâyelerini bir araya getiren, şiirle sohbet eder gibi okunacak bir seçki.' },
+    { t:'Adı Güzel Kendi Güzel', sub:"Peygamberimiz'e (s.a.v.) Şiirler", role:'Hazırlayan', img:'kitap-adi-guzel.jpg', pub:'Semerkand',
+      d:'Asırlar boyunca Peygamber Efendimiz için yazılmış na\'tlardan ve şiirlerden yapılmış bir derleme.' },
+    { t:'Lemezât-ı Hulviyye', sub:"Ez Lemeât-ı Ulviyye · Halvetî Büyüklerinin Tatlı Hâlleri", role:'Sadeleştiren', a:'Mahmud Cemaleddin el-Hulvî', img:'kitap-lemezat.jpg', pub:'Semerkand',
+      d:'Halvetî büyüklerinin hayatlarını ve menkıbelerini anlatan klasik eserin günümüz Türkçesiyle okunabilir hâle getirilmiş baskısı.' },
+    { t:'En Sevilen İlahiler', role:'Derleyen', img:'kitap-ilahiler.jpg', pub:'Şadırvan',
+      d:'Dillerden düşmeyen ilahilerin sözlerini bir araya getiren cep kitabı.' },
+    { t:'Hikmetleriyle Nasreddin Hoca Latifeleri', role:'Hazırlayan', a:'Seyyid Burhaneddin İbn Mevlânâ', img:'kitap-nasreddin.jpg', contain:true,
+      d:'Nasreddin Hoca fıkralarını, her birinin ardındaki hikmeti açıklayarak sunan bir derleme.' },
+    { t:"Mahmûdü's-Siyer", sub:'Peygamber Efendimizin Hayatı', role:'Hazırlayan',
+      d:"Peygamber Efendimiz'in hayatını anlatan klasik siyer eserinin yeni baskısı." },
+    { t:'Safahat', role:'Hazırlayan', a:'Mehmed Âkif Ersoy',
+      d:"Mehmed Âkif'in şiirlerinin açıklamalı baskısı." },
+    { t:"Güzel'i Bulmak", sub:'Hattatların Hâli', role:'Yazar',
+      d:'Hattatların hayatlarından, meşk geleneğinden ve güzeli arayışlarından hikâyeler.' },
+    { t:"Mesnevî'de Geçen Hikâyeler", role:'Hazırlayan',
+      d:"Mevlânâ'nın Mesnevî'sindeki hikâyelerin sade bir dille anlatımı." },
+    { t:'Yolumuzu Aydınlatan Kandil', role:'Yazar', pub:'Semerkand',
+      d:'Kandil geceleri ve mübarek günler üzerine yazılar.' },
+  ];
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const coverHtml = b => b.img
+    ? `<img src="img/${b.img}" alt="${esc(b.t)} kapağı" class="${b.contain ? 'contain' : ''}" loading="lazy">`
+    : `<div class="tcover"><span class="o">❖</span><span class="t">${esc(b.t)}</span><span class="a">${esc(b.a || 'Sıtkı Çoban')}</span></div>`;
+
+  const shelf = document.getElementById('shelf');
+  shelf.innerHTML = books.map((b, i) => `
+    <button class="book" data-i="${i}" data-role="${b.role}">
+      <div class="cover">${coverHtml(b)}</div>
+      <h3>${esc(b.t)}</h3>
+      <div class="role"><b>${b.role}</b>${b.a ? ' · ' + esc(b.a) : ''}</div>
+    </button>`).join('');
+
+  // Rol çipleri: Yazar, Hazırlayan, Sadeleştiren, Derleyen
+  const cats = document.getElementById('cats');
+  ['Tümü', ...new Set(books.map(b => b.role))].forEach(r => {
+    const c = document.createElement('button'); c.className = 'chip' + (r === 'Tümü' ? ' on' : ''); c.textContent = r;
+    c.onclick = () => {
+      cats.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+      shelf.querySelectorAll('.book').forEach(b => b.classList.toggle('hide', r !== 'Tümü' && b.dataset.role !== r));
+    };
+    cats.appendChild(c);
+  });
+
+  // Ayrıntı penceresi
+  const modal = document.getElementById('modal'); let cur = 0;
+  const row = (k, v) => `<dt>${k}</dt><dd class="${v ? '' : 'none'}">${v ? esc(v) : 'Bilgi girilecek'}</dd>`;
+  function show(i){
+    cur = i; const b = books[i];
+    document.getElementById('m-cover').innerHTML = coverHtml(b);
+    document.getElementById('m-body').innerHTML = `
+      <div class="eyebrow">${b.role}</div>
+      <h2 id="m-title">${esc(b.t)}</h2>
+      <div class="by">${b.sub ? esc(b.sub) + '<br>' : ''}${b.a ? esc(b.a) + ' · ' + b.role.toLowerCase() + ': Sıtkı Çoban' : 'Sıtkı Çoban'}</div>
+      <p class="desc">${esc(b.d)}</p>
+      <dl>${row('Yayınevi', b.pub)}${row('Yıl', b.yil)}${row('Sayfa', b.sayfa)}${row('ISBN', b.isbn)}</dl>
+      <a class="btn primary" href="#">Satın al →</a><a class="btn" href="yazilar.html">İlgili yazılar</a>
+      <div class="sheet-nav"><button id="m-prev">← Önceki kitap</button><button id="m-next">Sonraki kitap →</button></div>`;
+    document.getElementById('m-prev').onclick = () => show((cur - 1 + books.length) % books.length);
+    document.getElementById('m-next').onclick = () => show((cur + 1) % books.length);
+  }
+  const open = i => { show(i); modal.classList.add('open'); document.body.style.overflow = 'hidden'; document.getElementById('m-close').focus(); };
+  const close = () => { modal.classList.remove('open'); document.body.style.overflow = ''; };
+  shelf.addEventListener('click', e => { const b = e.target.closest('.book'); if (b) open(+b.dataset.i); });
+  document.getElementById('m-close').onclick = close;
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  addEventListener('keydown', e => {
+    if (!modal.classList.contains('open')) return;
+    if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') show((cur + 1) % books.length); else if (e.key === 'ArrowLeft') show((cur - 1 + books.length) % books.length);
+  });
+</script>
+</body>
+</html>
