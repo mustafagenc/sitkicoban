@@ -9,7 +9,7 @@
   const links = pages.map(([h, t]) => `<a href="${h}" class="${t === active ? 'on' : ''}">${t}</a>`).join('');
   const moon = '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
   const sun = '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>';
-  const logo = '<a class="logo" href="index.html"><img src="img/imza.png" alt="Sıtkı Çoban imza"><span class="name">Sıtkı Çoban</span></a>';
+  const logo = '<a class="logo" href="index.html"><span class="logo-mark"><img src="img/imza.png" alt="Sıtkı Çoban imza"></span><span class="name">Sıtkı Çoban</span></a>';
 
   document.body.insertAdjacentHTML('afterbegin', `
     <header><div class="wrap">${logo}
@@ -37,6 +37,13 @@
   mbtn.onclick = () => setMenu(true);
   document.getElementById('mclose').onclick = () => setMenu(false);
   addEventListener('keydown', e => { if (e.key === 'Escape' && mnav.classList.contains('open')) setMenu(false); });
+
+  // Logo parıltısı: sayfa açılınca bir kez, fareyle üzerine gelince yeniden
+  const mark = document.querySelector('header .logo-mark');
+  const parla = () => { if (mark.classList.contains('parla')) return; mark.classList.add('parla'); setTimeout(() => mark.classList.remove('parla'), 1400); };
+  mark.style.setProperty('--logo-src', `url("${mark.querySelector('img').src}")`);
+  mark.closest('.logo').addEventListener('mouseenter', parla);
+  setTimeout(parla, 600);
 
   const tbtn = document.getElementById('tbtn');
   window.setTheme = t => {
