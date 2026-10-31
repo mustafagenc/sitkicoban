@@ -1,11 +1,11 @@
 /* Taslak sayfaların ortak temeli: renkler, yazı tipleri, üst bilgi, mobil menü, alt bilgi */
 :root {
   --bg:#f3ead7; --bg-2:#ece0c6; --paper:#fff8ea; --ink:#2b2118; --ink-soft:#5f4f3d; --head:#3a2a1a;
-  --gold:#b08a3e; --line:#c9a96a; --logo-filter:none; --shadow:none;
+  --gold:#b08a3e; --line:#c9a96a; --line-strong:#c9a96a; --logo-filter:none; --shadow:none;
 }
 [data-theme="dark"] {
   --bg:#0f1420; --bg-2:#141b2b; --paper:#1a2234; --ink:#e9e3d3; --ink-soft:#b3ac9b; --head:#e8d39a;
-  --gold:#c9a96a; --line:rgba(201,169,106,.35); --logo-filter:invert(1) sepia(.55) saturate(1.6) hue-rotate(-8deg) brightness(1.05);
+  --gold:#c9a96a; --line:rgba(201,169,106,.16); --line-strong:rgba(201,169,106,.34); --logo-filter:invert(1) sepia(.55) saturate(1.6) hue-rotate(-8deg) brightness(1.05);
   --shadow:0 14px 40px rgba(0,0,0,.5);
 }
 * { box-sizing:border-box; }
@@ -26,7 +26,7 @@ header nav a:hover, header nav a.on { color:var(--gold); }
 header nav a::after { content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:right; transition:transform .45s ease; }
 header nav a:hover::after, header nav a.on::after { transform:scaleX(1); }
 .tools { display:flex; gap:14px; margin-left:30px; }
-.circle { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:none; color:var(--head); padding:0; cursor:pointer; font:600 12px/1 'Source Serif 4', serif; letter-spacing:.06em; transition:.2s; }
+.circle { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:50%; background:none; color:var(--head); padding:0; cursor:pointer; font:600 12px/1 'Source Serif 4', serif; letter-spacing:.06em; transition:.2s; }
 .circle:hover { color:var(--gold); border-color:var(--gold); }
 .circle svg { width:18px; height:18px; }
 .circle .sun { display:none; } [data-theme="dark"] .circle .sun { display:block; } [data-theme="dark"] .circle .moon { display:none; }
@@ -51,12 +51,12 @@ footer img { height:56px; filter:var(--logo-filter); }
 footer .links a { margin-right:22px; font-size:15px; }
 footer .side { text-align:right; line-height:1.5; }
 footer .social-ic { display:flex; gap:10px; justify-content:flex-end; margin-bottom:12px; }
-footer .social-ic a { width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; color:var(--ink-soft); transition:.2s; }
+footer .social-ic a { width:34px; height:34px; border:1px solid var(--line-strong); border-radius:50%; display:grid; place-items:center; color:var(--ink-soft); transition:.2s; }
 footer .social-ic a:hover { color:var(--gold); border-color:var(--gold); }
 footer .social-ic svg { width:16px; height:16px; }
 footer small { color:var(--ink-soft); }
 footer .credit { display:block; font-size:12px; opacity:.85; }
-footer .credit a { color:var(--ink); border-bottom:1px solid var(--line); }
+footer .credit a { color:var(--ink); border-bottom:1px solid var(--line-strong); }
 
 @media (max-width: 860px) {
   header nav { display:none; }

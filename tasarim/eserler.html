@@ -36,7 +36,7 @@
   header nav a::after { content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:right; transition:transform .45s ease; }
   header nav a:hover::after, header nav a.on::after { transform:scaleX(1); }
   .tools { display:flex; gap:14px; margin-left:30px; }
-  .circle { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:none; color:var(--head); padding:0; cursor:pointer; font:600 12px/1 'Source Serif 4', serif; letter-spacing:.06em; }
+  .circle { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:50%; background:none; color:var(--head); padding:0; cursor:pointer; font:600 12px/1 'Source Serif 4', serif; letter-spacing:.06em; }
   .circle svg { width:18px; height:18px; }
   .menu-btn { display:none !important; }
   .mnav { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; flex-direction:column; opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s; }
@@ -57,7 +57,7 @@
   /* Filtreler: iki etiket grubu, birlikte çalışır */
   /* Filtre çipleri Yazılar sayfasındaki gibi: başlığın altında, çizgisiz */
   .fgroup { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 0; }
-  .chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  .chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line-strong); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
   .chip:hover { border-color:var(--gold); color:var(--gold); }
   .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
 
@@ -90,7 +90,7 @@
   [data-layout="c"] .card .cap { text-align:center; }
 
   /* Görünüm seçici: ziyaretçi galerinin düzenini kendisi seçer; seçim hatırlanır */
-  .switch { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:30; display:flex; gap:2px; padding:4px; border-radius:30px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,25,10,.18); }
+  .switch { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:30; display:flex; gap:2px; padding:4px; border-radius:30px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border:1px solid var(--line-strong); box-shadow:0 10px 30px rgba(40,25,10,.18); }
   .switch button { position:relative; width:42px; height:36px; display:grid; place-items:center; border:0; border-radius:20px; background:none; color:var(--ink-soft); cursor:pointer; transition:.2s; }
   .switch button:hover { color:var(--gold); }
   .switch button.on { background:var(--head); color:var(--bg); }
