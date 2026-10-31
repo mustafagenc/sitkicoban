@@ -50,6 +50,10 @@ footer .wrap { display:grid; grid-template-columns:auto 1fr auto; gap:40px; alig
 footer img { height:56px; filter:var(--logo-filter); }
 footer .links a { margin-right:22px; font-size:15px; }
 footer .side { text-align:right; line-height:1.5; }
+footer .social-ic { display:flex; gap:10px; justify-content:flex-end; margin-bottom:12px; }
+footer .social-ic a { width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; color:var(--ink-soft); transition:.2s; }
+footer .social-ic a:hover { color:var(--gold); border-color:var(--gold); }
+footer .social-ic svg { width:16px; height:16px; }
 footer small { color:var(--ink-soft); }
 footer .credit { display:block; font-size:12px; opacity:.85; }
 footer .credit a { color:var(--ink); border-bottom:1px solid var(--line); }
@@ -62,4 +66,5 @@ footer .credit a { color:var(--ink); border-bottom:1px solid var(--line); }
   footer .wrap { grid-template-columns:1fr; justify-items:center; text-align:center; gap:20px; }
   footer .links { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 18px; } footer .links a { margin:0; }
   footer .side { text-align:center; }
+  footer .social-ic { justify-content:center; }
 }

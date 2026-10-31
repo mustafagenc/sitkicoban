@@ -71,6 +71,10 @@
   footer .side { text-align:right; line-height:1.5; }
   footer .side .credit { display:block; font-size:12px; margin-top:2px; opacity:.85; }
   footer .credit a { color:var(--ink); border-bottom:1px solid var(--line); transition:.2s; }
+  footer .social-ic { display:flex; gap:10px; justify-content:flex-end; margin-bottom:12px; }
+  footer .social-ic a { width:34px; height:34px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; color:var(--ink-soft); transition:.2s; }
+  footer .social-ic a:hover { color:var(--gold); border-color:var(--gold); }
+  footer .social-ic svg { width:16px; height:16px; }
   footer .credit a:hover { color:var(--gold); border-color:var(--gold); }
 
   /* Hero */
@@ -134,6 +138,26 @@
   .tag-chip { display:inline-block; border:1px solid var(--line); border-radius:20px; padding:0 10px; font-size:13px; margin-right:6px; }
 
   /* İcazet */
+  /* Meşk ve Dersler: panelden eklenen duyurular; bitiş tarihi geçen kart ve kart kalmazsa bölüm gizlenir */
+  .ders-list { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
+  .ders { display:grid; grid-template-columns:150px 1fr; gap:26px; background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:22px; position:relative; }
+  .ders::before { content:''; position:absolute; inset:6px; border:1px solid var(--line); pointer-events:none; }
+  .ders .afis { aspect-ratio:3/4; background:var(--bg-2); border:0; padding:0; cursor:zoom-in; overflow:hidden; position:relative; z-index:1; }
+  .ders .afis img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s; }
+  .ders .afis:hover img { transform:scale(1.04); }
+  .ders .afis.bos { cursor:default; display:grid; place-items:center; }
+  .ders .afis.bos img { width:62%; height:auto; object-fit:contain; filter:var(--logo-filter); opacity:.35; transform:none; }
+  .ders .kurum { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+  .ders h3 { font-size:25px; margin:6px 0 14px; line-height:1.2; }
+  .ders ul { list-style:none; margin:0 0 18px; padding:0; font-size:16px; }
+  .ders li { display:flex; gap:10px; align-items:flex-start; padding:3px 0; color:var(--ink-soft); }
+  .ders li svg { width:16px; height:16px; flex-shrink:0; margin-top:4px; color:var(--gold); }
+  .ders li b { color:var(--ink); font-weight:500; }
+  .ders .git { font-size:15px; border-bottom:1px solid var(--line); transition:.2s; position:relative; z-index:1; }
+  .ders .git:hover { color:var(--gold); border-color:var(--gold); }
+  .afis-lb { position:fixed; inset:0; z-index:90; background:rgba(15,12,8,.88); display:grid; place-items:center; padding:24px; cursor:zoom-out; }
+  .afis-lb img { max-width:100%; max-height:100%; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+  .afis-lb[hidden] { display:none; }
   .icazet { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .silsile { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:40px; text-align:center; }
   .hoca h3 { font-size:28px; } .hoca .hat { margin-top:6px; color:var(--gold); letter-spacing:.12em; text-transform:uppercase; font-size:14px; }
@@ -198,6 +222,13 @@
     .work.big { grid-row:auto; }
     .work.big .frame { flex:none; aspect-ratio:3/4; }
     .books { grid-template-columns:repeat(3,1fr); }
+    .ders-list { grid-template-columns:1fr; gap:22px; }
+    .ders { grid-template-columns:92px 1fr; gap:16px; padding:16px; }
+    .ders:not(:has(button.afis)) { grid-template-columns:1fr; }
+    .ders .afis.bos { display:none; }
+    .ders .kurum { letter-spacing:.1em; font-size:11px; }
+    .ders h3 { font-size:21px; margin-bottom:10px; }
+    .ders ul { font-size:15px; }
     .silsile .arrow { transform:rotate(90deg); }
     section { padding:64px 0; }
     .sec-head { flex-direction:column; align-items:flex-start; }
@@ -210,6 +241,12 @@
     footer .links { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 18px; }
     footer .links a { margin-right:0; }
     footer .side { text-align:center; }
+    footer .social-ic { justify-content:center; }
+    /* Mobilde kolaj ilk ekranı doldurur: eser yüksekliği ekran genişliğine değil yüksekliğine göre */
+    .hero { min-height:calc(100svh - 72px); }
+    .hero .collage { gap:16px; }
+    .hero .row { gap:16px; }
+    .hero .row img { height:19svh; outline-width:5px; }
   }
 </style>
 </head>
@@ -323,7 +360,43 @@
   </div>
 </section>
 
-<section id="hayati">
+<section class="dersler" id="dersler">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow">Meşk ve Dersler</div><h2>Bu dönem dersler</h2><p>Sıtkı Çoban'ın hüsn-i hat meşk ettirdiği güncel dersler.</p></div>
+    </div>
+    <div class="ders-list">
+      <article class="ders" data-bitis="2027-01-31">
+        <button class="afis" type="button" aria-label="Afişi büyüt"><img src="img/duyuru-imu-mesk.jpg" alt="Bir Medeniyet Çizgisi: Hüsn-i Hat, Nokta'nın Seyri afişi"></button>
+        <div>
+          <div class="kurum">İstanbul Medeniyet Üniversitesi</div>
+          <h3>Hüsn-i Hat Meşkleri<br><i style="font-size:.8em;color:var(--ink-soft)">Nokta'nın Seyri</i></h3>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Perşembe</b> · 16.30–18.00</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Kuzey Yerleşke, B Blok Derslik 106</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span>Kontenjan: 25 kişi</span></li>
+          </ul>
+          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
+        </div>
+      </article>
+      <article class="ders" data-bitis="2027-06-30">
+        <div class="afis bos"><img src="img/imza.png" alt=""></div>
+        <div>
+          <div class="kurum">Çamlıca Kız Anadolu İmam Hatip Lisesi</div>
+          <h3>Hat Dersi</h3>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Cumartesi</b> · 09.00–11.00</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Çamlıca Kız Anadolu İmam Hatip Lisesi, Üsküdar</span></li>
+          </ul>
+          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<div class="afis-lb" id="afisLb" hidden><img alt=""></div>
+
+<section id="hayati" style="background:var(--bg-2);border-top:1px solid var(--line)">
   <div class="wrap about">
     <div class="photo has-img" role="img" aria-label="Sıtkı Çoban, çalışma masasında"></div>
     <div>
@@ -353,6 +426,7 @@
     <img src="img/imza.png" alt="">
     <div class="links"><a href="#">Eserler</a><a href="#">Yazılar</a><a href="#">Kitaplar</a><a href="#">Videolar</a><a href="#">Hayatı</a><a href="#">İletişim</a></div>
     <div class="side">
+      <div class="social-ic"><a href="https://www.instagram.com/hattatstkcoban/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a><a href="https://www.facebook.com/s.tk.coban.619408" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M14.5 21v-7.5h2.6l.4-3.2h-3V8.4c0-.9.3-1.6 1.6-1.6h1.6V4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.4H8.9v3.2h2.6V21"/></svg></a></div>
       <small>© 2026 Sıtkı Çoban · sitkicoban.com</small>
       <small class="credit">Tasarım ve geliştirme: <a href="https://mustafagenc.info" target="_blank" rel="noopener">Mustafa Genç</a></small>
     </div>
@@ -362,6 +436,16 @@
 <div class="note">Fotoğraflar ve yazılar örnektir</div>
 
 <script>
+  // Dersler: bitiş tarihi geçmiş kartlar gizlenir, kart kalmazsa bölüm hiç görünmez
+  const bugun = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll('.ders').forEach(d => { if (d.dataset.bitis < bugun) d.remove(); });
+  if (!document.querySelector('.ders')) document.getElementById('dersler').remove();
+  const afisLb = document.getElementById('afisLb');
+  document.querySelectorAll('button.afis').forEach(b => b.addEventListener('click', () => {
+    afisLb.querySelector('img').src = b.querySelector('img').src; afisLb.querySelector('img').alt = b.querySelector('img').alt; afisLb.hidden = false;
+  }));
+  afisLb.addEventListener('click', () => afisLb.hidden = true);
+  addEventListener('keydown', e => { if (e.key === 'Escape') afisLb.hidden = true; });
   // Kolaj: 3 satır, her satırda eserler iki kez (kesintisiz kayma için)
   const imgs = ['e-subhanallah.jpg','e-hilye.jpg','e-fussilet.jpg','e-seyen-lillah.jpg','e-rika-1.jpg','e-sulus-2.jpg','e-besmele.jpg','e-tovbe.jpg','e-hilye-saadet.png','e-emrolundugun.jpg','e-rika-gazel.jpg','e-sulus-1.jpg','e-besmele-levha.png'];
   const collage = document.getElementById('collage');
