@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Videolar · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  .cats { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 40px; }
+  .chip { white-space:nowrap; border:1px solid var(--line); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  .chip:hover { border-color:var(--gold); color:var(--gold); }
+  .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
+
+  /* Sahne: seçili video büyük oynatıcıda, yanında bilgisi */
+  .stage { display:grid; grid-template-columns:1.75fr 1fr; gap:44px; align-items:start; padding-bottom:56px; border-bottom:1px solid var(--line); margin-bottom:50px; }
+  .player { position:relative; aspect-ratio:16/9; background:#14110d; outline:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; }
+  .player img { width:100%; height:100%; object-fit:cover; display:block; opacity:.75; transition:opacity .3s, transform .6s; }
+  .player:hover img { opacity:.9; transform:scale(1.02); }
+  .player .play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:84px; height:84px; border-radius:50%; background:rgba(255,248,234,.93); display:grid; place-items:center; transition:transform .25s; }
+  .player:hover .play { transform:translate(-50%,-50%) scale(1.07); }
+  .player .play svg { width:30px; height:30px; margin-left:5px; color:#3a2a1a; }
+  .player .msg { position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:30px; color:#eee3cc; font-style:italic; background:#14110d; }
+  .stage .info h2 { font-size:34px; line-height:1.15; margin:8px 0 12px; }
+  .stage .info p { color:var(--ink-soft); margin:0 0 18px; }
+  .meta { font-size:14px; color:var(--ink-soft); }
+  .meta .dot { color:var(--gold); margin:0 7px; }
+  .series { margin-top:24px; padding-top:18px; border-top:1px solid var(--line); }
+  .series .lbl { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .series button { display:flex; justify-content:space-between; width:100%; padding:8px 0; border:0; border-bottom:1px dashed var(--line); background:none; font:inherit; font-size:15px; color:var(--ink); text-align:left; cursor:pointer; }
+  .series button:hover, .series button.on { color:var(--gold); }
+  .series button span { color:var(--ink-soft); font-size:14px; }
+
+  /* Video listesi */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:40px 30px; margin-bottom:110px; }
+  .vid { display:block; cursor:pointer; background:none; border:0; padding:0; text-align:left; font:inherit; color:inherit; }
+  .vid.hide { display:none; }
+  .thumb { position:relative; aspect-ratio:16/9; background:var(--paper); outline:1px solid var(--line); overflow:hidden; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s; }
+  .vid:hover .thumb img { transform:scale(1.04); }
+  .thumb .dur { position:absolute; right:8px; bottom:8px; background:rgba(20,17,13,.8); color:#eee3cc; font-size:12px; padding:2px 7px; border-radius:3px; }
+  .thumb .pl { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.85); width:48px; height:48px; border-radius:50%; background:rgba(255,248,234,.9); display:grid; place-items:center; opacity:0; transition:.25s; }
+  .thumb .pl svg { width:18px; height:18px; margin-left:3px; color:#3a2a1a; }
+  .vid:hover .thumb .pl { opacity:1; transform:translate(-50%,-50%); }
+  .vid.now .thumb { outline:2px solid var(--gold); }
+  .vid .eyebrow { margin-top:12px; font-size:12px; }
+  .vid h3 { font-size:20px; line-height:1.25; margin:4px 0 4px; transition:color .2s; }
+  .vid:hover h3 { color:var(--gold); }
+
+  .note { text-align:center; color:var(--ink-soft); font-size:14px; font-style:italic; margin:-70px 0 90px; }
+
+  @media (max-width: 860px) {
+    .stage { grid-template-columns:1fr; gap:22px; }
+    .stage .info h2 { font-size:26px; }
+    .player .play { width:64px; height:64px; }
+    .grid { grid-template-columns:1fr; gap:30px; }
+  }
+</style>
+</head>
+<body data-page="Videolar">
+
+<div class="page-head wrap">
+  <div class="orn">❖</div>
+  <h1>Videolar</h1>
+  <p>Klasik usulle meşk dersleri, söyleşiler ve programlar.</p>
+</div>
+
+<main class="wrap">
+  <div class="cats" id="cats"></div>
+
+  <section class="stage">
+    <div class="player" id="player" role="button" tabindex="0" aria-label="Videoyu oynat"></div>
+    <div class="info" id="info"></div>
+  </section>
+
+  <div class="grid" id="grid"></div>
+  <p class="note">Video başlıkları, süreleri ve kapak görselleri taslak için örnektir; gerçek videolar YouTube'dan bağlanacak.</p>
+</main>
+
+<script src="ortak.js"></script>
+<script>
+  // Örnek veri. Gerçek sitede her kayıt bir YouTube bağlantısından gelir; kapak ve süre YouTube'dan alınır.
+  // seri: aynı derse ait bölümler sağdaki listede birlikte gösterilir
+  const videos = [
+    { t:"Ta'lik Meşki · Harflerin Ölçüsü", c:'Meşk', seri:"Ta'lik meşki", b:1, dur:'14:32', d:'Ekim 2025', img:'e-tovbe.jpg', x:"Ta'lik meşkinin ilk dersinde harflerin nokta ile ölçülmesi ve kalemin tutuluşu." },
+    { t:"Ta'lik Meşki · Elif ve Be", c:'Meşk', seri:"Ta'lik meşki", b:2, dur:'12:05', d:'Ekim 2025', img:'e-rika-gazel.jpg', x:'Elif ve be harflerinin yazılışı, kalemin döndürülmesi.' },
+    { t:"Ta'lik Meşki · Cim Ailesi", c:'Meşk', seri:"Ta'lik meşki", b:3, dur:'16:48', d:'Kasım 2025', img:'e-sulus-1.jpg', x:'Cim, ha ve hı harflerinde çanak ve kuyruk.' },
+    { t:"Rik'a Meşki · Müfredat", c:'Meşk', seri:"Rik'a meşki", b:1, dur:'11:20', d:'Eylül 2025', img:'e-rika-1.jpg', x:"Rik'a yazısının günlük yazıdaki yeri ve meşk sırası." },
+    { t:'Sülüs Meşki · Vav', c:'Meşk', seri:'Sülüs meşki', b:1, dur:'08:17', d:'Ağustos 2025', img:'e-subhanallah.jpg', x:"Sülüsün en zarif harflerinden vav'ın kafası ve kuyruğu." },
+    { t:'Hat ve Edebiyat Üzerine', c:'Söyleşi', dur:'24:05', d:'Haziran 2025', img:'e-hilye.jpg', x:'Hat sanatı ile klasik şiir arasındaki bağ üzerine bir söyleşi.' },
+    { t:'Bir Levhanın Hikâyesi', c:'Söyleşi', dur:'18:40', d:'Mayıs 2025', img:'e-emrolundugun.jpg', x:"\"Fe'stakim\" levhasının istifinden tezhibine kadar yolculuğu." },
+    { t:'Muhabbet Bağı · Hattatların Hâli', c:'Program', dur:'32:10', d:'Mart 2024', img:'e-besmele.jpg', x:"Muhabbet Bağı programından: eski hattatların hayatlarından hikâyeler." },
+  ];
+
+  const play = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>';
+  const grid = document.getElementById('grid'), player = document.getElementById('player'), info = document.getElementById('info');
+  grid.innerHTML = videos.map((v, i) => `
+    <button class="vid" data-i="${i}" data-c="${v.c}">
+      <div class="thumb"><img src="img/${v.img}" alt="" loading="lazy"><span class="pl">${play}</span><span class="dur">${v.dur}</span></div>
+      <div class="eyebrow">${v.c}${v.seri ? ' · ' + v.b + '. ders' : ''}</div>
+      <h3>${v.t}</h3>
+      <div class="meta">${v.d}</div>
+    </button>`).join('');
+
+  // Seçilen video sahneye gelir; oynatıcı ancak tıklanınca yüklenir (sayfa hızlı açılır, YouTube çerezi baştan gelmez)
+  function select(i, scroll){
+    const v = videos[i];
+    player.innerHTML = `<img src="img/${v.img}" alt=""><div class="play">${play}</div>`;
+    player.onclick = player.onkeydown = e => {
+      if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+      player.innerHTML = '<div class="msg">Burada YouTube oynatıcısı açılacak (youtube-nocookie.com, site içinde).<br>Taslakta gerçek video bağlı değil.</div>';
+    };
+    const ep = v.seri ? videos.map((x, j) => [x, j]).filter(([x]) => x.seri === v.seri) : [];
+    info.innerHTML = `
+      <div class="eyebrow">${v.c}</div>
+      <h2>${v.t}</h2>
+      <p>${v.x}</p>
+      <div class="meta">${v.d}<span class="dot">❖</span>${v.dur}</div>
+      ${ep.length > 1 ? `<div class="series"><div class="lbl">${v.seri} · ${ep.length} ders</div>${ep.map(([x, j]) => `<button data-j="${j}" class="${j === i ? 'on' : ''}">${x.b}. ${x.t.split(' · ')[1]}<span>${x.dur}</span></button>`).join('')}</div>` : ''}`;
+    info.querySelectorAll('.series button').forEach(b => b.onclick = () => select(+b.dataset.j));
+    grid.querySelectorAll('.vid').forEach(el => el.classList.toggle('now', +el.dataset.i === i));
+    if (scroll) document.querySelector('.stage').scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+  grid.addEventListener('click', e => { const v = e.target.closest('.vid'); if (v) select(+v.dataset.i, true); });
+  select(0);
+
+  const cats = document.getElementById('cats');
+  ['Tümü', ...new Set(videos.map(v => v.c))].forEach(c => {
+    const b = document.createElement('button'); b.className = 'chip' + (c === 'Tümü' ? ' on' : ''); b.textContent = c;
+    b.onclick = () => {
+      cats.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b));
+      grid.querySelectorAll('.vid').forEach(v => v.classList.toggle('hide', c !== 'Tümü' && v.dataset.c !== c));
+    };
+    cats.appendChild(b);
+  });
+</script>
+</body>
+</html>

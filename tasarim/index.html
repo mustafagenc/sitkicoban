@@ -219,7 +219,7 @@
     <a class="logo" href="index.html"><img src="img/imza.png" alt="Sıtkı Çoban imza"><span class="name">Sıtkı Çoban</span></a>
     <div style="display:flex;align-items:center">
       <nav>
-        <a href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="sayfa.html?p=videolar">Videolar</a><a href="sayfa.html?p=hayati">Hayatı</a><a href="sayfa.html?p=iletisim">İletişim</a>
+        <a href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="videolar.html">Videolar</a><a href="hayati.html">Hayatı</a><a href="iletisim.html">İletişim</a>
       </nav>
       <div class="tools">
         <div class="lang" id="lang">
@@ -371,10 +371,10 @@
     collage.appendChild(row);
   }
   // Ana sayfadaki "Tümü →" bağlantıları da kendi sayfalarına gider
-  const map = { 'Tüm videolar →':'videolar', 'Devamını oku →':'hayati' };
+  const map = {};
   document.querySelectorAll('a.btn').forEach(a => {
     const t = a.textContent.trim();
-    if (map[t]) a.href = 'sayfa.html?p=' + map[t]; else if (t === 'Tüm eserler →') a.href = 'eserler.html';
+    if (map[t]) a.href = 'sayfa.html?p=' + map[t]; else if (t === 'Tüm eserler →') a.href = 'eserler.html'; else if (t === 'Tüm videolar →') a.href = 'videolar.html'; else if (t === 'Devamını oku →') a.href = 'hayati.html';
     else if (t === 'Tümü →') a.href = 'sayfa.html?p=' + (a.closest('.two > div:first-child') ? 'yazilar' : 'kitaplar'); if (t === 'Tümü →' && a.closest('.two > div:first-child')) a.href = 'yazilar.html'; if (t === 'Tümü →' && !a.closest('.two > div:first-child')) a.href = 'kitaplar.html';
   });
   document.querySelectorAll('footer .links a').forEach(a => a.href = document.querySelector('nav a:nth-child(' + ([...a.parentNode.children].indexOf(a) + 1) + ')').href);

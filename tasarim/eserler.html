@@ -130,6 +130,8 @@
   .lb-body dl { display:grid; grid-template-columns:auto 1fr; gap:10px 18px; margin:0; font-size:15px; }
   .lb-body dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
   .lb-body dd { margin:0; }
+  .lb-body .ask { display:inline-block; margin-top:28px; border:1px solid var(--line); padding:9px 20px; font-size:15px; transition:.2s; }
+  .lb-body .ask:hover { border-color:var(--gold); color:var(--gold); }
   .lb-body dd.none { color:var(--ink-soft); font-style:italic; }
 
   @media (max-width: 860px) {
@@ -167,7 +169,7 @@
 <header><div class="wrap">
   <a class="logo" href="index.html"><img src="img/imza.png" alt="Sıtkı Çoban imza"><span class="name">Sıtkı Çoban</span></a>
   <div style="display:flex;align-items:center">
-    <nav><a class="on" href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="sayfa.html?p=videolar">Videolar</a><a href="sayfa.html?p=hayati">Hayatı</a><a href="sayfa.html?p=iletisim">İletişim</a></nav>
+    <nav><a class="on" href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="videolar.html">Videolar</a><a href="hayati.html">Hayatı</a><a href="iletisim.html">İletişim</a></nav>
     <div class="tools">
       <button class="circle" aria-label="Dil seçin">TR</button>
       <button class="circle" id="tbtn" onclick="toggleTheme()" aria-label="Gece görünümüne geç">
@@ -357,7 +359,8 @@
         ${row('Malzeme', w.malzeme)}
         ${row('Tezhip', w.tezhip === 'Bilgi girilecek' ? '' : w.tezhip)}
         ${row('Ebru', w.ebru)}
-      </dl>`;
+      </dl>
+      <a class="ask" href="iletisim.html?eser=${encodeURIComponent(w.t)}">Bu eser hakkında sorun →</a>`;
     ['lb-prev','lb-next','m-prev','m-next'].forEach(id => document.getElementById(id).hidden = list.length < 2);
   }
   const step = d => { cur = (cur + d + list.length) % list.length; show(); };

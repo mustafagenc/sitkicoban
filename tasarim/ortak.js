@@ -2,7 +2,7 @@
 (function () {
   const pages = [
     ['eserler.html', 'Eserler'], ['yazilar.html', 'Yazılar'], ['kitaplar.html', 'Kitaplar'],
-    ['sayfa.html?p=videolar', 'Videolar'], ['sayfa.html?p=hayati', 'Hayatı'], ['sayfa.html?p=iletisim', 'İletişim'],
+    ['videolar.html', 'Videolar'], ['hayati.html', 'Hayatı'], ['iletisim.html', 'İletişim'],
   ];
   const active = document.body.dataset.page;
   const links = pages.map(([h, t]) => `<a href="${h}" class="${t === active ? 'on' : ''}">${t}</a>`).join('');
