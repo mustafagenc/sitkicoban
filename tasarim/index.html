@@ -32,6 +32,14 @@
   header .wrap { display:flex; align-items:center; justify-content:space-between; height:72px; }
   header .logo { display:flex; align-items:center; gap:14px; }
   header .logo img { height:48px; filter:var(--logo-filter); display:block; }
+  /* Logo parıltısı: imza maske olarak kullanılır, içinden ince bir ışık geçer (açılışta bir kez, üzerine gelince yeniden) */
+  .logo-mark { position:relative; display:block; }
+  .logo-mark::after { content:''; position:absolute; inset:0; pointer-events:none;
+    -webkit-mask:var(--logo-src) center/contain no-repeat; mask:var(--logo-src) center/contain no-repeat;
+    background:linear-gradient(115deg, transparent 38%, var(--logo-glint) 50%, transparent 62%) 100% 0 / 300% 100% no-repeat; }
+  .logo-mark.parla::after { animation:logo-glint 1.3s ease-in-out; }
+  @keyframes logo-glint { from { background-position:100% 0; } to { background-position:0% 0; } }
+  @media (prefers-reduced-motion: reduce) { .logo-mark.parla::after { animation:none; } }
   header .logo .name { font-family:'Playfair Display', serif; font-size:22px; color:var(--head); letter-spacing:.01em; padding-left:14px; border-left:1px solid var(--line); line-height:1; }
   header nav a.on { color:var(--gold); }
   header nav a { margin-left:26px; font-size:16px; position:relative; padding:4px 0; transition:color .3s; }
@@ -101,8 +109,8 @@
   .hero .veil { position:absolute; inset:0; background:radial-gradient(ellipse at center, var(--hero-veil) 30%, color-mix(in srgb, var(--hero-veil) 70%, transparent) 100%); }
   .hero .in { position:relative; padding:60px 20px; }
   /* İmza: PNG maske olarak kullanılır, içinden altın bir ışık süzülür (birkaç saniyede bir) */
-  :root { --sig-base:#1c1510; --sig-glint:#d4af5a; }
-  [data-theme="dark"] { --sig-base:#cfae68; --sig-glint:#fff3cf; }
+  :root { --sig-base:#1c1510; --sig-glint:#d4af5a; --logo-glint:#d4af5a; }
+  [data-theme="dark"] { --sig-base:#cfae68; --sig-glint:#fff3cf; --logo-glint:#fff3cf; }
   .hero .sig { width:min(360px,70vw); aspect-ratio:2235/1948; margin:0 auto;
     -webkit-mask:url('img/imza.png') center/contain no-repeat; mask:url('img/imza.png') center/contain no-repeat;
     background:linear-gradient(115deg, var(--sig-base) 0%, var(--sig-base) 42%, var(--sig-glint) 50%, var(--sig-base) 58%, var(--sig-base) 100%);
@@ -260,7 +268,7 @@
 
 <header>
   <div class="wrap">
-    <a class="logo" href="index.html"><img src="img/imza.png" alt="Sıtkı Çoban imza"><span class="name">Sıtkı Çoban</span></a>
+    <a class="logo" href="index.html"><span class="logo-mark"><img src="img/imza.png" alt="Sıtkı Çoban imza"></span><span class="name">Sıtkı Çoban</span></a>
     <div style="display:flex;align-items:center">
       <nav>
         <a href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="videolar.html">Videolar</a><a href="hayati.html">Hayatı</a><a href="iletisim.html">İletişim</a>
@@ -444,6 +452,11 @@
 <script src="eser-lb.js"></script>
 <script src="kitap-lb.js"></script>
 <script>
+  // Logo parıltısı: ana sayfada ortadaki imza zaten parladığı için yalnızca fareyle üzerine gelince
+  const mark = document.querySelector('header .logo-mark');
+  const parla = () => { if (mark.classList.contains('parla')) return; mark.classList.add('parla'); setTimeout(() => mark.classList.remove('parla'), 1400); };
+  mark.style.setProperty('--logo-src', `url("${mark.querySelector('img').src}")`);
+  mark.closest('.logo').addEventListener('mouseenter', parla);
   // Kitaplar: tıklanan kitap, Kitaplar sayfasındaki ayrıntı penceresinde açılır; oklar bu üç kitap arasında gezer
   const anaKitaplar = [...document.querySelectorAll('.books .book')];
   const kitapSira = anaKitaplar.map(a => KITAPLAR.findIndex(b => b.img && a.querySelector('img').src.endsWith('/' + b.img)));
