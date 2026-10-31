@@ -112,7 +112,8 @@
   .hero h1 { font-size:clamp(44px,6vw,76px); margin-top:14px; letter-spacing:.01em; }
   .hero .roles { margin-top:10px; font-size:18px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
   .hero .tag { margin-top:8px; font-size:19px; font-style:italic; color:var(--ink-soft); }
-  .hero .down { margin-top:36px; font-size:13px; letter-spacing:.2em; color:var(--ink-soft); }
+  .hero .down { display:inline-block; margin-top:30px; font-size:24px; line-height:1; color:var(--ink-soft); transition:color .2s; }
+  .hero .down:hover { color:var(--gold); }
 
   section { padding:96px 0; }
   .sec-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; gap:20px; }
@@ -287,9 +288,9 @@
   <div class="in">
     <div class="sig" role="img" aria-label="Sıtkı Çoban imzası"></div>
     <h1>Sıtkı Çoban</h1>
-    <div class="roles">Hattat · Yazar · Edebiyat Öğretmeni</div>
+    <div class="roles">Hattat · Müellif · Muallim</div>
     <div class="tag">Klasik meşk geleneğinin günümüzdeki temsilcilerinden.</div>
-    <div class="down">AŞAĞI KAYDIRIN ↓</div>
+    <a class="down" href="#eserler" aria-label="Aşağı kaydır">↓</a>
   </div>
 </div>
 
@@ -403,7 +404,7 @@
     <div class="photo has-img" role="img" aria-label="Sıtkı Çoban, çalışma masasında"></div>
     <div>
       <div class="eyebrow">Hayatı</div>
-      <h2>Hattat, yazar, muallim</h2>
+      <h2>Hattat, müellif, muallim</h2>
       <p>Muğla'nın Köyceğiz ilçesinde doğdu. Trakya Üniversitesi'nde lisans, Sakarya Üniversitesi'nde Türk Dili ve Edebiyatı alanında yüksek lisans yaptı.</p>
       <p>Halen İstanbul Çamlıca Kız İmam Hatip Lisesi'nde edebiyat öğretmenliği yapıyor; okul dışında hat sanatına gönül veren öğrencilere klasik usulle meşk ettiriyor.</p>
       <div class="quote">Gelenekle çağdaş estetiğin zarif bir sentezi.</div>
