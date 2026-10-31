@@ -122,6 +122,8 @@
   mesaj.addEventListener('input', () => document.getElementById('count').textContent = mesaj.value.length + ' / 2000');
 
   // Bir eserden gelindiyse konu ve mesaj hazır doldurulur: iletisim.html?eser=Sübhânellâh
+  const konu = new URLSearchParams(location.search).get('konu');
+  if (konu) document.getElementById('konu').value = konu;
   const eser = new URLSearchParams(location.search).get('eser');
   if (eser) {
     document.getElementById('konu').value = 'Eser talebi';
