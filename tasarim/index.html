@@ -139,7 +139,6 @@
 
   /* İcazet */
   /* Meşk ve Dersler: panelden eklenen duyurular; bitiş tarihi geçen kart ve kart kalmazsa bölüm gizlenir */
-  .dersler { padding-top:0; }
   .ders-list { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
   .ders { display:grid; grid-template-columns:150px 1fr; gap:26px; background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:22px; position:relative; }
   .ders::before { content:''; position:absolute; inset:6px; border:1px solid var(--line); pointer-events:none; }
@@ -313,42 +312,6 @@
   </div>
 </section>
 
-<section class="dersler" id="dersler">
-  <div class="wrap">
-    <div class="sec-head">
-      <div><div class="eyebrow">Meşk ve Dersler</div><h2>Bu dönem dersler</h2><p>Sıtkı Çoban'ın hüsn-i hat meşk ettirdiği güncel dersler.</p></div>
-    </div>
-    <div class="ders-list">
-      <article class="ders" data-bitis="2027-01-31">
-        <button class="afis" type="button" aria-label="Afişi büyüt"><img src="img/duyuru-imu-mesk.jpg" alt="Bir Medeniyet Çizgisi: Hüsn-i Hat, Nokta'nın Seyri afişi"></button>
-        <div>
-          <div class="kurum">İstanbul Medeniyet Üniversitesi</div>
-          <h3>Hüsn-i Hat Meşkleri<br><i style="font-size:.8em;color:var(--ink-soft)">Nokta'nın Seyri</i></h3>
-          <ul>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Perşembe</b> · 16.30–18.00</span></li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Kuzey Yerleşke, B Blok Derslik 106</span></li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span>Kontenjan: 25 kişi</span></li>
-          </ul>
-          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
-        </div>
-      </article>
-      <article class="ders" data-bitis="2027-06-30">
-        <div class="afis bos"><img src="img/imza.png" alt=""></div>
-        <div>
-          <div class="kurum">Çamlıca Kız Anadolu İmam Hatip Lisesi</div>
-          <h3>Hat Dersi</h3>
-          <ul>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Cumartesi</b></span></li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Çamlıca Kız Anadolu İmam Hatip Lisesi, Üsküdar</span></li>
-          </ul>
-          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-<div class="afis-lb" id="afisLb" hidden><img alt=""></div>
-
 <section class="icazet">
   <div class="wrap">
     <div class="orn" style="margin-bottom:10px">❖</div>
@@ -397,7 +360,43 @@
   </div>
 </section>
 
-<section id="hayati">
+<section class="dersler" id="dersler">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow">Meşk ve Dersler</div><h2>Bu dönem dersler</h2><p>Sıtkı Çoban'ın hüsn-i hat meşk ettirdiği güncel dersler.</p></div>
+    </div>
+    <div class="ders-list">
+      <article class="ders" data-bitis="2027-01-31">
+        <button class="afis" type="button" aria-label="Afişi büyüt"><img src="img/duyuru-imu-mesk.jpg" alt="Bir Medeniyet Çizgisi: Hüsn-i Hat, Nokta'nın Seyri afişi"></button>
+        <div>
+          <div class="kurum">İstanbul Medeniyet Üniversitesi</div>
+          <h3>Hüsn-i Hat Meşkleri<br><i style="font-size:.8em;color:var(--ink-soft)">Nokta'nın Seyri</i></h3>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Perşembe</b> · 16.30–18.00</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Kuzey Yerleşke, B Blok Derslik 106</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span>Kontenjan: 25 kişi</span></li>
+          </ul>
+          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
+        </div>
+      </article>
+      <article class="ders" data-bitis="2027-06-30">
+        <div class="afis bos"><img src="img/imza.png" alt=""></div>
+        <div>
+          <div class="kurum">Çamlıca Kız Anadolu İmam Hatip Lisesi</div>
+          <h3>Hat Dersi</h3>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Her Cumartesi</b> · 09.00–11.00</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Çamlıca Kız Anadolu İmam Hatip Lisesi, Üsküdar</span></li>
+          </ul>
+          <a class="git" href="iletisim.html?konu=Meşk">Bilgi almak için yazın →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<div class="afis-lb" id="afisLb" hidden><img alt=""></div>
+
+<section id="hayati" style="background:var(--bg-2);border-top:1px solid var(--line)">
   <div class="wrap about">
     <div class="photo has-img" role="img" aria-label="Sıtkı Çoban, çalışma masasında"></div>
     <div>
