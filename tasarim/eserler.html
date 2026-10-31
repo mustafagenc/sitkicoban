@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eserler · Sıtkı Çoban</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
 <style>
   :root {
     --bg:#f3ead7; --bg-2:#ece0c6; --paper:#fff8ea; --ink:#2b2118; --ink-soft:#5f4f3d; --head:#3a2a1a;
@@ -98,6 +99,9 @@
   .switch svg { width:20px; height:20px; }
   .switch button::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(4px); white-space:nowrap; font-size:13px; padding:4px 10px; border-radius:4px; background:var(--head); color:var(--bg); opacity:0; pointer-events:none; transition:.2s; }
   .switch button:hover::after, .switch button:focus-visible::after { opacity:1; transform:translateX(-50%); }
+  /* Alt bilgiye gelince seçici kaybolur, alttaki yazıların üstüne binmez */
+  .switch { transition:opacity .3s, transform .3s; }
+  .switch.away { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(16px); }
 
   /* Lightbox: solda yakınlaştırılabilir eser, sağda açıklama */
   .lb { position:fixed; inset:0; z-index:60; display:grid; grid-template-columns:1fr 400px; background:var(--bg); opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s; }
@@ -164,31 +168,8 @@
   }
 </style>
 </head>
-<body data-layout="a">
+<body data-layout="a" data-page="Eserler">
 
-<header><div class="wrap">
-  <a class="logo" href="index.html"><img src="img/imza.png" alt="Sıtkı Çoban imza"><span class="name">Sıtkı Çoban</span></a>
-  <div style="display:flex;align-items:center">
-    <nav><a class="on" href="eserler.html">Eserler</a><a href="yazilar.html">Yazılar</a><a href="kitaplar.html">Kitaplar</a><a href="videolar.html">Videolar</a><a href="hayati.html">Hayatı</a><a href="iletisim.html">İletişim</a></nav>
-    <div class="tools">
-      <button class="circle" aria-label="Dil seçin">TR</button>
-      <button class="circle" id="tbtn" onclick="toggleTheme()" aria-label="Gece görünümüne geç">
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
-      </button>
-      <button class="circle menu-btn" id="mbtn" aria-label="Menüyü aç" aria-expanded="false" aria-controls="mnav">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M8 17h12"/></svg>
-      </button>
-    </div>
-  </div>
-</div></header>
-<div class="mnav" id="mnav" role="dialog" aria-modal="true" aria-label="Menü">
-  <div class="top">
-    <a class="logo" href="index.html"><img src="img/imza.png" alt=""><span class="name">Sıtkı Çoban</span></a>
-    <button class="circle" id="mclose" aria-label="Menüyü kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  </div>
-  <div class="links" id="mlinks" role="navigation"></div>
-</div>
 
 <div class="page-head wrap">
   <div class="orn">❖</div>
@@ -240,6 +221,7 @@
   </button>
 </div>
 
+<script src="ortak.js"></script>
 <script>
   // Örnek veri: yazı türleri tahminidir, Sıtkı Bey'in teyidi gerekir
   // ar: eserin metni · mean: anlamı · src: kaynağı · desc: kısa açıklama · olcu, malzeme, tezhip, ebru
@@ -324,6 +306,9 @@
     justify();
   }
   document.querySelectorAll('.switch button').forEach(b => b.onclick = () => setLayout(b.dataset.l));
+  const sw = document.querySelector('.switch'), foot = document.querySelector('footer');
+  const awayCheck = () => sw.classList.toggle('away', foot.getBoundingClientRect().top < innerHeight - 10);
+  addEventListener('scroll', awayCheck, { passive:true }); addEventListener('resize', awayCheck); awayCheck();
   try { const l = localStorage.getItem('galeri'); if (l) setLayout(l); } catch(e) {}
 
   // ---------- Lightbox ----------
@@ -427,15 +412,6 @@
   });
   addEventListener('resize', () => { if (lb.classList.contains('open')) fit(); });
 
-  document.getElementById('mlinks').innerHTML = document.querySelector('header nav').innerHTML;
-  const mnav = document.getElementById('mnav'), mbtn = document.getElementById('mbtn');
-  function setMenu(o){ mnav.classList.toggle('open', o); mbtn.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; }
-  mbtn.onclick = () => setMenu(true);
-  document.getElementById('mclose').onclick = () => setMenu(false);
-  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
-  function setTheme(t){ document.documentElement.dataset.theme = t; try { localStorage.setItem('tema', t); } catch(e) {} }
-  function toggleTheme(){ setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); }
-  try { const t = localStorage.getItem('tema'); if (t) setTheme(t); } catch(e) {}
 </script>
 </body>
 </html>

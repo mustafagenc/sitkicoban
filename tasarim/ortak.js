@@ -4,6 +4,7 @@
     ['eserler.html', 'Eserler'], ['yazilar.html', 'Yazılar'], ['kitaplar.html', 'Kitaplar'],
     ['videolar.html', 'Videolar'], ['hayati.html', 'Hayatı'], ['iletisim.html', 'İletişim'],
   ];
+  if (!document.querySelector('link[rel=icon]')) document.head.insertAdjacentHTML('beforeend', '<link rel="icon" type="image/svg+xml" href="img/favicon.svg">');
   const active = document.body.dataset.page;
   const links = pages.map(([h, t]) => `<a href="${h}" class="${t === active ? 'on' : ''}">${t}</a>`).join('');
   const moon = '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
