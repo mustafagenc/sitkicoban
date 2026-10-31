@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hayatı · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  /* Açılış: portre ve kısa künye */
+  .intro { display:grid; grid-template-columns:420px 1fr; gap:64px; align-items:center; padding:70px 0 80px; }
+  .portrait { aspect-ratio:4/5; background:url('img/sitki-coban.jpg') 100% 19% / 200% auto no-repeat; outline:1px solid var(--line); box-shadow:var(--shadow); position:relative; }
+  .portrait::before { content:''; position:absolute; inset:10px; border:1px solid rgba(255,248,234,.6); }
+  .intro h1 { font-size:clamp(46px,5.5vw,72px); line-height:1.05; margin:10px 0 12px; }
+  .intro .roles { font-size:17px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+  .intro .lead { font-size:21px; font-style:italic; color:var(--ink-soft); margin:22px 0 30px; max-width:40ch; }
+  .facts { display:grid; grid-template-columns:auto 1fr; gap:10px 22px; margin:0; font-size:15px; padding-top:22px; border-top:1px solid var(--line); }
+  .facts dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
+  .facts dd { margin:0; }
+
+  /* Metin + yandaki içindekiler */
+  .body { display:grid; grid-template-columns:220px 1fr; gap:70px; padding:70px 0 40px; border-top:1px solid var(--line); }
+  .toc { position:sticky; top:100px; align-self:start; font-size:15px; }
+  .toc .lbl { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .toc a { display:block; padding:7px 0 7px 14px; border-left:1px solid var(--line); color:var(--ink-soft); transition:.2s; }
+  .toc a:hover { color:var(--gold); }
+  .toc a.on { color:var(--head); border-left:2px solid var(--gold); padding-left:13px; }
+  .prose { max-width:680px; font-size:19px; line-height:1.8; }
+  .prose section { scroll-margin-top:100px; margin-bottom:56px; }
+  .prose h2 { font-size:34px; margin:0 0 18px; }
+  .prose h2 .n { font-size:15px; color:var(--gold); letter-spacing:.18em; display:block; font-family:'Source Serif 4', serif; margin-bottom:4px; }
+  .prose p { margin:0 0 1.2em; }
+  .prose section:first-child > p:first-of-type::first-letter { float:left; font-family:'Playfair Display', serif; font-size:4.1em; line-height:.8; padding:.08em .1em 0 0; color:var(--gold); }
+
+  /* İcazet silsilesi: iki hoca, iki kalem çifti */
+  .icazet { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:26px 0 30px; }
+  .ic { background:var(--paper); outline:1px solid var(--line); padding:22px 22px 20px; position:relative; }
+  .ic::before { content:''; position:absolute; inset:5px; border:1px solid var(--line); pointer-events:none; }
+  .ic .k { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+  .ic b { display:block; font-family:'Playfair Display', serif; font-weight:400; font-size:23px; color:var(--head); margin:4px 0 6px; }
+  .ic span { font-size:15px; color:var(--ink-soft); }
+
+  .pull { margin:1.6em 0; padding-left:24px; border-left:2px solid var(--gold); font-family:'Playfair Display', serif; font-style:italic; font-size:25px; line-height:1.4; color:var(--head); }
+
+  .works-list { list-style:none; margin:20px 0 0; padding:0; columns:2; column-gap:30px; font-size:17px; }
+  .works-list li { break-inside:avoid; padding:9px 0; border-bottom:1px solid var(--line); }
+  .works-list li::before { content:'❖'; color:var(--gold); font-size:11px; margin-right:10px; }
+  .more { display:inline-block; margin-top:18px; border-bottom:1px solid var(--gold); color:var(--gold); font-size:16px; }
+
+  .closing { text-align:center; padding:60px 0 110px; border-top:1px solid var(--line); }
+  .closing img { height:110px; filter:var(--logo-filter); }
+  .closing p { max-width:60ch; margin:18px auto 0; font-family:'Playfair Display', serif; font-style:italic; font-size:22px; line-height:1.5; color:var(--head); }
+
+  @media (max-width: 960px) {
+    .intro { grid-template-columns:1fr; gap:34px; padding:40px 0 50px; }
+    .portrait { max-width:420px; width:100%; margin:0 auto; }
+    .body { grid-template-columns:1fr; gap:0; padding-top:40px; }
+    .toc { display:none; }
+    .prose { font-size:18px; }
+    .prose h2 { font-size:28px; }
+    .icazet { grid-template-columns:1fr; }
+    .works-list { columns:1; }
+    .closing p { font-size:19px; }
+  }
+</style>
+</head>
+<body data-page="Hayatı">
+
+<main class="wrap">
+  <section class="intro">
+    <div class="portrait" role="img" aria-label="Sıtkı Çoban, çalışma masasında"></div>
+    <div>
+      <div class="eyebrow">Hayatı</div>
+      <h1>Sıtkı Çoban</h1>
+      <div class="roles">Hattat · Yazar · Edebiyat Öğretmeni</div>
+      <p class="lead">Klasik meşk geleneğinin günümüzdeki temsilcilerinden; hat sanatının dört ana kaleminde icazetli.</p>
+      <dl class="facts">
+        <dt>Doğum</dt><dd>Köyceğiz, Muğla</dd>
+        <dt>Eğitim</dt><dd>Trakya Üniversitesi (lisans)<br>Sakarya Üniversitesi, Türk Dili ve Edebiyatı (yüksek lisans)</dd>
+        <dt>İcazet</dt><dd>Rik'a ve ta'lik: Hasan Çelebi<br>Sülüs ve nesih: Abdulhadi Erol Dönmez</dd>
+        <dt>Görev</dt><dd>İstanbul Çamlıca Kız İmam Hatip Lisesi</dd>
+      </dl>
+    </div>
+  </section>
+
+  <div class="body">
+    <nav class="toc" aria-label="Bu sayfada">
+      <div class="lbl">Bu sayfada</div>
+      <a href="#ilim">İlim yolculuğu</a>
+      <a href="#hat">Hat yolculuğu</a>
+      <a href="#anlayis">Sanat anlayışı</a>
+      <a href="#kalem">Kalemden dökülenler</a>
+      <a href="#muallim">Muallimlik</a>
+    </nav>
+
+    <div class="prose">
+      <section id="ilim">
+        <h2><span class="n">I</span>İlim yolculuğu</h2>
+        <p>Hattat, münevver ve muallim Sıtkı Çoban, Ege'nin incisi Muğla'nın şirin ilçesi Köyceğiz'de dünyaya merhaba dedi. İlme olan susuzluğu onu Trakya Üniversitesi'nin yollarına düşürdü ve burada lisans eğitimini başarıyla tamamladı.</p>
+        <p>Ardından akademik derinliğini artırmak gayesiyle Sakarya Üniversitesi'nde Türk Dili ve Edebiyatı alanında yüksek lisans yaparak edebiyat dünyasına olan vukufiyetini perçinledi.</p>
+      </section>
+
+      <section id="hat">
+        <h2><span class="n">II</span>Hat yolculuğu</h2>
+        <p>Sanat ve kültürle yoğrulan hayatına edebiyat öğretmenliği gibi kıymetli bir vazifeyle devam eden Çoban'ı, ruhunun derinliklerindeki estetik arayışı klasik hat sanatının engin deryasına sürükledi. Bu kadim sanatta zirveye ulaşmak için dönemin üstatlarının rahle-i tedrisinden geçti.</p>
+        <div class="icazet">
+          <div class="ic"><div class="k">Rik'a · Ta'lik</div><b>Hasan Çelebi</b><span>Hat sanatının yaşayan efsanesinden icazet</span></div>
+          <div class="ic"><div class="k">Sülüs · Nesih</div><b>Abdulhadi Erol Dönmez</b><span>Rehberliğinde olgunlaşarak icazet</span></div>
+        </div>
+        <p>Böylece hat sanatının dört ana meşkinde de icazet sahibi nadir sanatkârlardan biri olarak, klasik meşk sisteminin günümüzdeki seçkin temsilcileri arasındaki yerini aldı.</p>
+      </section>
+
+      <section id="anlayis">
+        <h2><span class="n">III</span>Sanat anlayışı</h2>
+        <p>Sıtkı Çoban'ın sanat anlayışı, köklerinden beslenen özgün bir estetik üzerine kuruludur. Eserlerinde, ilahi kelamın nuraniyetini yansıtan Kur'ân-ı Kerîm âyetlerine, hikmet pınarlarından süzülen anlamlı sözlere ve klasik edebiyatımızın incelikli beyitlerine yer vererek, görsel bir şölenle mana derinliğini ustaca harmanlar.</p>
+        <blockquote class="pull">Gelenekle çağdaş estetiğin zarif bir sentezi.</blockquote>
+        <p>İzleyicinin ruhuna dokunan bu eserler, geleneğe sadık kalırken bugünün gözüne de seslenir.</p>
+        <a class="more" href="eserler.html">Eserlerini görün →</a>
+      </section>
+
+      <section id="kalem">
+        <h2><span class="n">IV</span>Kalemden dökülenler</h2>
+        <p>Çoban'ın kaleminden dökülenler sadece levhalarla sınırlı kalmaz. Edebî kimliğiyle de öne çıkan sanatçı, "Adı Güzel Kendi Güzel" ve "Eskimeyen Şiirimizden Hoş Bir Sada" gibi eserleriyle klasik Türk şiirine olan derin muhabbetini ve bu alandaki birikimini gözler önüne serer.</p>
+        <p>Kaleme aldığı tefsir yazılarıyla Kur'ânî hakikatlere tasavvufî bir pencereden yaklaşarak geniş bir okuyucu kitlesine ulaşmıştır. Geçmişte radyoda hazırlayıp sunduğu "Muhabbet Bağı" programıyla da dinleyicilerini edebiyatın, sanatın ve sanatçıların dünyasında keyifli bir yolculuğa çıkarmıştır.</p>
+        <ul class="works-list">
+          <li>Eskimeyen Şiirimizden Hoş Bir Sada</li>
+          <li>Lemezât-ı Hulviyye</li>
+          <li>En Sevilen İlahiler</li>
+          <li>Adı Güzel Kendi Güzel</li>
+          <li>Hikmetleriyle Nasreddin Hoca Latifeleri</li>
+          <li>Mahmûdü's-Siyer</li>
+          <li>Safahat</li>
+          <li>Güzel'i Bulmak · Hattatların Hâli</li>
+          <li>Mesnevî'de Geçen Hikâyeler</li>
+          <li>Yolumuzu Aydınlatan Kandil</li>
+        </ul>
+        <a class="more" href="kitaplar.html">Kitaplarını görün →</a>
+        <a class="more" href="yazilar.html" style="margin-left:22px">Yazılarını okuyun →</a>
+      </section>
+
+      <section id="muallim">
+        <h2><span class="n">V</span>Muallimlik</h2>
+        <p>Halen İstanbul Çamlıca Kız İmam Hatip Lisesi'nde eğitimci kimliğiyle genç nesillere yol göstermeye devam eden Sıtkı Çoban, burada Türk edebiyatının zenginliğini ve hat sanatının inceliklerini öğrencileriyle paylaşmaktadır.</p>
+        <p>Okul dışında da hat sanatına gönül veren öğrencilere klasik usulle meşkler yaptırarak, usta-çırak ilişkisinin asırlardır süregelen ruhunu canlı tutmaktadır. Yetiştirdiği kıymetli talebelerle birlikte bu kadim sanatı geleceğe taşıma gayretini büyük bir aşkla sürdürmektedir.</p>
+        <a class="more" href="videolar.html">Meşk videolarını izleyin →</a>
+      </section>
+    </div>
+  </div>
+
+  <section class="closing">
+    <img src="img/imza.png" alt="">
+    <p>Öğretmenliğiyle ilim yolunda ışık saçan, hattatlığıyla ruhlara zarafet bahşeden, yazarlığıyla gönüllere seslenen bir irfan ve sanat ehli.</p>
+  </section>
+</main>
+
+<script src="ortak.js"></script>
+<script>
+  // İçindekiler: okunan bölüm vurgulanır
+  const links = [...document.querySelectorAll('.toc a')];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.hash === '#' + e.target.id));
+  }), { rootMargin:'-30% 0px -60% 0px' });
+  document.querySelectorAll('.prose section').forEach(s => io.observe(s));
+</script>
+</body>
+</html>

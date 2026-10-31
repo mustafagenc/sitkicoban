@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eserler · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  :root {
+    --bg:#f3ead7; --bg-2:#ece0c6; --paper:#fff8ea; --ink:#2b2118; --ink-soft:#5f4f3d; --head:#3a2a1a;
+    --gold:#b08a3e; --line:#c9a96a; --logo-filter:none; --shadow:none;
+  }
+  [data-theme="dark"] {
+    --bg:#0f1420; --bg-2:#141b2b; --paper:#1a2234; --ink:#e9e3d3; --ink-soft:#b3ac9b; --head:#e8d39a;
+    --gold:#c9a96a; --line:rgba(201,169,106,.35); --logo-filter:invert(1) sepia(.55) saturate(1.6) hue-rotate(-8deg) brightness(1.05);
+    --shadow:0 14px 40px rgba(0,0,0,.5);
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Source Serif 4', serif; font-size:17px; line-height:1.6; transition:background .3s, color .3s; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3 { font-family:'Playfair Display', serif; font-weight:400; color:var(--head); margin:0; }
+  .wrap { max-width:1240px; margin:0 auto; padding:0 28px; }
+  .eyebrow { font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); }
+
+  /* Üst bilgi (ana sayfayla aynı) */
+  header { position:sticky; top:0; z-index:10; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
+  header .wrap { display:flex; align-items:center; justify-content:space-between; height:72px; }
+  .logo { display:flex; align-items:center; gap:14px; }
+  .logo img { height:48px; filter:var(--logo-filter); display:block; }
+  .logo .name { font-family:'Playfair Display', serif; font-size:22px; color:var(--head); padding-left:14px; border-left:1px solid var(--line); line-height:1; }
+  header nav a { margin-left:26px; font-size:16px; position:relative; padding:4px 0; transition:color .3s; }
+  header nav a:hover, header nav a.on { color:var(--gold); }
+  header nav a::after { content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:right; transition:transform .45s ease; }
+  header nav a:hover::after, header nav a.on::after { transform:scaleX(1); }
+  .tools { display:flex; gap:14px; margin-left:30px; }
+  .circle { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:none; color:var(--head); padding:0; cursor:pointer; font:600 12px/1 'Source Serif 4', serif; letter-spacing:.06em; }
+  .circle svg { width:18px; height:18px; }
+  .menu-btn { display:none !important; }
+  .mnav { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; flex-direction:column; opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s; }
+  .mnav.open { opacity:1; visibility:visible; }
+  .mnav .top { display:flex; align-items:center; justify-content:space-between; height:72px; padding:0 20px; border-bottom:1px solid var(--line); }
+  .mnav .links { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 32px; }
+  .mnav .links a { font-family:'Playfair Display', serif; font-size:32px; color:var(--head); padding:10px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:baseline; }
+  .mnav .links a::after { content:'←'; font-family:'Source Serif 4', serif; font-size:18px; color:var(--gold); }
+  .mnav .links a.on { color:var(--gold); }
+  .circle .sun { display:none; } [data-theme="dark"] .circle .sun { display:block; } [data-theme="dark"] .circle .moon { display:none; }
+
+  /* Sayfa başlığı */
+  .page-head { padding:64px 0 28px; text-align:center; }
+  .page-head .orn { color:var(--gold); letter-spacing:.7em; font-size:14px; }
+  .page-head h1 { font-size:clamp(44px,5vw,64px); margin:6px 0 10px; }
+  .page-head p { margin:0 auto; max-width:56ch; color:var(--ink-soft); font-style:italic; }
+
+  /* Filtreler: iki etiket grubu, birlikte çalışır */
+  .filters { position:sticky; top:72px; z-index:5; background:var(--bg); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .filters .wrap { display:flex; flex-wrap:wrap; align-items:center; gap:10px 34px; padding-top:14px; padding-bottom:14px; }
+  .fgroup { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .fgroup .lbl { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-right:6px; }
+  .chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line); border-radius:20px; padding:3px 14px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  .chip:hover { border-color:var(--gold); color:var(--gold); }
+  .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
+  .count { margin-left:auto; font-size:14px; color:var(--ink-soft); font-style:italic; }
+
+  .gallery { padding:44px 0 100px; }
+  .card { display:block; cursor:pointer; }
+  .card .mat { background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:12px; position:relative; overflow:hidden; }
+  .card img { display:block; width:100%; transition:transform .6s ease; }
+  .card:hover img { transform:scale(1.025); }
+  .card .cap { margin-top:12px; }
+  .card h3 { font-size:20px; line-height:1.25; transition:color .2s; }
+  .card:hover h3 { color:var(--gold); }
+  .card .meta { font-size:14px; color:var(--ink-soft); margin-top:3px; }
+  .card .meta .dot { color:var(--gold); margin:0 6px; }
+  .card.hide { display:none !important; }
+
+  /* A · Duvar: sütunlar, eserler kendi oranında alt alta */
+  [data-layout="a"] .gallery .grid { columns:3 300px; column-gap:32px; }
+  [data-layout="a"] .card { break-inside:avoid; margin-bottom:38px; }
+
+  /* B · Sıralı: eşit yükseklikte satırlar, eser genişliği oranına göre */
+  [data-layout="b"] .gallery .grid { display:flex; flex-wrap:wrap; gap:26px; }
+  [data-layout="b"] .card { width:var(--w); }
+  [data-layout="b"] .card .mat { padding:10px; }
+  [data-layout="b"] .card img { aspect-ratio:var(--r); height:auto; }
+
+  /* C · Müze: eşit kareler, eser paspartunun ortasında, bol boşluk */
+  [data-layout="c"] .gallery .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:48px 40px; }
+  [data-layout="c"] .card .mat { aspect-ratio:1; display:grid; place-items:center; padding:28px; }
+  [data-layout="c"] .card img { width:100%; height:100%; object-fit:contain; }
+  [data-layout="c"] .card .cap { text-align:center; }
+
+  /* Görünüm seçici: ziyaretçi galerinin düzenini kendisi seçer; seçim hatırlanır */
+  .switch { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:30; display:flex; gap:2px; padding:4px; border-radius:30px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border:1px solid var(--line); box-shadow:0 10px 30px rgba(40,25,10,.18); }
+  .switch button { position:relative; width:42px; height:36px; display:grid; place-items:center; border:0; border-radius:20px; background:none; color:var(--ink-soft); cursor:pointer; transition:.2s; }
+  .switch button:hover { color:var(--gold); }
+  .switch button.on { background:var(--head); color:var(--bg); }
+  .switch svg { width:20px; height:20px; }
+  .switch button::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(4px); white-space:nowrap; font-size:13px; padding:4px 10px; border-radius:4px; background:var(--head); color:var(--bg); opacity:0; pointer-events:none; transition:.2s; }
+  .switch button:hover::after, .switch button:focus-visible::after { opacity:1; transform:translateX(-50%); }
+  /* Alt bilgiye gelince seçici kaybolur, alttaki yazıların üstüne binmez */
+  .switch { transition:opacity .3s, transform .3s; }
+  .switch.away { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(16px); }
+
+  /* Lightbox: solda yakınlaştırılabilir eser, sağda açıklama */
+  .lb { position:fixed; inset:0; z-index:60; display:grid; grid-template-columns:1fr 400px; background:var(--bg); opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s; }
+  .lb.open { opacity:1; visibility:visible; }
+  .lb-stage { position:relative; overflow:hidden; background:#14110d; cursor:zoom-in; touch-action:none; user-select:none; }
+  [data-theme="dark"] .lb-stage { background:#080b12; }
+  .lb-stage.zoomed { cursor:grab; } .lb-stage.dragging { cursor:grabbing; }
+  .lb-stage img { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform; box-shadow:0 20px 60px rgba(0,0,0,.6); outline:10px solid #fbf6ea; }
+  .lb-ctrl { position:absolute; left:50%; bottom:20px; transform:translateX(-50%); display:flex; gap:2px; padding:4px; border-radius:30px; background:rgba(20,17,13,.75); backdrop-filter:blur(6px); }
+  .lb-ctrl button, .lb-nav, .lb-close { width:38px; height:38px; display:grid; place-items:center; border:0; border-radius:50%; background:none; color:#eee3cc; cursor:pointer; font:500 18px/1 'Source Serif 4', serif; transition:.2s; }
+  .lb-ctrl button:hover, .lb-nav:hover, .lb-close:hover { color:#d4af5a; background:rgba(255,255,255,.06); }
+  .lb-ctrl .m-nav { display:none; }
+  .lb-ctrl .pct { width:56px; font-size:13px; color:#b8ad95; cursor:default; }
+  .lb-nav { position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; background:rgba(20,17,13,.55); font-size:22px; }
+  .lb-nav.prev { left:16px; } .lb-nav.next { right:16px; }
+  .lb-hint { position:absolute; left:20px; top:18px; color:#9a8f78; font-size:13px; font-style:italic; }
+  .lb-side { border-left:1px solid var(--line); display:flex; flex-direction:column; min-height:0; }
+  .lb-head { display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid var(--line); }
+  .lb-head .pos { font-size:13px; letter-spacing:.18em; color:var(--gold); }
+  .lb-close { color:var(--head); border:1px solid var(--line); }
+  .lb-close:hover { background:none; border-color:var(--gold); }
+  .lb-body { padding:26px 28px 34px; overflow-y:auto; }
+  .lb-body h2 { font-size:32px; line-height:1.15; }
+  .lb-body .tags { margin:12px 0 22px; display:flex; flex-wrap:wrap; gap:6px; }
+  .lb-body .tag { border:1px solid var(--line); border-radius:20px; padding:1px 12px; font-size:14px; }
+  .lb-body .ar { font-family:'Amiri', serif; font-size:28px; line-height:1.8; direction:rtl; text-align:right; color:var(--head); padding:16px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .lb-body .mean { font-style:italic; color:var(--ink-soft); margin:14px 0 6px; }
+  .lb-body .src { font-size:14px; color:var(--gold); margin-bottom:22px; }
+  .lb-body .desc { margin:0 0 24px; }
+  .lb-body dl { display:grid; grid-template-columns:auto 1fr; gap:10px 18px; margin:0; font-size:15px; }
+  .lb-body dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
+  .lb-body dd { margin:0; }
+  .lb-body .ask { display:inline-block; margin-top:28px; border:1px solid var(--line); padding:9px 20px; font-size:15px; transition:.2s; }
+  .lb-body .ask:hover { border-color:var(--gold); color:var(--gold); }
+  .lb-body dd.none { color:var(--ink-soft); font-style:italic; }
+
+  @media (max-width: 860px) {
+    .lb { grid-template-columns:1fr; grid-template-rows:58vh 1fr; }
+    .lb-stage img { outline-width:6px; }
+    .lb-nav { display:none; }
+    .lb-ctrl .m-nav { display:grid; }
+    .lb-hint { display:none; }
+    .lb-side { border-left:0; border-top:1px solid var(--line); }
+    .lb-head { position:absolute; top:10px; right:10px; padding:0; border:0; z-index:2; }
+    .lb-head .pos { display:none; }
+    .lb-close { color:#eee3cc; background:rgba(20,17,13,.6); border:0; }
+    .lb-body { padding:20px 20px 30px; }
+    .lb-body h2 { font-size:26px; }
+  }
+
+  @media (max-width: 860px) {
+    header nav { display:none; }
+    .logo .name { font-size:19px; white-space:nowrap; } .logo img { height:40px; }
+    .tools { margin-left:12px; gap:10px; }
+    .count { margin-left:0; width:100%; }
+    .filters .wrap { gap:10px; }
+    .fgroup { flex-wrap:nowrap; overflow-x:auto; width:100%; padding-bottom:2px; scrollbar-width:none; }
+    .fgroup::-webkit-scrollbar { display:none; }
+    .menu-btn { display:grid !important; }
+    [data-layout="b"] .card { flex-basis:calc(var(--r) * 150px); }
+    [data-layout="c"] .gallery .grid { grid-template-columns:1fr 1fr; gap:28px 16px; }
+    [data-layout="c"] .card .mat { padding:12px; }
+    [data-layout="c"] .card h3 { font-size:16px; }
+  }
+</style>
+</head>
+<body data-layout="a" data-page="Eserler">
+
+
+<div class="page-head wrap">
+  <div class="orn">❖</div>
+  <h1>Eserler</h1>
+  <p>Sülüs, nesih, ta'lik ve rik'a kalemlerinden levhalar, hilyeler ve kıt'alar.</p>
+</div>
+
+<div class="filters"><div class="wrap">
+  <div class="fgroup" data-group="yazi"><span class="lbl">Yazı</span></div>
+  <div class="fgroup" data-group="tur"><span class="lbl">Eser</span></div>
+  <div class="count" id="count"></div>
+</div></div>
+
+<main class="gallery"><div class="wrap">
+  <div class="grid" id="grid"></div>
+  <p id="empty" hidden style="text-align:center;color:var(--ink-soft);font-style:italic;padding:40px 0">Bu seçime uyan eser yok. Bir etiketi kaldırmayı deneyin.</p>
+</div></main>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lb-title">
+  <div class="lb-stage" id="stage">
+    <img id="lb-img" alt="" draggable="false">
+    <div class="lb-hint">Yakınlaştırmak için kaydırın ya da çift tıklayın</div>
+    <button class="lb-nav prev" id="lb-prev" aria-label="Önceki eser">←</button>
+    <button class="lb-nav next" id="lb-next" aria-label="Sonraki eser">→</button>
+    <div class="lb-ctrl">
+      <button class="m-nav" id="m-prev" aria-label="Önceki eser">←</button>
+      <button id="z-out" aria-label="Uzaklaştır">−</button>
+      <button class="pct" id="z-pct" tabindex="-1">100%</button>
+      <button id="z-in" aria-label="Yakınlaştır">+</button>
+      <button class="m-nav" id="m-next" aria-label="Sonraki eser" style="order:9">→</button>
+      <button id="z-fit" aria-label="Ekrana sığdır"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+    </div>
+  </div>
+  <aside class="lb-side">
+    <div class="lb-head"><span class="pos" id="lb-pos"></span><button class="lb-close" id="lb-close" aria-label="Kapat">×</button></div>
+    <div class="lb-body" id="lb-body"></div>
+  </aside>
+</div>
+
+<div class="switch" role="group" aria-label="Galeri görünümü">
+  <button data-l="a" class="on" data-tip="Duvar" aria-label="Duvar görünümü" aria-pressed="true">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="4.5" height="9" rx=".6"/><rect x="2" y="13" width="4.5" height="5" rx=".6"/><rect x="7.75" y="2" width="4.5" height="5" rx=".6"/><rect x="7.75" y="9" width="4.5" height="9" rx=".6"/><rect x="13.5" y="2" width="4.5" height="7" rx=".6"/><rect x="13.5" y="11" width="4.5" height="7" rx=".6"/></svg>
+  </button>
+  <button data-l="b" data-tip="Sıralı" aria-label="Sıralı görünüm" aria-pressed="false">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="6" height="6" rx=".6"/><rect x="10" y="3" width="8" height="6" rx=".6"/><rect x="2" y="11" width="10" height="6" rx=".6"/><rect x="14" y="11" width="4" height="6" rx=".6"/></svg>
+  </button>
+  <button data-l="c" data-tip="Müze" aria-label="Müze görünümü" aria-pressed="false">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="7" height="7" rx=".6"/><rect x="11" y="2" width="7" height="7" rx=".6"/><rect x="2" y="11" width="7" height="7" rx=".6"/><rect x="11" y="11" width="7" height="7" rx=".6"/></svg>
+  </button>
+</div>
+
+<script src="ortak.js"></script>
+<script>
+  // Örnek veri: yazı türleri tahminidir, Sıtkı Bey'in teyidi gerekir
+  // ar: eserin metni · mean: anlamı · src: kaynağı · desc: kısa açıklama · olcu, malzeme, tezhip, ebru
+  const works = [
+    { f:'e-hilye.jpg',          r:.75, t:'Hilye-i Şerif',                  yazi:['Sülüs','Nesih'], tur:'Hilye',
+      desc:"Peygamber Efendimiz'in (s.a.v.) dış görünüşünü ve güzel ahlâkını anlatan metnin klasik hilye düzeninde yazılmış hâli. Başlıkta besmele, göbekte hilye metni, köşelerde dört halifenin isimleri yer alır.",
+      ar:'وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِلْعَالَمِينَ', mean:'Biz seni ancak âlemlere rahmet olarak gönderdik.', src:'Enbiyâ Sûresi, 107. âyet (hilyenin ayet kuşağı)',
+      tezhip:'Bilgi girilecek' },
+    { f:'e-subhanallah.jpg',    r:1.44, t:'Sübhânellâh',                   yazi:['Celî Sülüs'],    tur:'Levha', y:'1442',
+      ar:'سُبْحَانَ اللّٰهِ', mean:'Allah her türlü noksanlıktan münezzehtir.' },
+    { f:'e-fussilet.jpg',       r:4.35, t:'Fussilet Sûresi, 53. Âyet',     yazi:['Sülüs'],         tur:'Âyet',
+      ar:'سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ وَفِي أَنْفُسِهِمْ', mean:'Onlara ufuklarda ve kendi nefislerinde âyetlerimizi göstereceğiz…', src:'Fussilet Sûresi, 53. âyet' },
+    { f:'e-seyen-lillah.jpg',   r:1.18, t:"Şey'en Lillâh",                 yazi:['Celî Sülüs'],    tur:'Levha', y:'1445',
+      ar:'شَيْئًا لِلّٰهِ', mean:'Allah rızası için…', desc:'Dervişlerin kapıda Allah rızası için bir şey isterken söylediği, tasavvuf geleneğinde sıkça yazılan söz.' },
+    { f:'e-tovbe.jpg',          r:1.71, t:'Tövbe Yâ Rabbi',                yazi:["Ta'lik"],        tur:'Beyit' },
+    { f:'e-sulus-2.jpg',        r:.96, t:"Kün Mea'llâhi bi's-Sıdk",        yazi:['Sülüs'],         tur:"Kıt'a",
+      ar:'كُنْ مَعَ اللّٰهِ بِالصِّدْقِ وَمَعَ النَّاسِ بِالْإِنْصَافِ', mean:"Allah ile sadakatle, insanlarla insafla ol… (kıt'anın devamında nefis, âlimler, şeyhler, fakirler, çocuklar, dostlar, düşmanlar ve cahillerle nasıl olunacağı sayılır)" },
+    { f:'e-emrolundugun.jpg',   r:1.86, t:'Emrolunduğun Gibi Dosdoğru Ol', yazi:['Celî Sülüs'],    tur:'Âyet', y:'1444',
+      ar:'فَاسْتَقِمْ كَمَا أُمِرْتَ', mean:'Emrolunduğun gibi dosdoğru ol.', src:'Hûd Sûresi, 112. âyet' },
+    { f:'e-rika-gazel.jpg',     r:.89, t:'Gazel',                          yazi:["Rik'a"],         tur:"Kıt'a" },
+    { f:'e-besmele.jpg',        r:2.63, t:'Besmele-i Şerif',               yazi:['Celî Sülüs'],    tur:'Levha',
+      ar:'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ', mean:"Rahmân ve Rahîm olan Allah'ın adıyla." },
+    { f:'e-hilye-saadet.png',   r:.8,  t:'Hilye-i Saâdet',                 yazi:['Sülüs','Nesih'], tur:'Hilye' },
+    { f:'e-rika-1.jpg',         r:2.03, t:'Beyit',                         yazi:["Rik'a"],         tur:'Beyit' },
+    { f:'e-sulus-1.jpg',        r:1.73, t:'Beyit',                         yazi:['Sülüs'],         tur:'Beyit' },
+    { f:'e-besmele-levha.png',  r:1.78, t:'Besmele',                       yazi:['Sülüs'],         tur:'Levha' },
+  ];
+  const grid = document.getElementById('grid');
+  grid.innerHTML = works.map((w, i) => `
+    <a class="card" href="#" data-i="${i}" style="--r:${w.r}" data-yazi="${w.yazi.join('|')}" data-tur="${w.tur}">
+      <div class="mat"><img src="img/${w.f}" alt="${w.t}" loading="lazy"></div>
+      <div class="cap"><h3>${w.t}</h3><div class="meta">${w.yazi.join(' · ')}<span class="dot">❖</span>${w.tur}${w.y ? `<span class="dot">❖</span>${w.y}` : ''}</div></div>
+    </a>`).join('');
+
+  // Filtre çipleri verideki etiketlerden üretilir
+  const state = { yazi:'Tümü', tur:'Tümü' };
+  const opts = { yazi:['Tümü', ...new Set(works.flatMap(w => w.yazi))], tur:['Tümü', ...new Set(works.map(w => w.tur))] };
+  for (const g of ['yazi','tur']) {
+    const el = document.querySelector(`.fgroup[data-group="${g}"]`);
+    opts[g].forEach(o => {
+      const b = document.createElement('button'); b.className = 'chip' + (o === 'Tümü' ? ' on' : ''); b.textContent = o;
+      b.onclick = () => { state[g] = o; el.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); apply(); };
+      el.appendChild(b);
+    });
+  }
+  function apply(){
+    let n = 0;
+    grid.querySelectorAll('.card').forEach(c => {
+      const ok = (state.yazi === 'Tümü' || c.dataset.yazi.split('|').includes(state.yazi)) && (state.tur === 'Tümü' || c.dataset.tur === state.tur);
+      c.classList.toggle('hide', !ok); if (ok) n++;
+    });
+    document.getElementById('count').textContent = n + ' eser';
+    document.getElementById('empty').hidden = n > 0;
+    justify();
+  }
+
+  // B · Sıralı: görünen eserleri hedef yükseklikte satırlara dizer, her satırı tam genişliğe ölçekler
+  function justify(){
+    const cards = [...grid.querySelectorAll('.card:not(.hide)')];
+    const W = grid.clientWidth, gap = 26, pad = 20, target = innerWidth < 860 ? 150 : 250;
+    let row = [], sum = 0;
+    const flush = (last) => {
+      const free = W - gap * (row.length - 1) - pad * row.length;
+      const h = last ? Math.min(target, free / sum) : free / sum;
+      row.forEach(c => c.style.setProperty('--w', (c._r * h + pad) + 'px'));
+      row = []; sum = 0;
+    };
+    cards.forEach(c => {
+      c._r = parseFloat(c.style.getPropertyValue('--r'));
+      row.push(c); sum += c._r;
+      if (sum * target + (gap + pad) * row.length > W) flush(false);
+    });
+    if (row.length) flush(true);
+  }
+  addEventListener('resize', justify);
+  apply();
+
+  function setLayout(l){
+    document.body.dataset.layout = l;
+    document.querySelectorAll('.switch button').forEach(x => { const on = x.dataset.l === l; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+    try { localStorage.setItem('galeri', l); } catch(e) {}
+    justify();
+  }
+  document.querySelectorAll('.switch button').forEach(b => b.onclick = () => setLayout(b.dataset.l));
+  const sw = document.querySelector('.switch'), foot = document.querySelector('footer');
+  const awayCheck = () => sw.classList.toggle('away', foot.getBoundingClientRect().top < innerHeight - 10);
+  addEventListener('scroll', awayCheck, { passive:true }); addEventListener('resize', awayCheck); awayCheck();
+  try { const l = localStorage.getItem('galeri'); if (l) setLayout(l); } catch(e) {}
+
+  // ---------- Lightbox ----------
+  const lb = document.getElementById('lb'), stage = document.getElementById('stage'), lbImg = document.getElementById('lb-img');
+  let list = [], cur = 0, z = { s:1, x:0, y:0, w:0, h:0, max:4 };
+  const hijri = y => { const a = Math.floor((y - 1) * 0.970229 + 622.5), b = a + 1; return `${y} (${a}–${String(b).slice(2)})`; };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const row = (k, v) => `<dt>${k}</dt><dd class="${v ? '' : 'none'}">${v ? esc(v) : 'Bilgi girilecek'}</dd>`;
+
+  function openLb(i){
+    list = [...grid.querySelectorAll('.card:not(.hide)')].map(c => +c.dataset.i);
+    cur = list.indexOf(i); show();
+    lb.classList.add('open'); document.body.style.overflow = 'hidden';
+    document.getElementById('lb-close').focus();
+  }
+  function closeLb(){ lb.classList.remove('open'); document.body.style.overflow = ''; }
+  function show(){
+    const w = works[list[cur]];
+    lbImg.style.opacity = 0;
+    lbImg.onload = () => { fit(); lbImg.style.opacity = 1; };
+    lbImg.src = 'img/' + w.f; lbImg.alt = w.t;
+    document.getElementById('lb-pos').textContent = `${cur + 1} / ${list.length}`;
+    document.getElementById('lb-body').innerHTML = `
+      <h2 id="lb-title">${esc(w.t)}</h2>
+      <div class="tags">${[...w.yazi, w.tur].map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      ${w.ar ? `<div class="ar" lang="ar">${w.ar}</div>` : ''}
+      ${w.mean ? `<p class="mean">“${esc(w.mean)}”</p>` : ''}
+      ${w.src ? `<div class="src">${esc(w.src)}</div>` : (w.mean ? '<div class="src"></div>' : '')}
+      ${w.desc ? `<p class="desc">${esc(w.desc)}</p>` : ''}
+      <dl>
+        ${row('Tarih', w.y ? hijri(+w.y) : '')}
+        ${row('Ölçü', w.olcu)}
+        ${row('Malzeme', w.malzeme)}
+        ${row('Tezhip', w.tezhip === 'Bilgi girilecek' ? '' : w.tezhip)}
+        ${row('Ebru', w.ebru)}
+      </dl>
+      <a class="ask" href="iletisim.html?eser=${encodeURIComponent(w.t)}">Bu eser hakkında sorun →</a>`;
+    ['lb-prev','lb-next','m-prev','m-next'].forEach(id => document.getElementById(id).hidden = list.length < 2);
+  }
+  const step = d => { cur = (cur + d + list.length) % list.length; show(); };
+
+  // Yakınlaştırma: tekerlek, çift tık, +/− düğmeleri, sürükleyerek gezinme, iki parmakla büyütme
+  function fit(){
+    const W = stage.clientWidth, H = stage.clientHeight, mob = innerWidth < 860, mx = mob ? 40 : 160, my = mob ? 90 : 120;
+    const r = lbImg.naturalWidth / lbImg.naturalHeight;
+    let w = W - mx, h = w / r; if (h > H - my) { h = H - my; w = h * r; }
+    Object.assign(z, { s:1, w, h, x:(W - w) / 2, y:(H - h) / 2 - (mob ? 20 : 10), max:Math.max(2, lbImg.naturalWidth / w * 1.5) });
+    lbImg.style.width = w + 'px'; lbImg.style.height = h + 'px'; render();
+  }
+  function clamp(){
+    const W = stage.clientWidth, H = stage.clientHeight, sw = z.w * z.s, sh = z.h * z.s;
+    z.x = sw <= W ? (W - sw) / 2 : Math.min(0, Math.max(W - sw, z.x));
+    z.y = sh <= H ? (H - sh) / 2 : Math.min(0, Math.max(H - sh, z.y));
+  }
+  function render(anim){
+    clamp();
+    lbImg.style.transition = anim ? 'transform .25s ease' : 'none';
+    lbImg.style.transform = `translate(${z.x}px, ${z.y}px) scale(${z.s})`;
+    stage.classList.toggle('zoomed', z.s > 1.01);
+    document.getElementById('z-pct').textContent = Math.round(z.s * 100) + '%';
+  }
+  function zoomAt(ns, px, py, anim){
+    ns = Math.min(z.max, Math.max(1, ns));
+    z.x = px - (px - z.x) * (ns / z.s); z.y = py - (py - z.y) * (ns / z.s); z.s = ns; render(anim);
+  }
+  const center = () => [stage.clientWidth / 2, stage.clientHeight / 2];
+  stage.addEventListener('wheel', e => { e.preventDefault(); const b = stage.getBoundingClientRect(); zoomAt(z.s * Math.exp(-e.deltaY * 0.0015), e.clientX - b.left, e.clientY - b.top); }, { passive:false });
+  stage.addEventListener('dblclick', e => { if (e.target.closest('button')) return; const b = stage.getBoundingClientRect(); zoomAt(z.s > 1.01 ? 1 : 2.5, e.clientX - b.left, e.clientY - b.top, true); });
+  document.getElementById('z-in').onclick = () => zoomAt(z.s * 1.5, ...center(), true);
+  document.getElementById('z-out').onclick = () => zoomAt(z.s / 1.5, ...center(), true);
+  document.getElementById('z-fit').onclick = () => zoomAt(1, ...center(), true);
+  const pts = new Map(); let last = null, pinch = null;
+  stage.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d:Math.hypot(a[0]-b[0], a[1]-b[1]), s:z.s }; }
+    last = [e.clientX, e.clientY]; stage.classList.add('dragging');
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pinch && pts.size === 2) {
+      const [a, b] = [...pts.values()], r = stage.getBoundingClientRect();
+      zoomAt(pinch.s * Math.hypot(a[0]-b[0], a[1]-b[1]) / pinch.d, (a[0]+b[0])/2 - r.left, (a[1]+b[1])/2 - r.top);
+    } else if (z.s > 1.01) { z.x += e.clientX - last[0]; z.y += e.clientY - last[1]; render(); }
+    last = [e.clientX, e.clientY];
+  });
+  const up = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (!pts.size) stage.classList.remove('dragging'); last = pts.size ? [...pts.values()][0] : null; };
+  stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+
+  grid.addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; e.preventDefault(); openLb(+c.dataset.i); });
+  document.getElementById('lb-close').onclick = closeLb;
+  document.getElementById('lb-prev').onclick = () => step(-1);
+  document.getElementById('lb-next').onclick = () => step(1);
+  document.getElementById('m-prev').onclick = () => step(-1);
+  document.getElementById('m-next').onclick = () => step(1);
+  addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLb(); else if (e.key === 'ArrowLeft') step(-1); else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === '+' || e.key === '=') zoomAt(z.s * 1.5, ...center(), true); else if (e.key === '-') zoomAt(z.s / 1.5, ...center(), true);
+  });
+  addEventListener('resize', () => { if (lb.classList.contains('open')) fit(); });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İletişim · Sıtkı Çoban</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ortak.css">
+<style>
+  .contact { display:grid; grid-template-columns:1fr 1.35fr; gap:70px; padding:10px 0 110px; align-items:start; }
+
+  /* Sol: ne için yazılabilir, bağlantılar */
+  .side h2 { font-size:30px; margin-bottom:14px; }
+  .side > p { color:var(--ink-soft); margin:0 0 26px; }
+  .topics { list-style:none; margin:0 0 34px; padding:0; }
+  .topics li { display:grid; grid-template-columns:30px 1fr; gap:6px 12px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .topics li:first-child { border-top:1px solid var(--line); }
+  .topics .ic { color:var(--gold); font-size:14px; padding-top:4px; }
+  .topics b { font-family:'Playfair Display', serif; font-weight:400; font-size:20px; color:var(--head); display:block; }
+  .topics span { font-size:15px; color:var(--ink-soft); }
+  .social { display:flex; gap:10px; flex-wrap:wrap; }
+  .social a { display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:22px; padding:6px 16px 6px 12px; font-size:15px; transition:.2s; }
+  .social a:hover { border-color:var(--gold); color:var(--gold); }
+  .social svg { width:16px; height:16px; }
+
+  /* Sağ: form, kâğıt zemin üzerinde */
+  .card { background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:42px 44px 38px; position:relative; }
+  .card::before { content:''; position:absolute; inset:7px; border:1px solid var(--line); pointer-events:none; }
+  .card h2 { font-size:30px; margin-bottom:6px; }
+  .card > p { color:var(--ink-soft); margin:0 0 28px; font-size:16px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .field { margin-bottom:20px; position:relative; }
+  label { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+  label .opt { text-transform:none; letter-spacing:0; color:var(--ink-soft); font-style:italic; font-size:13px; }
+  input, select, textarea { width:100%; font:inherit; font-size:17px; color:var(--ink); background:transparent; border:0; border-bottom:1px solid var(--line); padding:8px 0 9px; border-radius:0; transition:border-color .2s; }
+  select { appearance:none; cursor:pointer; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b08a3e' stroke-width='1.4'/%3E%3C/svg%3E") right 4px center no-repeat; }
+  select option { background:var(--bg); color:var(--ink); }
+  textarea { resize:vertical; min-height:150px; line-height:1.6; }
+  input:focus, select:focus, textarea:focus { outline:none; border-bottom-color:var(--gold); border-bottom-width:2px; padding-bottom:8px; }
+  .field.err input, .field.err textarea, .field.err select { border-bottom-color:#b5452f; }
+  .field .msg { font-size:13px; color:#b5452f; margin-top:5px; display:none; }
+  .field.err .msg { display:block; }
+  .count { position:absolute; right:0; bottom:-20px; font-size:12px; color:var(--ink-soft); }
+  .check { display:flex; gap:12px; align-items:flex-start; font-size:14px; color:var(--ink-soft); margin:26px 0 26px; text-transform:none; letter-spacing:0; line-height:1.5; cursor:pointer; }
+  .check input { width:18px; height:18px; margin:2px 0 0; padding:0; border:0; accent-color:var(--gold); flex-shrink:0; }
+  .check a { border-bottom:1px solid var(--line); }
+  .hp { position:absolute; left:-9999px; }
+  .send { display:inline-flex; align-items:center; gap:10px; background:var(--head); color:var(--bg); border:0; padding:13px 30px; font:inherit; font-size:16px; letter-spacing:.04em; cursor:pointer; transition:.2s; }
+  .send:hover { background:var(--gold); }
+  .send:disabled { opacity:.6; cursor:wait; }
+
+  .done { text-align:center; padding:50px 10px; }
+  .done img { height:90px; filter:var(--logo-filter); }
+  .done h2 { margin:18px 0 10px; }
+  .done p { color:var(--ink-soft); max-width:40ch; margin:0 auto 24px; }
+  .done button { background:none; border:0; font:inherit; color:var(--gold); border-bottom:1px solid var(--gold); cursor:pointer; padding:0; }
+
+  .note { text-align:center; color:var(--ink-soft); font-size:14px; font-style:italic; margin:-70px 0 90px; }
+
+  @media (max-width: 960px) {
+    .contact { grid-template-columns:1fr; gap:44px; }
+    .card { padding:30px 22px 28px; }
+    .row { grid-template-columns:1fr; gap:0; }
+  }
+</style>
+</head>
+<body data-page="İletişim">
+
+<div class="page-head wrap">
+  <div class="orn">❖</div>
+  <h1>İletişim</h1>
+  <p>Bir eser, meşk ya da söyleşi için yazabilirsiniz; mesajınız doğrudan Sıtkı Çoban'a ulaşır.</p>
+</div>
+
+<main class="wrap">
+  <div class="contact">
+    <aside class="side">
+      <h2>Ne için yazabilirsiniz?</h2>
+      <p>Mesajlarınız okunur ve en kısa zamanda cevaplanır.</p>
+      <ul class="topics">
+        <li><span class="ic">❖</span><div><b>Eser talebi</b><span>Sergilenen bir eser ya da size özel bir levha hakkında bilgi.</span></div></li>
+        <li><span class="ic">❖</span><div><b>Meşk</b><span>Hat sanatına başlamak ve klasik usulle meşk etmek isteyenler için.</span></div></li>
+        <li><span class="ic">❖</span><div><b>Söyleşi ve davet</b><span>Konferans, sergi, okul ve program davetleri.</span></div></li>
+        <li><span class="ic">❖</span><div><b>Kitaplar ve yazılar</b><span>Kitaplar, yayınlar ve yazılar hakkında sorular.</span></div></li>
+      </ul>
+      <div class="social">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>Instagram</a>
+        <a href="videolar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>YouTube</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></svg>E-posta</a>
+      </div>
+    </aside>
+
+    <section class="card" id="card">
+      <form id="form" novalidate>
+        <h2>Mesaj gönderin</h2>
+        <p>Alanların hepsi zorunludur, telefon hariç.</p>
+        <div class="row">
+          <div class="field"><label for="ad">Adınız</label><input id="ad" name="ad" autocomplete="name" required><div class="msg">Adınızı yazın.</div></div>
+          <div class="field"><label for="eposta">E-posta</label><input id="eposta" name="eposta" type="email" autocomplete="email" required><div class="msg">Geçerli bir e-posta adresi yazın.</div></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="konu">Konu</label>
+            <select id="konu" name="konu" required>
+              <option value="">Seçin…</option><option>Eser talebi</option><option>Meşk</option><option>Söyleşi ve davet</option><option>Kitaplar ve yazılar</option><option>Diğer</option>
+            </select><div class="msg">Bir konu seçin.</div></div>
+          <div class="field"><label for="tel">Telefon <span class="opt">(isteğe bağlı)</span></label><input id="tel" name="tel" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="field" style="margin-top:4px"><label for="mesaj">Mesajınız</label><textarea id="mesaj" name="mesaj" maxlength="2000" required></textarea><div class="msg">Mesajınızı yazın.</div><span class="count" id="count">0 / 2000</span></div>
+        <input class="hp" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="check"><input type="checkbox" id="kvkk" required><span>Bilgilerimin yalnızca bu mesaja cevap vermek için kullanılacağını okudum, kabul ediyorum. <a href="#">Aydınlatma metni</a></span></label>
+        <button class="send" id="send" type="submit">Gönder <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+  </div>
+  <p class="note">Taslakta form hiçbir yere gönderilmez; gerçek sitede mesajlar yönetim panelinde listelenecek. Sosyal medya bağlantıları sonra eklenecek.</p>
+</main>
+
+<script src="ortak.js"></script>
+<script>
+  const form = document.getElementById('form'), card = document.getElementById('card');
+  const mesaj = document.getElementById('mesaj');
+  mesaj.addEventListener('input', () => document.getElementById('count').textContent = mesaj.value.length + ' / 2000');
+
+  // Bir eserden gelindiyse konu ve mesaj hazır doldurulur: iletisim.html?eser=Sübhânellâh
+  const eser = new URLSearchParams(location.search).get('eser');
+  if (eser) {
+    document.getElementById('konu').value = 'Eser talebi';
+    mesaj.value = `"${eser}" adlı eser hakkında bilgi almak istiyorum.\n\n`;
+    mesaj.dispatchEvent(new Event('input'));
+  }
+
+  const check = el => {
+    const f = el.closest('.field'); if (!f) return true;
+    const ok = el.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()) : el.value.trim() !== '';
+    f.classList.toggle('err', !ok); return ok;
+  };
+  form.querySelectorAll('[required]').forEach(el => el.addEventListener('blur', () => el.value && check(el)));
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const fields = [...form.querySelectorAll('.field [required]')];
+    const bad = fields.filter(el => !check(el));
+    const kvkk = document.getElementById('kvkk');
+    if (bad.length) { bad[0].focus(); return; }
+    if (!kvkk.checked) { kvkk.focus(); kvkk.closest('.check').style.color = '#b5452f'; return; }
+    const btn = document.getElementById('send'); btn.disabled = true; btn.firstChild.textContent = 'Gönderiliyor… ';
+    setTimeout(() => {
+      const ad = document.getElementById('ad').value.trim().split(' ')[0], ep = document.getElementById('eposta').value.trim();
+      card.innerHTML = `<div class="done" role="status"><img src="img/imza.png" alt=""><h2>Mesajınız ulaştı</h2>
+        <p></p><button onclick="location.reload()">Yeni mesaj yaz</button></div>`;
+      card.querySelector('.done p').textContent = `Teşekkür ederiz, ${ad}. En kısa zamanda ${ep} adresine cevap verilecek.`;
+    }, 700);
+  });
+</script>
+</body>
+</html>
