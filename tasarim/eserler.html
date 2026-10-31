@@ -55,14 +55,11 @@
   .page-head p { margin:0 auto; max-width:56ch; color:var(--ink-soft); font-style:italic; }
 
   /* Filtreler: iki etiket grubu, birlikte çalışır */
-  .filters { position:sticky; top:72px; z-index:5; background:var(--bg); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-  .filters .wrap { display:flex; flex-wrap:wrap; align-items:center; gap:10px 34px; padding-top:14px; padding-bottom:14px; }
-  .fgroup { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-  .fgroup .lbl { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-right:6px; }
-  .chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line); border-radius:20px; padding:3px 14px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+  /* Filtre çipleri Yazılar sayfasındaki gibi: başlığın altında, çizgisiz */
+  .fgroup { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 0; }
+  .chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
   .chip:hover { border-color:var(--gold); color:var(--gold); }
   .chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
-  .count { margin-left:auto; font-size:14px; color:var(--ink-soft); font-style:italic; }
 
   .gallery { padding:44px 0 100px; }
   .card { display:block; cursor:pointer; }
@@ -109,9 +106,7 @@
     header nav { display:none; }
     .logo .name { font-size:19px; white-space:nowrap; } .logo img { height:40px; }
     .tools { margin-left:12px; gap:10px; }
-    .count { margin-left:0; width:100%; }
-    .filters .wrap { gap:10px; }
-    .fgroup { flex-wrap:nowrap; overflow-x:auto; width:100%; padding-bottom:2px; scrollbar-width:none; }
+    .fgroup { flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; padding-bottom:2px; scrollbar-width:none; }
     .fgroup::-webkit-scrollbar { display:none; }
     .menu-btn { display:grid !important; }
     [data-layout="b"] .card { flex-basis:calc(var(--r) * 150px); }
@@ -130,11 +125,7 @@
   <p>Sülüs, nesih, ta'lik ve rik'a kalemlerinden levhalar, hilyeler ve kıt'alar.</p>
 </div>
 
-<div class="filters"><div class="wrap">
-  <div class="fgroup" data-group="yazi"><span class="lbl">Yazı</span></div>
-  <div class="fgroup" data-group="tur"><span class="lbl">Eser</span></div>
-  <div class="count" id="count"></div>
-</div></div>
+<div class="wrap"><div class="fgroup" id="yazi"></div></div>
 
 <main class="gallery"><div class="wrap">
   <div class="grid" id="grid"></div>
@@ -160,29 +151,25 @@
   const works = window.ESERLER;
   const grid = document.getElementById('grid');
   grid.innerHTML = works.map((w, i) => `
-    <a class="card" href="#" data-i="${i}" style="--r:${w.r}" data-yazi="${w.yazi.join('|')}" data-tur="${w.tur}">
+    <a class="card" href="#" data-i="${i}" style="--r:${w.r}" data-yazi="${w.yazi.join('|')}">
       <div class="mat"><img src="img/${w.f}" alt="${w.t}" loading="lazy"></div>
       <div class="cap"><h3>${w.t}</h3><div class="meta">${w.yazi.join(' · ')}<span class="dot">❖</span>${w.tur}${w.y ? `<span class="dot">❖</span>${w.y}` : ''}</div></div>
     </a>`).join('');
 
-  // Filtre çipleri verideki etiketlerden üretilir
-  const state = { yazi:'Tümü', tur:'Tümü' };
-  const opts = { yazi:['Tümü', ...new Set(works.flatMap(w => w.yazi))], tur:['Tümü', ...new Set(works.map(w => w.tur))] };
-  for (const g of ['yazi','tur']) {
-    const el = document.querySelector(`.fgroup[data-group="${g}"]`);
-    opts[g].forEach(o => {
-      const b = document.createElement('button'); b.className = 'chip' + (o === 'Tümü' ? ' on' : ''); b.textContent = o;
-      b.onclick = () => { state[g] = o; el.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); apply(); };
-      el.appendChild(b);
-    });
-  }
+  // Yazı türü çipleri verideki etiketlerden üretilir
+  let secili = 'Tümü';
+  const fgroup = document.getElementById('yazi');
+  ['Tümü', ...new Set(works.flatMap(w => w.yazi))].forEach(o => {
+    const b = document.createElement('button'); b.className = 'chip' + (o === 'Tümü' ? ' on' : ''); b.textContent = o;
+    b.onclick = () => { secili = o; fgroup.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); apply(); };
+    fgroup.appendChild(b);
+  });
   function apply(){
     let n = 0;
     grid.querySelectorAll('.card').forEach(c => {
-      const ok = (state.yazi === 'Tümü' || c.dataset.yazi.split('|').includes(state.yazi)) && (state.tur === 'Tümü' || c.dataset.tur === state.tur);
+      const ok = secili === 'Tümü' || c.dataset.yazi.split('|').includes(secili);
       c.classList.toggle('hide', !ok); if (ok) n++;
     });
-    document.getElementById('count').textContent = n + ' eser';
     document.getElementById('empty').hidden = n > 0;
     justify();
   }
