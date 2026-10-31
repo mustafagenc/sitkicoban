@@ -1,0 +1,40 @@
+/* Kapağı olmayan kitaplar için yazı tipiyle yapılmış kapak */
+.tcover { width:100%; height:100%; position:relative; display:flex; flex-direction:column; justify-content:space-between; align-items:center; text-align:center; padding:26px 16px 18px; background:linear-gradient(160deg, var(--paper), color-mix(in srgb, var(--paper) 80%, var(--line))); }
+.tcover::before { content:''; position:absolute; inset:8px; border:1px solid var(--line); }
+.tcover .o { color:var(--gold); letter-spacing:.5em; font-size:12px; }
+.tcover .t { font-family:'Playfair Display', serif; font-size:19px; line-height:1.25; color:var(--head); }
+.tcover .a { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+
+/* Kitap ayrıntısı penceresi */
+.modal { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:30px; background:rgba(15,12,8,.55); backdrop-filter:blur(4px); opacity:0; visibility:hidden; transition:.3s; }
+.modal.open { opacity:1; visibility:visible; }
+.sheet { position:relative; width:min(940px, 100%); max-height:calc(100vh - 60px); overflow:auto; background:var(--bg); outline:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.35); display:grid; grid-template-columns:340px 1fr; transform:translateY(12px); transition:transform .3s; }
+.modal.open .sheet { transform:none; }
+.sheet .left { background:var(--bg-2); padding:44px 40px; display:grid; place-items:center; border-right:1px solid var(--line); }
+.sheet .cover { width:100%; aspect-ratio:2/3; background:var(--paper); outline:1px solid var(--line); box-shadow:0 12px 26px rgba(40,25,10,.18), var(--shadow); overflow:hidden; display:grid; place-items:center; }
+.sheet .cover img { width:100%; height:100%; object-fit:cover; display:block; }
+.sheet .cover img.contain { object-fit:contain; padding:8px; }
+.sheet .right { padding:44px 44px 40px; }
+.sheet h2 { font-size:34px; line-height:1.15; margin:8px 0 6px; }
+.sheet .by { color:var(--ink-soft); font-style:italic; margin-bottom:22px; }
+.sheet .desc { margin:0 0 26px; }
+.sheet dl { display:grid; grid-template-columns:auto 1fr; gap:10px 20px; margin:0 0 30px; font-size:15px; padding-top:20px; border-top:1px solid var(--line); }
+.sheet dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
+.sheet dd { margin:0; } .sheet dd.none { color:var(--ink-soft); font-style:italic; }
+.sheet .btn { display:inline-block; border:1px solid var(--line); padding:10px 22px; font-size:15px; letter-spacing:.04em; transition:.2s; margin-right:10px; }
+.sheet .btn.primary { background:var(--head); color:var(--bg); border-color:var(--head); }
+.sheet .btn:hover { border-color:var(--gold); color:var(--gold); } .sheet .btn.primary:hover { background:var(--gold); color:var(--bg); }
+.sheet .x { position:absolute; top:14px; right:14px; z-index:2; width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; background:var(--bg); color:var(--head); padding:0; cursor:pointer; transition:.2s; }
+.sheet .x:hover { color:var(--gold); border-color:var(--gold); }
+.sheet .x svg { width:18px; height:18px; }
+.sheet-nav { display:flex; justify-content:space-between; margin-top:34px; padding-top:18px; border-top:1px solid var(--line); font-size:14px; }
+.sheet-nav button { background:none; border:0; font:inherit; color:var(--ink-soft); cursor:pointer; padding:0; }
+.sheet-nav button:hover { color:var(--gold); }
+
+@media (max-width: 860px) {
+  .modal { padding:0; place-items:end stretch; }
+  .sheet { grid-template-columns:1fr; max-height:92vh; width:100%; }
+  .sheet .left { padding:28px 70px; border-right:0; border-bottom:1px solid var(--line); }
+  .sheet .right { padding:26px 22px 30px; }
+  .sheet h2 { font-size:27px; }
+}
