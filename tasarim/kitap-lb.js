@@ -17,7 +17,7 @@
       d:"Mehmed Âkif'in şiirlerinin açıklamalı baskısı." },
     { t:"Güzel'i Bulmak", sub:'Hattatların Hâli', role:'Yazar',
       d:'Hattatların hayatlarından, meşk geleneğinden ve güzeli arayışlarından hikâyeler.' },
-    { t:"Mesnevî'de Geçen Hikâyeler", role:'Hazırlayan',
+    { t:"Mesnevî'de Geçen Hikâyeler", role:'Hazırlayan', img:'kitap-mesnevi.jpg', pub:'Ravza',
       d:"Mevlânâ'nın Mesnevî'sindeki hikâyelerin sade bir dille anlatımı." },
     { t:'Yolumuzu Aydınlatan Kandil', role:'Yazar', pub:'Semerkand',
       d:'Kandil geceleri ve mübarek günler üzerine yazılar.' },
