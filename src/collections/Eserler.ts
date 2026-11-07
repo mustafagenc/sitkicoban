@@ -1,7 +1,7 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { revalidateHooks } from '@/lib/cache/revalidate'
-import { adminWrite, publicRead } from '@/lib/access'
+import { adminWrite, adminRead } from '@/lib/access'
 import { uniqueSlug } from '@/lib/slug'
 
 const computeOran: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
@@ -25,7 +25,7 @@ export const Eserler: CollectionConfig = {
   slug: 'eserler',
   labels: { singular: 'Eser', plural: 'Eserler' },
   admin: { useAsTitle: 'baslik', defaultColumns: ['baslik', 'tur', 'yil', 'sira'] },
-  access: { ...publicRead, ...adminWrite },
+  access: { ...adminRead, ...adminWrite },
   hooks: { beforeChange: [computeOran], afterChange: [revalidateHooks('eserler').afterChange], afterDelete: [revalidateHooks('eserler').afterDelete] },
   fields: [
     { name: 'baslik', label: 'Başlık', type: 'text', required: true, localized: true },

@@ -39,6 +39,13 @@ if (!existsSync(SUNUCU_LOG)) {
   process.exit(1)
 }
 
+// Betik yönetici bilgisini gönderir ve içerik düzenler: yalnızca yerel sunucuya karşı çalışır.
+const SUNUCU_ADI = new URL(BASE).hostname.replace(/^\[|\]$/g, '')
+if (!['localhost', '127.0.0.1', '::1'].includes(SUNUCU_ADI)) {
+  console.error(`HATA: NEXT_PUBLIC_SITE_URL yerel değil (${SUNUCU_ADI}); betik yalnızca localhost, 127.0.0.1 veya ::1 ile çalışır`)
+  process.exit(1)
+}
+
 const url = (p) => new URL(p, BASE).toString()
 const boyut = (f) => (existsSync(f) ? statSync(f).size : 0)
 const okuFrom = (f, ofs) => (existsSync(f) ? readFileSync(f).subarray(ofs).toString('utf8') : '')
@@ -136,15 +143,18 @@ async function main() {
   console.log('0 sorgu')
 
   // 2) Ana sayfanın ilk eserinin Türkçe başlığını değiştir.
+  // Genel okuma kapalı: listeyi de oturum açarak (JWT) çek.
+  const token = await girisYap()
   const liste = await fetch(
     url('/api/eserler?where[anasayfadaGoster][equals]=true&sort=anasayfaSira&limit=1&depth=0&locale=tr'),
-  ).then((r) => r.json())
+    { headers: { Authorization: `JWT ${token}` } },
+  ).then((r) => (r.ok ? r.json() : hata(`GET /api/eserler → HTTP ${r.status}`)))
   const eser = liste.docs?.[0]
   if (!eser) hata('ana sayfada gösterilen eser yok')
   const eski = eser.baslik
   const yeniBaslik = `${eski} (test)`
 
-  const token = await girisYap()
+  let asilHata
   try {
     const yollar = await kaydetVeBekle(token, eser.id, yeniBaslik)
     const fazla = yollar.filter((y) => !BEKLENEN_YENILEME.includes(y))
@@ -155,12 +165,21 @@ async function main() {
 
     await ilkZiyaret(yeniBaslik)
     console.log(`ilk ziyarette yeni başlık, 0 sorgu: ${ILK_ZIYARET.join(', ')}`)
-  } finally {
-    // 3) Eski başlığı her durumda geri yükle (yine REST ile, önbellek de tazelensin).
+  } catch (e) {
+    asilHata = e
+  }
+  // 3) Eski başlığı her durumda geri yükle (yine REST ile, önbellek de tazelensin).
+  // Geri yükleme de başarısız olursa asıl hata gizlenmez.
+  try {
     await kaydetVeBekle(token, eser.id, eski)
     await ilkZiyaret(eski)
     console.log(`geri yüklendi: "${eski}"`)
+  } catch (e) {
+    console.error(`UYARI: başlık geri yüklenemedi (eser ${eser.id}, "${eski}"): ${e.message}`)
+    process.exitCode = 1
+    asilHata ??= e
   }
+  if (asilHata) throw asilHata
 }
 
 main().then(

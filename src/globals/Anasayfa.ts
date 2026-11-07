@@ -1,7 +1,7 @@
 import type { Field, GlobalConfig } from 'payload'
 
 import { revalidateHooks } from '@/lib/cache/revalidate'
-import { adminWrite, publicRead } from '@/lib/access'
+import { adminWrite, adminRead } from '@/lib/access'
 
 const t = (name: string, label: string, type: 'text' | 'textarea' = 'text'): Field =>
   type === 'text'
@@ -11,7 +11,7 @@ const t = (name: string, label: string, type: 'text' | 'textarea' = 'text'): Fie
 export const Anasayfa: GlobalConfig = {
   slug: 'anasayfa',
   label: 'Ana sayfa',
-  access: { read: publicRead.read, update: adminWrite.update },
+  access: { read: adminRead.read, update: adminWrite.update },
   hooks: { afterChange: [revalidateHooks('anasayfa').afterChange] },
   fields: [
     t('heroEyebrow', 'Hero üst yazı'),

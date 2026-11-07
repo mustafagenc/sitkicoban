@@ -1,12 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
 import { revalidateHooks } from '@/lib/cache/revalidate'
-import { adminWrite, publicRead } from '@/lib/access'
+import { adminWrite, adminRead } from '@/lib/access'
 
 export const SiteAyarlari: GlobalConfig = {
   slug: 'site-ayarlari',
   label: 'Site ayarları',
-  access: { read: publicRead.read, update: adminWrite.update },
+  access: { read: adminRead.read, update: adminWrite.update },
   hooks: { afterChange: [revalidateHooks('site-ayarlari').afterChange] },
   fields: [
     { name: 'eposta', label: 'E-posta', type: 'text' },

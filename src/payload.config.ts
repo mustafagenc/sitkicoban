@@ -37,6 +37,16 @@ const logger = sorguLog
     }
   : false
 
+// Şema `push` (otomatik eşitleme) yalnızca yerel veritabanında açık; uzak/Neon'da migration kullanılır.
+const dbHost = (() => {
+  try {
+    return new URL(process.env.DATABASE_URL || '').hostname.replace(/^\[|\]$/g, '')
+  } catch {
+    return ''
+  }
+})()
+const yerelDb = ['localhost', '127.0.0.1', '::1'].includes(dbHost)
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -69,7 +79,8 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL,
     },
     // Üretim/Neon: `pnpm payload migrate` bu klasördeki migration'ları uygular.
-    // Yerelde (NODE_ENV !== 'production') şema hâlâ `push` ile eşitlenir.
+    // Yerel veritabanında (localhost) şema `push` ile eşitlenir; uzak sunucuda `push` kapalıdır.
+    push: yerelDb,
     migrationDir: path.resolve(dirname, 'migrations'),
     logger,
   }),
