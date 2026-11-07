@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { appendFileSync } from 'fs'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -20,6 +21,21 @@ import { UiMetinleri } from './globals/UiMetinleri'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Kabul kontrolü için: SORGU_LOG ayarlıysa Drizzle'ın çalıştırdığı her SQL sorgusu bu dosyaya
+// bir satır olarak eklenir (scripts/sorgu-kontrol.mjs okur). Ayarlı değilse günlük kapalı.
+const sorguLog = process.env.SORGU_LOG
+const logger = sorguLog
+  ? {
+      logQuery: (query: string) => {
+        try {
+          appendFileSync(sorguLog, query.replace(/\s+/g, ' ') + '\n')
+        } catch {
+          // Günlük yazılamazsa sorgu yine de çalışsın.
+        }
+      },
+    }
+  : false
 
 export default buildConfig({
   admin: {
@@ -52,6 +68,10 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL,
     },
+    // Üretim/Neon: `pnpm payload migrate` bu klasördeki migration'ları uygular.
+    // Yerelde (NODE_ENV !== 'production') şema hâlâ `push` ile eşitlenir.
+    migrationDir: path.resolve(dirname, 'migrations'),
+    logger,
   }),
   sharp,
   plugins: [
