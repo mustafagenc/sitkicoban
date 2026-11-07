@@ -13,6 +13,12 @@ describe('pathsForTags', () => {
     expect(paths.length).toBe(new Set(paths).size)
   })
 
+  it('maps turler to the works page and home only', () => {
+    expect(new Set(pathsForTags(['turler']))).toEqual(
+      new Set(['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works']),
+    )
+  })
+
   it('maps ui to every page in every locale', () => {
     expect(pathsForTags(['ui'])).toHaveLength(9)
   })

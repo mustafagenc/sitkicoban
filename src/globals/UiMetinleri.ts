@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { revalidateHooks } from '@/lib/cache/revalidate'
-import { adminWrite, publicRead } from '@/lib/access'
+import { adminWrite, adminRead } from '@/lib/access'
 
 /** Anahtar -> yönetici paneli etiketi. Anahtar eklemek için buraya satır ekleyin. */
 const LABELS = {
@@ -37,6 +37,8 @@ const LABELS = {
   gorunumMuze: 'Görünüm: Müze',
   gorunumEtiket: 'Görünüm: Etiket',
   bosSecim: 'Boş seçim',
+  logoAlt: 'Logo: alternatif metin',
+  menu: 'Menü (mobil menü başlığı)',
   menuAc: 'Menüyü aç',
   menuKapat: 'Menüyü kapat',
   temaDegistir: 'Temayı değiştir',
@@ -66,7 +68,7 @@ export const UI_KEYS = Object.keys(LABELS) as readonly UiKey[]
 export const UiMetinleri: GlobalConfig = {
   slug: 'ui-metinleri',
   label: 'Arayüz metinleri',
-  access: { read: publicRead.read, update: adminWrite.update },
+  access: { read: adminRead.read, update: adminWrite.update },
   hooks: { afterChange: [revalidateHooks('ui-metinleri').afterChange] },
   fields: UI_KEYS.map((k) => ({ name: k, label: LABELS[k], type: 'text' as const, localized: true })),
 }

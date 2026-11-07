@@ -40,6 +40,8 @@ export const UI_STRINGS: Record<UiKey, S> = {
     en: 'No works match this selection. Try removing a tag.',
     ar: 'لا توجد أعمال تطابق هذا الاختيار. جرّب إزالة إحدى العلامات.',
   },
+  logoAlt: { tr: 'Sıtkı Çoban imza', en: 'Sıtkı Çoban signature', ar: 'توقيع سيتكي تشوبان' },
+  menu: { tr: 'Menü', en: 'Menu', ar: 'القائمة' },
   menuAc: { tr: 'Menüyü aç', en: 'Open menu', ar: 'فتح القائمة' },
   menuKapat: { tr: 'Menüyü kapat', en: 'Close menu', ar: 'إغلاق القائمة' },
   temaDegistir: { tr: 'Gece görünümüne geç', en: 'Switch theme', ar: 'تبديل المظهر' },

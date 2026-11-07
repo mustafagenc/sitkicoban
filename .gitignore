@@ -31,3 +31,4 @@ public/tasarim/
 # Next dev ile otomatik üretilen
 AGENTS.md
 CLAUDE.md
+.claude/

@@ -18,7 +18,7 @@ const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   anasayfa: ['home'],
   ayarlar: ALL_PAGES,
   ui: ALL_PAGES,
-  turler: ALL_PAGES,
+  turler: ['eserler', 'home'],
   media: ALL_PAGES,
 }
 

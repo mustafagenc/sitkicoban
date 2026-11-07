@@ -34,7 +34,8 @@ export function toWorks(docs: Eserler[]): Work[] {
     if (!g || !src) continue
     const width = g.width ?? null
     const height = g.height ?? null
-    const oran = d.oran || (width && height ? width / height : 1)
+    // Dosya değiştirilmişse saklı `oran` eskir; güncel boyutlar varsa onlardan hesapla.
+    const oran = width && height ? width / height : d.oran || 1
     out.push({
       id: d.id,
       baslik: d.baslik,

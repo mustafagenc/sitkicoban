@@ -557,6 +557,8 @@ export interface UiMetinleri {
   gorunumMuze?: string | null;
   gorunumEtiket?: string | null;
   bosSecim?: string | null;
+  logoAlt?: string | null;
+  menu?: string | null;
   menuAc?: string | null;
   menuKapat?: string | null;
   temaDegistir?: string | null;
@@ -651,6 +653,8 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   gorunumMuze?: T;
   gorunumEtiket?: T;
   bosSecim?: T;
+  logoAlt?: T;
+  menu?: T;
   menuAc?: T;
   menuKapat?: T;
   temaDegistir?: T;

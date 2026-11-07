@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 
-import { localizedPath, type Locale } from '@/i18n/config'
+import { localizedPath } from '@/i18n/config'
 
 import { LangMenu } from './LangMenu'
 import { LogoMark } from './LogoMark'
@@ -10,13 +10,6 @@ import { MobileNav } from './MobileNav'
 import { navLinks } from './navLinks'
 import { ThemeToggle } from './ThemeToggle'
 import type { LayoutProps } from './types'
-
-const LOGO_ALT: Record<Locale, string> = {
-  tr: 'Sıtkı Çoban imza',
-  en: 'Sıtkı Çoban signature',
-  ar: 'توقيع سيتكي تشوبان',
-}
-const MENU_LABEL: Record<Locale, string> = { tr: 'Menü', en: 'Menu', ar: 'القائمة' }
 
 /** Üst bilgi: logo, menü, dil seçici, tema düğmesi; dar ekranda mobil menüyü açar. */
 export function Header({
@@ -43,7 +36,7 @@ export function Header({
       <header>
         <div className="wrap">
           <a className="logo" href={homeHref}>
-            <LogoMark alt={LOGO_ALT[locale]} glintOnLoad={glintOnLoad} />
+            <LogoMark alt={ui.logoAlt ?? ''} glintOnLoad={glintOnLoad} />
             <span className="name" lang="tr">
               Sıtkı Çoban
             </span>
@@ -94,7 +87,7 @@ export function Header({
         activeKey={activeKey}
         homeHref={homeHref}
         closeLabel={ui.menuKapat ?? ''}
-        menuLabel={MENU_LABEL[locale]}
+        menuLabel={ui.menu ?? ''}
       />
     </>
   )
