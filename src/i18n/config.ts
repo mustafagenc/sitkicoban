@@ -19,7 +19,7 @@ export const TASARIM_LINKS: Record<'yazilar' | 'videolar' | 'hayati' | 'iletisim
   iletisim: '/tasarim/iletisim.html',
 }
 
-const isLocale = (s: string): s is Locale => (LOCALES as readonly string[]).includes(s)
+export const isLocale = (s: string): s is Locale => (LOCALES as readonly string[]).includes(s)
 
 const keyFor = (segment: string, l: Locale): PageKey | null =>
   (Object.keys(ROUTES) as PageKey[]).find((k) => ROUTES[k][l] === segment) ?? null

@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation'
+
 import { toBooks } from '@/components/books'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
@@ -7,7 +9,7 @@ import { HomeHero } from '@/components/HomeHero'
 import { Hayati, Icazet, VideoSection, YazilarList } from '@/components/HomeStatic'
 import { HomeWorks } from '@/components/HomeWorks'
 import { toWorks } from '@/components/works'
-import { localizedPath, type Locale } from '@/i18n/config'
+import { isLocale, localizedPath } from '@/i18n/config'
 import {
   getAnasayfa,
   getAnasayfaEserleri,
@@ -20,7 +22,8 @@ import {
 import '../styles/anasayfa.css'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = (await params).locale as Locale
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
   const [ui, ayarlar, anasayfa, eserler, secme, kitaplar] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),

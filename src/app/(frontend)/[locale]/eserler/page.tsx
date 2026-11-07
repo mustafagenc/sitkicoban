@@ -1,14 +1,17 @@
+import { notFound } from 'next/navigation'
+
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { WorksGallery } from '@/components/WorksGallery'
 import { toWorks } from '@/components/works'
-import type { Locale } from '@/i18n/config'
+import { isLocale } from '@/i18n/config'
 import { getEserler, getSiteAyarlari, getUi, getYaziTurleri } from '@/lib/data'
 
 import '../../styles/eserler.css'
 
 export default async function EserlerPage({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = (await params).locale as Locale
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
   const [ui, ayarlar, eserler, turler] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),

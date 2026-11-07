@@ -1,14 +1,17 @@
+import { notFound } from 'next/navigation'
+
 import { BookShelf } from '@/components/BookShelf'
 import { toBooks } from '@/components/books'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-import type { Locale } from '@/i18n/config'
+import { isLocale } from '@/i18n/config'
 import { getKitaplar, getSiteAyarlari, getUi } from '@/lib/data'
 
 import '../../styles/kitaplar.css'
 
 export default async function KitaplarPage({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = (await params).locale as Locale
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
   const [ui, ayarlar, kitaplar] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),

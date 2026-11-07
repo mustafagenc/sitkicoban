@@ -3,12 +3,15 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 import { ThemeScript } from '@/components/ThemeScript'
-import { dir, LOCALES, type Locale } from '@/i18n/config'
+import { dir, isLocale, LOCALES } from '@/i18n/config'
 
 import { fontVars } from '../fonts'
 import '../styles/ortak.css'
 
-export const dynamicParams = false
+// dynamicParams bilerek açık (varsayılan): `revalidateTag(..., { expire: 0 })` sonrası ISR girdisi
+// "yok" sayılır; `dynamicParams = false` olsaydı Next yeniden üretmek yerine 404 dönerdi.
+// Bilinmeyen diller zaten proxy'de elenir; buraya düşen olursa düzen ve sayfalar
+// veriye dokunmadan notFound() verir (sayfalar düzenle eşzamanlı çalıştığı için onlarda da kontrol var).
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
@@ -19,8 +22,6 @@ export const metadata: Metadata = {
   description: 'Hattat Sıtkı Çoban',
   icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
 }
-
-const isLocale = (s: string): s is Locale => (LOCALES as readonly string[]).includes(s)
 
 export default async function LocaleLayout({
   children,
