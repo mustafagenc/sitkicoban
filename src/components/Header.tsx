@@ -19,7 +19,15 @@ const LOGO_ALT: Record<Locale, string> = {
 const MENU_LABEL: Record<Locale, string> = { tr: 'Menü', en: 'Menu', ar: 'القائمة' }
 
 /** Üst bilgi: logo, menü, dil seçici, tema düğmesi; dar ekranda mobil menüyü açar. */
-export function Header({ locale, ui, activeKey = 'home' }: Omit<LayoutProps, 'ayarlar'>) {
+export function Header({
+  locale,
+  ui,
+  activeKey = 'home',
+  glintOnLoad = true,
+}: Omit<LayoutProps, 'ayarlar'> & {
+  /** Logo açılışta bir kez parlasın mı (ana sayfada kapalı). */
+  glintOnLoad?: boolean
+}) {
   const [open, setOpen] = useState(false)
   const menuBtn = useRef<HTMLButtonElement>(null)
   const links = navLinks(locale, ui)
@@ -35,7 +43,7 @@ export function Header({ locale, ui, activeKey = 'home' }: Omit<LayoutProps, 'ay
       <header>
         <div className="wrap">
           <a className="logo" href={homeHref}>
-            <LogoMark alt={LOGO_ALT[locale]} />
+            <LogoMark alt={LOGO_ALT[locale]} glintOnLoad={glintOnLoad} />
             <span className="name" lang="tr">
               Sıtkı Çoban
             </span>

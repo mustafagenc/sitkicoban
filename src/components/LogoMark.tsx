@@ -4,8 +4,11 @@ import { useEffect, useRef, type CSSProperties } from 'react'
 
 import { LOGO_SRC } from './logo'
 
-/** İmza logosu; açılışta (600 ms sonra) ve logoya fareyle gelince bir kez parlar. */
-export function LogoMark({ alt }: { alt: string }) {
+/**
+ * İmza logosu; logoya fareyle gelince bir kez parlar. `glintOnLoad` açıksa (varsayılan) açılışta da
+ * (600 ms sonra) parlar; ana sayfada ortadaki imza zaten parladığı için kapalıdır.
+ */
+export function LogoMark({ alt, glintOnLoad = true }: { alt: string; glintOnLoad?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
@@ -19,12 +22,12 @@ export function LogoMark({ alt }: { alt: string }) {
     }
     const logo = mark.closest('.logo')
     logo?.addEventListener('mouseenter', parla)
-    timers.push(setTimeout(parla, 600))
+    if (glintOnLoad) timers.push(setTimeout(parla, 600))
     return () => {
       logo?.removeEventListener('mouseenter', parla)
       timers.forEach(clearTimeout)
     }
-  }, [])
+  }, [glintOnLoad])
 
   return (
     <span

@@ -1,0 +1,158 @@
+/* Ana sayfa: tasarim/index.html <style> bloğundan, ortak.css'te olmayan kurallar.
+   Tümü .home altında: başka sayfaları etkilemez. Ana sayfanın kendi değerleri ortak.css'ten ayrıldığı
+   yerlerde (.wrap 1180px, satır aralığı 1.65, alt bilgi boşlukları ve imza boyu) burada ezilir.
+   RTL: metin akışına bağlı kenarlar mantıksal özelliklerle; kolaj her dilde soldan sağa dizilir. */
+html:has(.home) { scroll-behavior:smooth; }
+.home { line-height:1.65; }
+.home .wrap { max-width:1180px; }
+.home .orn { color:var(--gold); letter-spacing:.7em; text-align:center; font-size:14px; }
+.home .btn { display:inline-block; border:1px solid var(--line-strong); padding:10px 22px; font-size:15px; letter-spacing:.04em; transition:.2s; }
+.home .btn:hover { background:var(--head); color:var(--bg); }
+
+/* Hero */
+.home .hero { position:relative; min-height:calc(100vh - 72px); display:grid; place-items:center; text-align:center; overflow:hidden; }
+/* Kolaj: üst üste satırlar, hafif eğimli; her satır farklı hızda kayar */
+.home .hero .collage { position:absolute; inset:-30% -15%; display:flex; flex-direction:column; justify-content:center; gap:28px; transform:rotate(-8deg); direction:ltr; }
+.home .hero .row { display:flex; align-items:center; gap:28px; width:max-content; animation:drift var(--dur,90s) linear infinite reverse; }
+.home .hero .row:nth-child(1) { --dur:140s; }
+.home .hero .row:nth-child(2) { --dur:110s; margin-left:-12vw; }
+.home .hero .row:nth-child(3) { --dur:130s; margin-left:-5vw; }
+.home .hero .row:nth-child(4) { --dur:120s; margin-left:-16vw; }
+.home .hero .row:nth-child(5) { --dur:150s; margin-left:-8vw; }
+/* Eserler kendi oranlarıyla: hepsi aynı yükseklikte, genişlik esere göre (kırpma yok) */
+.home .hero .row img { height:15vw; width:auto; display:block; background:var(--paper); outline:8px solid var(--paper); box-shadow:var(--shadow); transition:filter .3s; }
+@keyframes drift { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .home .hero .row { animation:none; } }
+/* Gece görünüşünde kolaj daha soluk; yazılar öne çıkar */
+[data-theme="dark"] .home .hero .row img { filter:brightness(.55) saturate(.6); }
+.home .hero .veil { position:absolute; inset:0; background:radial-gradient(ellipse at center, var(--hero-veil) 30%, color-mix(in srgb, var(--hero-veil) 70%, transparent) 100%); }
+.home .hero .in { position:relative; padding:60px 20px; }
+/* İmza: PNG maske olarak kullanılır, içinden altın bir ışık süzülür (birkaç saniyede bir) */
+.home .hero .sig { width:min(360px,70vw); aspect-ratio:2235/1948; margin:0 auto;
+  -webkit-mask:url('/imza.png') center/contain no-repeat; mask:url('/imza.png') center/contain no-repeat;
+  background:linear-gradient(115deg, var(--sig-base) 0%, var(--sig-base) 42%, var(--sig-glint) 50%, var(--sig-base) 58%, var(--sig-base) 100%);
+  background-size:300% 100%; background-position:100% 0; animation:glint 10s ease-in-out 1.2s infinite; }
+@keyframes glint { 0% { background-position:100% 0; } 42%,100% { background-position:0% 0; } }
+@media (prefers-reduced-motion: reduce) { .home .hero .sig { animation:none; } }
+.home .hero h1 { font-size:clamp(44px,6vw,76px); margin-top:14px; letter-spacing:.01em; }
+.home .hero .roles { margin-top:10px; font-size:18px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+.home .hero .tag { margin-top:8px; font-size:19px; font-style:italic; color:var(--ink-soft); }
+.home .hero .down { display:inline-block; margin-top:30px; font-size:24px; line-height:1; color:var(--ink-soft); transition:color .2s; }
+.home .hero .down:hover { color:var(--gold); }
+
+.home section { padding:96px 0; }
+.home .sec-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; gap:20px; }
+.home .sec-head h2 { font-size:42px; }
+.home .sec-head p { margin:6px 0 0; color:var(--ink-soft); }
+
+/* Seçme eserler */
+.home .works { display:grid; grid-template-columns:1.25fr 1fr 1fr; grid-template-rows:auto auto; gap:26px; }
+.home .work { display:block; cursor:zoom-in; }
+/* Eser hiç kırpılmaz: oranı ne olursa olsun çerçevenin içine tamamı sığar */
+.home .work .frame { background:var(--paper); padding:10px; outline:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; aspect-ratio:4/3; }
+.home .work img { width:100%; height:100%; object-fit:contain; display:block; transition:transform .5s; }
+.home .work:hover img { transform:scale(1.03); }
+/* Büyük eser sağdaki iki sıranın toplam yüksekliğini doldurur */
+.home .work.big { grid-row:span 2; display:flex; flex-direction:column; }
+.home .work.big .frame { flex:1; min-height:0; position:relative; aspect-ratio:auto; }
+.home .work.big .frame img { position:absolute; inset:10px; width:calc(100% - 20px); height:calc(100% - 20px); }
+.home .work .meta { margin-top:12px; display:flex; gap:12px; align-items:baseline; }
+.home .work .no { font-family:var(--f-display); color:var(--gold); font-size:15px; }
+.home .work h3 { font-size:22px; }
+.home .work .tags { font-size:14px; color:var(--ink-soft); margin-top:2px; }
+.home .tag-chip { display:inline-block; border:1px solid var(--line-strong); border-radius:20px; padding:0 10px; font-size:13px; margin-inline-end:6px; }
+
+/* İcazet */
+.home .icazet { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.home .silsile { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:40px; text-align:center; }
+/* Hocaların imzaları: aynı yükseklikte bir alanda ortalı, Sıtkı Bey'in imzasından küçük */
+.home .hoca-imza { height:84px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.home .hoca-imza img { max-height:100%; max-width:150px; filter:var(--logo-filter); opacity:.8; }
+.home .hoca h3 { font-size:28px; }
+.home .hoca .hat { margin-top:6px; color:var(--gold); letter-spacing:.12em; text-transform:uppercase; font-size:14px; }
+.home .hoca p { margin:8px auto 0; max-width:30ch; color:var(--ink-soft); font-size:15px; }
+.home .center-sig img { width:150px; filter:var(--logo-filter); opacity:.9; }
+.home .center-sig .lbl { font-size:13px; letter-spacing:.2em; color:var(--gold); margin-top:6px; }
+
+/* Yazılar & Kitaplar */
+.home .two { display:grid; grid-template-columns:1.1fr 1fr; gap:70px; }
+.home .post { padding:20px 0; border-bottom:1px solid var(--line); }
+.home .post:first-of-type { border-top:1px solid var(--line); }
+.home .post .cat { font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+.home .post h3 { font-size:24px; margin-top:4px; }
+.home .post p { margin:6px 0 0; color:var(--ink-soft); font-size:16px; }
+/* Kapaklar üstten hizalı; başlık her zaman iki satır yer kaplar, kapaklar kaymaz */
+.home .books { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:start; }
+.home .book { display:block; }
+.home .book .cap { font-size:14px; margin-top:10px; color:var(--ink-soft); line-height:1.35; min-height:calc(2 * 1.35em); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.home .book .cover-img { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; outline:1px solid var(--line); box-shadow:0 10px 24px rgba(40,25,10,.18), var(--shadow); transition:transform .35s ease, box-shadow .35s ease; }
+.home .book .cover-img.contain { object-fit:contain; padding:8px; background:var(--paper); }
+.home .book:hover .cover-img { transform:translateY(-6px); box-shadow:0 18px 34px rgba(40,25,10,.25), var(--shadow); }
+.home .book:hover .cap { color:var(--gold); }
+
+/* Video */
+.home .video-wrap { display:grid; grid-template-columns:1.6fr 1fr; gap:46px; align-items:center; }
+.home .player { aspect-ratio:16/9; background:url('/tasarim/img/e-rika-1.jpg') center/cover; position:relative; outline:1px solid var(--line); box-shadow:var(--shadow); }
+.home .player::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.35); }
+.home .player .play { position:absolute; z-index:1; left:50%; top:50%; transform:translate(-50%,-50%); width:78px; height:78px; border-radius:50%; background:rgba(255,248,234,.92); display:grid; place-items:center; color:#3a2a1a; font-size:26px; padding-left:5px; }
+.home .video-wrap h3 { font-size:30px; margin-top:8px; }
+.home .video-wrap p { color:var(--ink-soft); }
+.home .vlist { margin-top:16px; font-size:15px; }
+.home .vlist div { padding:8px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between; }
+.home .vlist span { color:var(--ink-soft); }
+
+/* Meşk ve Dersler: bitiş tarihi geçen kart, kart kalmazsa bölüm gizlenir */
+.home .ders-list { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
+.home .ders { display:grid; grid-template-columns:150px 1fr; gap:26px; background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:22px; position:relative; }
+.home .ders::before { content:''; position:absolute; inset:6px; border:1px solid var(--line); pointer-events:none; }
+.home .ders .afis { aspect-ratio:3/4; background:var(--bg-2); border:0; padding:0; cursor:zoom-in; overflow:hidden; position:relative; z-index:1; }
+.home .ders .afis img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s; }
+.home .ders .afis:hover img { transform:scale(1.04); }
+.home .ders .afis.bos { cursor:default; display:grid; place-items:center; }
+.home .ders .afis.bos img { width:62%; height:auto; object-fit:contain; filter:var(--logo-filter); opacity:.35; transform:none; }
+.home .ders .kurum { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); }
+.home .ders h3 { font-size:25px; margin:6px 0 14px; line-height:1.2; }
+.home .ders ul { list-style:none; margin:0 0 18px; padding:0; font-size:16px; }
+.home .ders li { display:flex; gap:10px; align-items:flex-start; padding:3px 0; color:var(--ink-soft); }
+.home .ders li svg { width:16px; height:16px; flex-shrink:0; margin-top:4px; color:var(--gold); }
+.home .ders li b { color:var(--ink); font-weight:500; }
+.home .ders .git { font-size:15px; border-bottom:1px solid var(--line-strong); transition:.2s; position:relative; z-index:1; }
+.home .ders .git:hover { color:var(--gold); border-color:var(--gold); }
+.home .afis-lb { position:fixed; inset:0; z-index:90; background:rgba(15,12,8,.88); display:grid; place-items:center; padding:24px; cursor:zoom-out; }
+.home .afis-lb img { max-width:100%; max-height:100%; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+
+/* Hayatı */
+.home .about { display:grid; grid-template-columns:1fr 1.3fr; gap:70px; align-items:center; }
+.home .about .photo { aspect-ratio:4/5; background:var(--paper); outline:1px solid var(--line); display:grid; place-items:center; color:var(--ink-soft); font-style:italic; position:relative; }
+.home .about .photo::before { content:''; position:absolute; inset:10px; border:1px solid var(--line); z-index:1; }
+/* Fotoğraf: çerçeve Sıtkı Bey'e ve arkasındaki "vav" levhasına yakınlaşır */
+.home .about .photo.has-img { background:url('/tasarim/img/sitki-coban.jpg') 100% 19% / 200% auto no-repeat; box-shadow:var(--shadow); }
+.home .about h2 { font-size:42px; margin-bottom:16px; }
+.home .about p { margin:0 0 14px; }
+.home .about .quote { font-family:var(--f-display); font-style:italic; font-size:22px; color:var(--head); border-inline-start:2px solid var(--gold); padding-inline-start:18px; margin:22px 0; }
+
+/* Alt bilgi: ana sayfanın kendi ölçüleri */
+.home footer { padding:50px 0 40px; }
+.home footer img { height:60px; }
+
+@media (max-width: 860px) {
+  .home .works, .home .two, .home .video-wrap, .home .about, .home .silsile { grid-template-columns:1fr; }
+  .home .work.big { grid-row:auto; }
+  .home .work.big .frame { flex:none; aspect-ratio:3/4; }
+  .home .books { grid-template-columns:repeat(3,1fr); }
+  .home .ders-list { grid-template-columns:1fr; gap:22px; }
+  .home .ders { grid-template-columns:92px 1fr; gap:16px; padding:16px; }
+  .home .ders:not(:has(button.afis)) { grid-template-columns:1fr; }
+  .home .ders .afis.bos { display:none; }
+  .home .ders .kurum { letter-spacing:.1em; font-size:11px; }
+  .home .ders h3 { font-size:21px; margin-bottom:10px; }
+  .home .ders ul { font-size:15px; }
+  .home section { padding:64px 0; }
+  .home .sec-head { flex-direction:column; align-items:flex-start; }
+  .home footer .wrap { gap:22px; }
+  /* Mobilde kolaj ilk ekranı doldurur: eser yüksekliği ekran yüksekliğine göre */
+  .home .hero { min-height:calc(100svh - 72px); }
+  .home .hero .collage { gap:16px; }
+  .home .hero .row { gap:16px; }
+  .home .hero .row img { height:19svh; outline-width:5px; }
+}
