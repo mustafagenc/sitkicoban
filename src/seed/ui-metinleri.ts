@@ -12,6 +12,7 @@ export const UI_STRINGS: Record<UiKey, S> = {
   navIletisim: { tr: 'İletişim', en: 'Contact', ar: 'اتصل بنا' },
   tumu: { tr: 'Tümü', en: 'All', ar: 'الكل' },
   tumuOk: { tr: 'Tümü →', en: 'View all →', ar: 'عرض الكل ←' },
+  tumEserlerOk: { tr: 'Tüm eserler →', en: 'All works →', ar: 'جميع الأعمال ←' },
   bilgiGirilecek: { tr: 'Bilgi girilecek', en: 'To be added', ar: 'سيُضاف لاحقًا' },
   satinAl: { tr: 'Satın al →', en: 'Buy →', ar: 'اشترِ ←' },
   ilgiliYazilar: { tr: 'İlgili yazılar', en: 'Related articles', ar: 'مقالات ذات صلة' },

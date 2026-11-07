@@ -52,7 +52,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {anasayfa.eserlerAciklama && <p>{anasayfa.eserlerAciklama}</p>}
             </div>
             <a className="btn" href={localizedPath('eserler', locale)}>
-              {ui.tumuOk}
+              {ui.tumEserlerOk}
             </a>
           </div>
           <HomeWorks works={toWorks(secme)} ui={ui} locale={locale} />

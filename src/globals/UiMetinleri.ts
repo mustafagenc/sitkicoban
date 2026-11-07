@@ -13,6 +13,7 @@ const LABELS = {
   navIletisim: 'Menü: İletişim',
   tumu: 'Tümü',
   tumuOk: 'Tümü (ok ile)',
+  tumEserlerOk: 'Tüm eserler (ok ile)',
   bilgiGirilecek: 'Bilgi girilecek',
   satinAl: 'Satın al',
   ilgiliYazilar: 'İlgili yazılar',

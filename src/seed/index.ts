@@ -8,6 +8,40 @@ import { LOCALES } from '@/i18n/config'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
 
+/** Ana sayfa metinleri: Türkçe tasarımdaki metinlerle birebir; İngilizce ve Arapça yeni yazıldı. */
+const ANASAYFA = {
+  tr: {
+    heroEyebrow: 'Hattat · Müellif · Muallim',
+    heroBaslik: 'Sıtkı Çoban',
+    heroAciklama: 'Klasik meşk geleneğinin günümüzdeki temsilcilerinden.',
+    eserlerEyebrow: 'Seçme Eserler',
+    eserlerBaslik: 'Kalemden levhaya',
+    eserlerAciklama: "Sülüs, nesih, ta'lik ve rik'a hatlarından seçilmiş eserler.",
+    kitaplarEyebrow: 'Kitaplar',
+    kitaplarBaslik: 'Eserleri',
+  },
+  en: {
+    heroEyebrow: 'Calligrapher · Author · Teacher',
+    heroBaslik: 'Sıtkı Çoban',
+    heroAciklama: 'A present-day representative of the classical meşk tradition.',
+    eserlerEyebrow: 'Selected Works',
+    eserlerBaslik: 'From pen to panel',
+    eserlerAciklama: "Works selected from the thuluth, naskh, ta'liq and riq'a scripts.",
+    kitaplarEyebrow: 'Books',
+    kitaplarBaslik: 'His books',
+  },
+  ar: {
+    heroEyebrow: 'خطّاط · مؤلّف · معلّم',
+    heroBaslik: 'Sıtkı Çoban', // özel ad, çevrilmez (üst bilgideki ad gibi)
+    heroAciklama: 'من أبرز ممثّلي تقاليد المَشْق الكلاسيكية في عصرنا.',
+    eserlerEyebrow: 'أعمال مختارة',
+    eserlerBaslik: 'من القلم إلى اللوحة',
+    eserlerAciklama: 'أعمال مختارة من خطوط الثلث والنسخ والتعليق والرقعة.',
+    kitaplarEyebrow: 'الكتب',
+    kitaplarBaslik: 'مؤلّفاته',
+  },
+} satisfies Record<(typeof LOCALES)[number], Record<string, string>>
+
 const CTX = { disableRevalidate: true }
 const LOCALE = 'tr' as const
 
@@ -151,21 +185,14 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     context: CTX,
   })
 
-  await payload.updateGlobal({
-    slug: 'anasayfa',
-    data: {
-      heroEyebrow: 'Hattat · Müellif · Muallim',
-      heroBaslik: 'Sıtkı Çoban',
-      heroAciklama: 'Klasik meşk geleneğinin günümüzdeki temsilcilerinden.',
-      eserlerEyebrow: 'Seçme Eserler',
-      eserlerBaslik: 'Kalemden levhaya',
-      eserlerAciklama: "Sülüs, nesih, ta'lik ve rik'a hatlarından seçilmiş eserler.",
-      kitaplarEyebrow: 'Kitaplar',
-      kitaplarBaslik: 'Eserleri',
-    },
-    locale: LOCALE,
-    context: CTX,
-  })
+  for (const locale of LOCALES) {
+    await payload.updateGlobal({
+      slug: 'anasayfa',
+      data: ANASAYFA[locale],
+      locale,
+      context: CTX,
+    })
+  }
 
   for (const locale of LOCALES) {
     await payload.updateGlobal({

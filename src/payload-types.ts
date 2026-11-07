@@ -533,6 +533,7 @@ export interface UiMetinleri {
   navIletisim?: string | null;
   tumu?: string | null;
   tumuOk?: string | null;
+  tumEserlerOk?: string | null;
   bilgiGirilecek?: string | null;
   satinAl?: string | null;
   ilgiliYazilar?: string | null;
@@ -626,6 +627,7 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   navIletisim?: T;
   tumu?: T;
   tumuOk?: T;
+  tumEserlerOk?: T;
   bilgiGirilecek?: T;
   satinAl?: T;
   ilgiliYazilar?: T;
