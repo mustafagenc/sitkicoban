@@ -68,6 +68,11 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    media: Media;
+    'yazi-turleri': YaziTurleri;
+    'eser-turleri': EserTurleri;
+    eserler: Eserler;
+    kitaplar: Kitaplar;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,6 +81,11 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    'yazi-turleri': YaziTurleriSelect<false> | YaziTurleriSelect<true>;
+    'eser-turleri': EserTurleriSelect<false> | EserTurleriSelect<true>;
+    eserler: EserlerSelect<false> | EserlerSelect<true>;
+    kitaplar: KitaplarSelect<false> | KitaplarSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -85,8 +95,16 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('tr' | 'en' | 'ar') | ('tr' | 'en' | 'ar')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-ayarlari': SiteAyarlari;
+    'ui-metinleri': UiMetinleri;
+    anasayfa: Anasayfa;
+  };
+  globalsSelect: {
+    'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
+    'ui-metinleri': UiMetinleriSelect<false> | UiMetinleriSelect<true>;
+    anasayfa: AnasayfaSelect<false> | AnasayfaSelect<true>;
+  };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
     collections: CollectionsWidget;
@@ -143,6 +161,110 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazi-turleri".
+ */
+export interface YaziTurleri {
+  id: number;
+  ad: string;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eser-turleri".
+ */
+export interface EserTurleri {
+  id: number;
+  ad: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eserler".
+ */
+export interface Eserler {
+  id: number;
+  baslik: string;
+  /**
+   * Boş bırakılırsa başlıktan üretilir.
+   */
+  slug?: string | null;
+  gorsel?: (number | null) | Media;
+  /**
+   * Görselden otomatik hesaplanır.
+   */
+  oran?: number | null;
+  yaziTurleri?: (number | YaziTurleri)[] | null;
+  tur?: (number | null) | EserTurleri;
+  yil?: string | null;
+  metin?: string | null;
+  anlam?: string | null;
+  kaynak?: string | null;
+  aciklama?: string | null;
+  olcu?: string | null;
+  malzeme?: string | null;
+  tezhip?: string | null;
+  ebru?: string | null;
+  sira?: number | null;
+  anasayfadaGoster?: boolean | null;
+  anasayfaSira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kitaplar".
+ */
+export interface Kitaplar {
+  id: number;
+  baslik: string;
+  altBaslik?: string | null;
+  /**
+   * Boş bırakılırsa başlıktan üretilir.
+   */
+  slug?: string | null;
+  rol?: ('yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen') | null;
+  asilYazar?: string | null;
+  /**
+   * Boşsa yazı kapak kullanılır.
+   */
+  kapak?: (number | null) | Media;
+  kapakSigdir?: boolean | null;
+  yayinevi?: string | null;
+  yil?: string | null;
+  sayfa?: number | null;
+  isbn?: string | null;
+  aciklama?: string | null;
+  satinAlLinki?: string | null;
+  sira?: number | null;
+  anasayfadaGoster?: boolean | null;
+  anasayfaSira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -164,10 +286,31 @@ export interface PayloadKv {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'yazi-turleri';
+        value: number | YaziTurleri;
+      } | null)
+    | ({
+        relationTo: 'eser-turleri';
+        value: number | EserTurleri;
+      } | null)
+    | ({
+        relationTo: 'eserler';
+        value: number | Eserler;
+      } | null)
+    | ({
+        relationTo: 'kitaplar';
+        value: number | Kitaplar;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -235,6 +378,93 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazi-turleri_select".
+ */
+export interface YaziTurleriSelect<T extends boolean = true> {
+  ad?: T;
+  sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eser-turleri_select".
+ */
+export interface EserTurleriSelect<T extends boolean = true> {
+  ad?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eserler_select".
+ */
+export interface EserlerSelect<T extends boolean = true> {
+  baslik?: T;
+  slug?: T;
+  gorsel?: T;
+  oran?: T;
+  yaziTurleri?: T;
+  tur?: T;
+  yil?: T;
+  metin?: T;
+  anlam?: T;
+  kaynak?: T;
+  aciklama?: T;
+  olcu?: T;
+  malzeme?: T;
+  tezhip?: T;
+  ebru?: T;
+  sira?: T;
+  anasayfadaGoster?: T;
+  anasayfaSira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kitaplar_select".
+ */
+export interface KitaplarSelect<T extends boolean = true> {
+  baslik?: T;
+  altBaslik?: T;
+  slug?: T;
+  rol?: T;
+  asilYazar?: T;
+  kapak?: T;
+  kapakSigdir?: T;
+  yayinevi?: T;
+  yil?: T;
+  sayfa?: T;
+  isbn?: T;
+  aciklama?: T;
+  satinAlLinki?: T;
+  sira?: T;
+  anasayfadaGoster?: T;
+  anasayfaSira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -272,6 +502,180 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-ayarlari".
+ */
+export interface SiteAyarlari {
+  id: number;
+  eposta?: string | null;
+  telefon?: string | null;
+  adres?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  youtube?: string | null;
+  formHedefEposta?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ui-metinleri".
+ */
+export interface UiMetinleri {
+  id: number;
+  navEserler?: string | null;
+  navYazilar?: string | null;
+  navKitaplar?: string | null;
+  navVideolar?: string | null;
+  navHayati?: string | null;
+  navIletisim?: string | null;
+  tumu?: string | null;
+  tumuOk?: string | null;
+  bilgiGirilecek?: string | null;
+  satinAl?: string | null;
+  ilgiliYazilar?: string | null;
+  oncekiKitap?: string | null;
+  sonrakiKitap?: string | null;
+  rolYazar?: string | null;
+  rolHazirlayan?: string | null;
+  rolSadelestiren?: string | null;
+  rolDerleyen?: string | null;
+  olcu?: string | null;
+  malzeme?: string | null;
+  tezhip?: string | null;
+  ebru?: string | null;
+  kaynak?: string | null;
+  yil?: string | null;
+  yayinevi?: string | null;
+  sayfa?: string | null;
+  isbn?: string | null;
+  gorunumDuvar?: string | null;
+  gorunumSirali?: string | null;
+  gorunumMuze?: string | null;
+  gorunumEtiket?: string | null;
+  bosSecim?: string | null;
+  menuAc?: string | null;
+  menuKapat?: string | null;
+  temaDegistir?: string | null;
+  dilSec?: string | null;
+  asagiKaydir?: string | null;
+  kapat?: string | null;
+  onceki?: string | null;
+  sonraki?: string | null;
+  eserlerBaslik?: string | null;
+  eserlerAciklama?: string | null;
+  kitaplarBaslik?: string | null;
+  kitaplarAciklama?: string | null;
+  footerTelif?: string | null;
+  footerNot?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "anasayfa".
+ */
+export interface Anasayfa {
+  id: number;
+  heroEyebrow?: string | null;
+  heroBaslik?: string | null;
+  heroAciklama?: string | null;
+  eserlerEyebrow?: string | null;
+  eserlerBaslik?: string | null;
+  eserlerAciklama?: string | null;
+  kitaplarEyebrow?: string | null;
+  kitaplarBaslik?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-ayarlari_select".
+ */
+export interface SiteAyarlariSelect<T extends boolean = true> {
+  eposta?: T;
+  telefon?: T;
+  adres?: T;
+  instagram?: T;
+  facebook?: T;
+  youtube?: T;
+  formHedefEposta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ui-metinleri_select".
+ */
+export interface UiMetinleriSelect<T extends boolean = true> {
+  navEserler?: T;
+  navYazilar?: T;
+  navKitaplar?: T;
+  navVideolar?: T;
+  navHayati?: T;
+  navIletisim?: T;
+  tumu?: T;
+  tumuOk?: T;
+  bilgiGirilecek?: T;
+  satinAl?: T;
+  ilgiliYazilar?: T;
+  oncekiKitap?: T;
+  sonrakiKitap?: T;
+  rolYazar?: T;
+  rolHazirlayan?: T;
+  rolSadelestiren?: T;
+  rolDerleyen?: T;
+  olcu?: T;
+  malzeme?: T;
+  tezhip?: T;
+  ebru?: T;
+  kaynak?: T;
+  yil?: T;
+  yayinevi?: T;
+  sayfa?: T;
+  isbn?: T;
+  gorunumDuvar?: T;
+  gorunumSirali?: T;
+  gorunumMuze?: T;
+  gorunumEtiket?: T;
+  bosSecim?: T;
+  menuAc?: T;
+  menuKapat?: T;
+  temaDegistir?: T;
+  dilSec?: T;
+  asagiKaydir?: T;
+  kapat?: T;
+  onceki?: T;
+  sonraki?: T;
+  eserlerBaslik?: T;
+  eserlerAciklama?: T;
+  kitaplarBaslik?: T;
+  kitaplarAciklama?: T;
+  footerTelif?: T;
+  footerNot?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "anasayfa_select".
+ */
+export interface AnasayfaSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroBaslik?: T;
+  heroAciklama?: T;
+  eserlerEyebrow?: T;
+  eserlerBaslik?: T;
+  eserlerAciklama?: T;
+  kitaplarEyebrow?: T;
+  kitaplarBaslik?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
