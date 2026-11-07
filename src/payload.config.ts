@@ -96,6 +96,8 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
+      // Blob'un `prefix` ve `_objectKey` alanları token olsa da olmasa da şemada: migration'lar iki durumda aynı.
+      alwaysInsertFields: true,
       collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
