@@ -55,12 +55,5 @@
   "engines": {
     "node": ">=22",
     "pnpm": "^9 || ^10 || ^11"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild",
-      "unrs-resolver"
-    ]
   }
 }
