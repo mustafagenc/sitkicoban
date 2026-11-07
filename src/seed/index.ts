@@ -6,6 +6,7 @@ import { slugify } from '@/lib/slug'
 import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
 import { SEED_DERSLER } from './dersler'
+import { SEED_YAZI_KATEGORILERI, SEED_YAZILAR } from './yazilar'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
 
@@ -58,7 +59,7 @@ const ROL: Record<string, 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen'> 
 
 export type SeedResult = { eserler: number; kitaplar: number }
 
-async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-turleri', ad: string, extra: { sira?: number } = {}) {
+async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-turleri' | 'yazi-kategorileri', ad: string, extra: { sira?: number } = {}) {
   const found = await payload.find({ collection, where: { ad: { equals: ad } }, locale: LOCALE, limit: 1, depth: 0 })
   if (found.docs[0]) return found.docs[0].id
   const created = await payload.create({ collection, data: { ad, ...extra }, locale: LOCALE, context: CTX })
@@ -93,7 +94,7 @@ function slugsFor(titles: string[]): string[] {
   })
 }
 
-async function upsertBySlug(payload: Payload, collection: 'eserler' | 'kitaplar', slug: string, data: Record<string, unknown>) {
+async function upsertBySlug(payload: Payload, collection: 'eserler' | 'kitaplar' | 'yazilar', slug: string, data: Record<string, unknown>) {
   const found = await payload.find({ collection, where: { slug: { equals: slug } }, locale: LOCALE, limit: 1, depth: 0 })
   const args = { data: { ...data, slug }, locale: LOCALE, context: CTX } as const
   if (found.docs[0]) {
@@ -203,6 +204,29 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     } else {
       await payload.create({ collection: 'dersler', data, locale: LOCALE, context: CTX })
     }
+  }
+
+  // Posts: only the first has the sample body and is published. Drafts keep the design's
+  // reading minutes (no body to count); the published one is computed from its body.
+  const kategoriIds = new Map<string, number | string>()
+  for (const [i, ad] of SEED_YAZI_KATEGORILERI.entries()) {
+    kategoriIds.set(ad, await upsertByAd(payload, 'yazi-kategorileri', ad, { sira: i }))
+  }
+  const yaziSlugs = slugsFor(SEED_YAZILAR.map((y) => y.baslik))
+  for (const [i, y] of SEED_YAZILAR.entries()) {
+    const kapak = y.kapak ? await upsertMedia(payload, root, y.kapak.file, y.kapak.alt) : null
+    await upsertBySlug(payload, 'yazilar', yaziSlugs[i], {
+      baslik: y.baslik,
+      kategori: kategoriIds.get(y.kategori),
+      ozet: y.ozet,
+      govde: y.govde ?? null,
+      tarih: `${y.tarih}T00:00:00.000Z`,
+      okumaSuresiOtomatik: Boolean(y.govde),
+      okumaSuresi: y.govde ? null : y.dakika,
+      kapak,
+      kaynaklar: (y.kaynaklar ?? []).map((metin) => ({ metin })),
+      yayinda: y.yayinda,
+    })
   }
 
   // Globals

@@ -9,6 +9,6 @@ export default defineConfig({
     // Integration specs share one test DB (some wipe tables), so run files serially.
     fileParallelism: false,
     setupFiles: ['./vitest.setup.ts'],
-    include: ['tests/int/**/*.spec.ts'],
+    include: ['tests/int/**/*.spec.{ts,tsx}'],
   },
 })

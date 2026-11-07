@@ -22,6 +22,41 @@ const runAfter = () => {
 const fetchMock = vi.fn(async () => new Response('ok'))
 const mediaIds: (number | string)[] = []
 const eserIds: (number | string)[] = []
+const yaziIds: (number | string)[] = []
+const kategoriIds: (number | string)[] = []
+
+const BODY = {
+  root: {
+    type: 'root',
+    version: 1,
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    children: [
+      {
+        type: 'paragraph',
+        version: 1,
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        textFormat: 0,
+        children: [{ type: 'text', version: 1, text: 'Gövde', format: 0, detail: 0, mode: 'normal', style: '' }],
+      },
+    ],
+  },
+} as never
+
+async function makeYazi(slug: string, yayinda: boolean) {
+  const y = await payload.create({
+    collection: 'yazilar',
+    data: { baslik: `Yazı ${slug}`, slug, ozet: 'Özet', govde: BODY, yayinda },
+    context: { disableRevalidate: true },
+  })
+  yaziIds.push(y.id)
+  return y
+}
+const detailUrls = (slug: string) =>
+  [`/yazilar/${slug}`, `/en/writings/${slug}`, `/ar/writings/${slug}`].map((p) => `http://localhost:3999${p}`)
 
 async function makeMedia() {
   const buffer = await sharp({
@@ -62,6 +97,8 @@ describe('revalidation hooks', () => {
   })
 
   afterAll(async () => {
+    for (const id of yaziIds) await payload.delete({ collection: 'yazilar', id, context: { disableRevalidate: true } }).catch(() => {})
+    for (const id of kategoriIds) await payload.delete({ collection: 'yazi-kategorileri', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of eserIds) await payload.delete({ collection: 'eserler', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of mediaIds) await payload.delete({ collection: 'media', id, context: { disableRevalidate: true } }).catch(() => {})
     vi.unstubAllGlobals()
@@ -98,9 +135,9 @@ describe('revalidation hooks', () => {
   })
 
   // The yazilar collection arrives in a later task; exercise its hook directly.
-  it('warms yazi detail paths for old and new slug on a slug change', () => {
+  it('warms yazi detail paths for old and new slug on a slug change', async () => {
     const hooks = revalidateHooks('yazilar')
-    hooks.afterChange({
+    await hooks.afterChange({
       doc: { slug: 'b' },
       previousDoc: { slug: 'a' },
       context: {},
@@ -110,5 +147,45 @@ describe('revalidation hooks', () => {
     for (const p of ['/yazilar/a', '/yazilar/b', '/en/writings/b', '/ar/writings/a'])
       expect(urls).toContain(`http://localhost:3999${p}`)
     expect(tagCalls()).toEqual(['yazilar'])
+  })
+
+  it('warms published yazi detail pages on media and yazi-kategorileri saves', async () => {
+    await makeYazi('rv-yayinda', true)
+    await makeYazi('rv-taslak', false)
+    const m = await makeMedia()
+    const k = await payload.create({ collection: 'yazi-kategorileri', data: { ad: 'RV' }, context: { disableRevalidate: true } })
+    kategoriIds.push(k.id)
+
+    for (const save of [
+      () => payload.update({ collection: 'media', id: m.id, data: { alt: 'rv2' } }),
+      () => payload.update({ collection: 'yazi-kategorileri', id: k.id, data: { ad: 'RV2' } }),
+    ]) {
+      fetchMock.mockClear()
+      afterCallbacks.length = 0
+      await save()
+      runAfter()
+      const urls = warmCalls()
+      for (const u of detailUrls('rv-yayinda')) expect(urls).toContain(u)
+      for (const u of detailUrls('rv-taslak')) expect(urls).not.toContain(u)
+    }
+  })
+
+  it('does not warm yazi detail pages for unrelated sources', async () => {
+    await makeYazi('rv-ilgisiz', true)
+    const e = await payload.create({ collection: 'eserler', data: { baslik: 'RV ilgisiz', gorsel: (await makeMedia()).id }, context: { disableRevalidate: true } })
+    eserIds.push(e.id)
+    await payload.update({ collection: 'eserler', id: e.id, data: { yil: '2025' } })
+    runAfter()
+    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
+  })
+
+  it('warms a deleted yazi detail paths', async () => {
+    const y = await makeYazi('rv-silinen', true)
+    await payload.delete({ collection: 'yazilar', id: y.id })
+    expect(tagCalls()).toEqual(['yazilar'])
+    runAfter()
+    const urls = warmCalls()
+    for (const u of detailUrls('rv-silinen')) expect(urls).toContain(u)
+    for (const p of ['/yazilar', '/en/writings', '/']) expect(urls).toContain(`http://localhost:3999${p}`)
   })
 })

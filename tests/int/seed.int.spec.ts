@@ -12,7 +12,7 @@ let payload: Payload
 const dbName = () => new URL(process.env.DATABASE_URL ?? 'postgres://x/none').pathname.replace(/^\//, '')
 
 async function wipe() {
-  for (const collection of ['dersler', 'eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
+  for (const collection of ['yazilar', 'yazi-kategorileri', 'dersler', 'eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
     await payload.delete({ collection, where: { id: { exists: true } } })
   }
 }

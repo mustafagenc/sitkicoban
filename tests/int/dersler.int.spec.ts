@@ -28,7 +28,7 @@ describe('dersler seed', () => {
 
   afterAll(async () => {
     if (dbName().endsWith('_test') && payload) {
-      for (const collection of ['dersler', 'eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
+      for (const collection of ['yazilar', 'yazi-kategorileri', 'dersler', 'eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
         await payload.delete({ collection, where: { id: { exists: true } } })
       }
     }

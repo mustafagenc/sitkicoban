@@ -26,7 +26,7 @@ function titleOf(v: unknown): string | undefined {
 
 /** Fills `slug` from the Turkish `baslik` when empty; appends -2, -3… on collision. */
 export const uniqueSlug =
-  (collection: 'eserler' | 'kitaplar'): FieldHook =>
+  (collection: 'eserler' | 'kitaplar' | 'yazilar'): FieldHook =>
   async ({ value, data, originalDoc, req }) => {
     let base = typeof value === 'string' && value.trim() ? slugify(value) : ''
     if (!base) {

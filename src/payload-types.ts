@@ -74,6 +74,8 @@ export interface Config {
     eserler: Eserler;
     kitaplar: Kitaplar;
     dersler: Dersler;
+    'yazi-kategorileri': YaziKategorileri;
+    yazilar: Yazilar;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +90,8 @@ export interface Config {
     eserler: EserlerSelect<false> | EserlerSelect<true>;
     kitaplar: KitaplarSelect<false> | KitaplarSelect<true>;
     dersler: DerslerSelect<false> | DerslerSelect<true>;
+    'yazi-kategorileri': YaziKategorileriSelect<false> | YaziKategorileriSelect<true>;
+    yazilar: YazilarSelect<false> | YazilarSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -303,6 +307,66 @@ export interface Dersler {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazi-kategorileri".
+ */
+export interface YaziKategorileri {
+  id: number;
+  ad: string;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazilar".
+ */
+export interface Yazilar {
+  id: number;
+  baslik: string;
+  /**
+   * Boş bırakılırsa başlıktan üretilir.
+   */
+  slug?: string | null;
+  kategori?: (number | null) | YaziKategorileri;
+  ozet: string;
+  govde?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  tarih?: string | null;
+  okumaSuresiOtomatik?: boolean | null;
+  /**
+   * Otomatikse Türkçe gövdeden hesaplanır (dakikada 200 kelime).
+   */
+  okumaSuresi?: number | null;
+  kapak?: (number | null) | Media;
+  kaynaklar?:
+    | {
+        metin: string;
+        id?: string | null;
+      }[]
+    | null;
+  ilgiliKitaplar?: (number | Kitaplar)[] | null;
+  /**
+   * Kapalıysa yazı sitede görünmez.
+   */
+  yayinda?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -352,6 +416,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'dersler';
         value: number | Dersler;
+      } | null)
+    | ({
+        relationTo: 'yazi-kategorileri';
+        value: number | YaziKategorileri;
+      } | null)
+    | ({
+        relationTo: 'yazilar';
+        value: number | Yazilar;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -522,6 +594,41 @@ export interface DerslerSelect<T extends boolean = true> {
   afis?: T;
   bitis?: T;
   sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazi-kategorileri_select".
+ */
+export interface YaziKategorileriSelect<T extends boolean = true> {
+  ad?: T;
+  sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yazilar_select".
+ */
+export interface YazilarSelect<T extends boolean = true> {
+  baslik?: T;
+  slug?: T;
+  kategori?: T;
+  ozet?: T;
+  govde?: T;
+  tarih?: T;
+  okumaSuresiOtomatik?: T;
+  okumaSuresi?: T;
+  kapak?: T;
+  kaynaklar?:
+    | T
+    | {
+        metin?: T;
+        id?: T;
+      };
+  ilgiliKitaplar?: T;
+  yayinda?: T;
   updatedAt?: T;
   createdAt?: T;
 }

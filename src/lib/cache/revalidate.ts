@@ -4,6 +4,7 @@ import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
   GlobalAfterChangeHook,
+  PayloadRequest,
 } from 'payload'
 
 import { LOCALES, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
@@ -47,27 +48,61 @@ export function pathsForTags(tags: Tag[]): string[] {
   return [...paths]
 }
 
-/** Tag paths plus, for `yazilar`, the detail pages of the changed doc's current and previous slug. */
+/**
+ * Tag paths plus yazı detail pages: for `yazilar`, the changed doc's current and previous slug,
+ * and every slug in `publishedSlugs` (see `rendersYaziDetail`).
+ */
 export function pathsForChange(
   source: string,
   doc?: { slug?: unknown } | null,
   previousDoc?: { slug?: unknown } | null,
+  publishedSlugs: string[] = [],
 ): string[] {
   const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
+  const slugs = [...publishedSlugs]
   if (source === 'yazilar') {
-    for (const d of [doc, previousDoc]) {
-      if (typeof d?.slug !== 'string' || !d.slug) continue
-      for (const locale of LOCALES) paths.add(yaziPath(d.slug, locale))
-    }
+    for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) slugs.push(d.slug)
   }
+  for (const slug of slugs) for (const locale of LOCALES) paths.add(yaziPath(slug, locale))
   return [...paths]
 }
 
-function invalidate(
+/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories). */
+const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar']
+
+/** Whether a save to this source changes data shown on every published yazı detail page. */
+export function rendersYaziDetail(source: string): boolean {
+  return (TAGS_BY_SOURCE[source] ?? []).some((t) => YAZI_DETAIL_TAGS.includes(t))
+}
+
+/**
+ * Published yazı slugs, read inside the save's own request/transaction (admin context, so the
+ * DB is already awake). Never fails a save.
+ */
+async function publishedYaziSlugs(req: PayloadRequest | undefined): Promise<string[]> {
+  if (!req?.payload?.collections?.yazilar) return []
+  try {
+    const res = await req.payload.find({
+      collection: 'yazilar',
+      where: { yayinda: { equals: true } },
+      select: { slug: true },
+      depth: 0,
+      pagination: false,
+      limit: 0,
+      req,
+    })
+    return res.docs.map((d) => d.slug).filter((s): s is string => typeof s === 'string' && s.length > 0)
+  } catch {
+    return []
+  }
+}
+
+async function invalidate(
   source: string,
+  req: PayloadRequest | undefined,
   doc?: { slug?: unknown } | null,
   previousDoc?: { slug?: unknown } | null,
-): void {
+): Promise<void> {
   const tags = TAGS_BY_SOURCE[source] ?? []
   for (const tag of tags) {
     try {
@@ -78,7 +113,8 @@ function invalidate(
     }
   }
 
-  const paths = pathsForChange(source, doc, previousDoc)
+  const published = rendersYaziDetail(source) ? await publishedYaziSlugs(req) : []
+  const paths = pathsForChange(source, doc, previousDoc, published)
   if (paths.length === 0) return
 
   // Ordering matters: the hook runs before Payload commits its DB transaction, and
@@ -115,12 +151,12 @@ export function revalidateHooks(source: string): {
   afterDelete: CollectionAfterDeleteHook
 } {
   return {
-    afterChange: ({ doc, previousDoc, context }) => {
-      if (!context?.disableRevalidate) invalidate(source, doc, previousDoc)
+    afterChange: async ({ doc, previousDoc, context, req }) => {
+      if (!context?.disableRevalidate) await invalidate(source, req, doc, previousDoc)
       return doc
     },
-    afterDelete: ({ doc, context }) => {
-      if (!context?.disableRevalidate) invalidate(source, doc)
+    afterDelete: async ({ doc, context, req }) => {
+      if (!context?.disableRevalidate) await invalidate(source, req, doc)
       return doc
     },
   }

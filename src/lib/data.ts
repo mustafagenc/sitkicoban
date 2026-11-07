@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 
 import type { Locale } from '@/i18n/config'
 import config from '@/payload.config'
@@ -114,3 +114,73 @@ export const getDersler = cached('dersler', ['dersler', 'media'], async (locale:
   })
   return res.docs
 })
+
+// Yazılar: yalnızca `yayinda` olanlar. İç fonksiyonlar testlerde önbelleksiz çağrılır.
+const YAYINDA = { yayinda: { equals: true } } as const
+
+export async function findYazilar(payload: Payload, locale: Locale) {
+  const res = await payload.find({
+    collection: 'yazilar',
+    where: YAYINDA,
+    sort: '-tarih',
+    limit: 1000,
+    pagination: false,
+    // Liste gövdeyi çizmez; ilgili kitaplardan yalnızca slug gerekir (?kitap= süzgeci).
+    select: { govde: false },
+    populate: { kitaplar: { slug: true } },
+    ...opts(locale),
+  })
+  return res.docs
+}
+
+export async function findYazi(payload: Payload, slug: string, locale: Locale) {
+  const res = await payload.find({
+    collection: 'yazilar',
+    where: { and: [YAYINDA, { slug: { equals: slug } }] },
+    limit: 1,
+    pagination: false,
+    populate: { kitaplar: { slug: true, baslik: true } },
+    ...opts(locale),
+  })
+  return res.docs[0] ?? null
+}
+
+export async function findYaziSluglari(payload: Payload) {
+  const res = await payload.find({
+    collection: 'yazilar',
+    where: YAYINDA,
+    sort: '-tarih',
+    select: { slug: true },
+    depth: 0,
+    limit: 1000,
+    pagination: false,
+  })
+  return res.docs.map((d) => d.slug).filter((s): s is string => typeof s === 'string' && s.length > 0)
+}
+
+export async function findYaziKategorileri(payload: Payload, locale: Locale) {
+  const res = await payload.find({
+    collection: 'yazi-kategorileri',
+    sort: 'sira',
+    limit: 1000,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs
+}
+
+export const getYazilar = cached('yazilar', ['yazilar', 'media'], async (locale: Locale) =>
+  findYazilar(await getPayload({ config }), locale),
+)
+
+export const getYazi = cached('yazi', ['yazilar', 'media'], async (slug: string, locale: Locale) =>
+  findYazi(await getPayload({ config }), slug, locale),
+)
+
+export const getYaziSluglari = cached('yazi-sluglari', ['yazilar'], async () =>
+  findYaziSluglari(await getPayload({ config })),
+)
+
+export const getYaziKategorileri = cached('yazi-kategorileri', ['yazilar'], async (locale: Locale) =>
+  findYaziKategorileri(await getPayload({ config }), locale),
+)
