@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
+import type { Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
 
 import { BookCover } from './BookCover'
@@ -9,7 +10,17 @@ import { BookModal } from './BookModal'
 import { type Book, type BookRole, ROLE_ORDER, roleLabel } from './books'
 
 /** Kitaplar rafı: rol çipleri ve ayrıntı penceresi (oklar süzülmüş liste içinde gezer). */
-export function BookShelf({ books, ui }: { books: Book[]; ui: UiMetinleri }) {
+export function BookShelf({
+  books,
+  ui,
+  locale,
+  yazili,
+}: {
+  books: Book[]
+  ui: UiMetinleri
+  locale: Locale
+  yazili: string[]
+}) {
   const [secili, setSecili] = useState<BookRole | null>(null)
   const [open, setOpen] = useState<{ list: Book[]; index: number } | null>(null)
   const close = useCallback(() => setOpen(null), [])
@@ -51,7 +62,7 @@ export function BookShelf({ books, ui }: { books: Book[]; ui: UiMetinleri }) {
           </button>
         ))}
       </div>
-      {open && <BookModal list={open.list} index={open.index} ui={ui} onClose={close} />}
+      {open && <BookModal list={open.list} index={open.index} ui={ui} locale={locale} yazili={yazili} onClose={close} />}
     </main>
   )
 }

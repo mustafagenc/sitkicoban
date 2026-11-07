@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { TASARIM_LINKS } from '@/i18n/config'
+import { localizedPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
 
 import { AUTHOR_FALLBACK, type Book, roleLabel } from './books'
@@ -17,12 +17,17 @@ export function BookModal({
   list,
   index,
   ui,
+  locale,
+  yazili = [],
   onClose,
 }: {
   list: Book[]
   /** Açılışta gösterilecek kitabın `list` içindeki sırası. */
   index: number
   ui: UiMetinleri
+  locale: Locale
+  /** Yayında ilgili yazısı olan kitapların slug'ları (İlgili yazılar yalnızca bunlarda görünür). */
+  yazili?: string[]
   onClose: () => void
 }) {
   const [cur, setCur] = useState(Math.min(Math.max(0, index), Math.max(0, list.length - 1)))
@@ -125,9 +130,11 @@ export function BookModal({
               {ui.satinAl}
             </a>
           )}
-          <a className="btn" href={TASARIM_LINKS.yazilar}>
-            {ui.ilgiliYazilar}
-          </a>
+          {b.slug && yazili.includes(b.slug) && (
+            <a className="btn" href={`${localizedPath('yazilar', locale)}?kitap=${encodeURIComponent(b.slug)}`}>
+              {ui.ilgiliYazilar}
+            </a>
+          )}
           {!single && (
             <div className="sheet-nav">
               <button type="button" id="m-prev" onClick={() => setCur((c) => (c - 1 + n) % n)}>

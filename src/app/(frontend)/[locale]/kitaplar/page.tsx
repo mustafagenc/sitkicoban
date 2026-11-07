@@ -5,17 +5,19 @@ import { toBooks } from '@/components/books'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { isLocale } from '@/i18n/config'
-import { getKitaplar, getSiteAyarlari, getUi } from '@/lib/data'
+import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
+import { getKitaplar, getSiteAyarlari, getUi, getYazilar } from '@/lib/data'
 
 import '../../styles/kitaplar.css'
 
 export default async function KitaplarPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, kitaplar] = await Promise.all([
+  const [ui, ayarlar, kitaplar, yazilar] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getKitaplar(locale),
+    getYazilar(locale),
   ])
 
   return (
@@ -26,7 +28,12 @@ export default async function KitaplarPage({ params }: { params: Promise<{ local
         <h1>{ui.kitaplarBaslik}</h1>
         <p>{ui.kitaplarAciklama}</p>
       </div>
-      <BookShelf books={toBooks(kitaplar)} ui={ui} />
+      <BookShelf
+        books={toBooks(kitaplar)}
+        ui={ui}
+        locale={locale}
+        yazili={yaziliKitaplar(toYazilar(yazilar, ui, locale))}
+      />
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
     </>
   )

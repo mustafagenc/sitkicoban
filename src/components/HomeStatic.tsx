@@ -3,7 +3,7 @@ import { TASARIM_LINKS } from '@/i18n/config'
 import { LOGO_SRC } from './logo'
 
 /*
- * Ana sayfanın şimdilik sabit bölümleri (İcazet, Yazılar, Video, Hayatı; Dersler HomeDersler.tsx'te).
+ * Ana sayfanın şimdilik sabit bölümleri (İcazet, Video, Hayatı; Yazılar HomeYazilar.tsx'te, Dersler HomeDersler.tsx'te).
  * Bu aşamada tüm dillerde Türkçe gösterilir; bu yüzden lang="tr" dir="ltr" taşırlar.
  * Görseller public/tasarim/img kopyasından, bağlantılar tasarım sayfalarına gider.
  */
@@ -48,39 +48,6 @@ export function Icazet() {
         </div>
       </div>
     </section>
-  )
-}
-
-const POSTS = [
-  {
-    t: "İhlâs'ın İlk Ayeti ve Üç Mertebe",
-    p: 'Tevhidin özünü anlatan ayete tasavvufi bir pencereden bakış.',
-  },
-  { t: "Herkes O'na Muhtaç", p: 'Samed isminin manası üzerine.' },
-  { t: 'Zikir, Fikir, Dua', p: 'Kulun Rabbine yönelişinin üç hâli.' },
-]
-
-/** Yazılar sütunu (Kitaplar ile aynı .two ızgarasında, solda). */
-export function YazilarList() {
-  return (
-    <div lang="tr" dir="ltr">
-      <div className="sec-head" style={{ marginBottom: 24 }}>
-        <div>
-          <div className="eyebrow">Yazılar</div>
-          <h2>Son yazılar</h2>
-        </div>
-        <a className="btn" href={TASARIM_LINKS.yazilar}>
-          Tümü →
-        </a>
-      </div>
-      {POSTS.map((x) => (
-        <a key={x.t} className="post" href="/tasarim/yazi.html" style={{ display: 'block' }}>
-          <div className="cat">Tefsir</div>
-          <h3>{x.t}</h3>
-          <p>{x.p}</p>
-        </a>
-      ))}
-    </div>
   )
 }
 

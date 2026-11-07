@@ -17,7 +17,10 @@ export function Header({
   ui,
   activeKey = 'home',
   glintOnLoad = true,
+  yaziSlug,
 }: Omit<LayoutProps, 'ayarlar'> & {
+  /** Yazı sayfasında dil menüsü aynı yazıya gider. */
+  yaziSlug?: string
   /** Logo açılışta bir kez parlasın mı (ana sayfada kapalı). */
   glintOnLoad?: boolean
 }) {
@@ -54,7 +57,7 @@ export function Header({
               ))}
             </nav>
             <div className="tools">
-              <LangMenu locale={locale} activeKey={activeKey} label={ui.dilSec ?? ''} />
+              <LangMenu locale={locale} activeKey={activeKey} label={ui.dilSec ?? ''} yaziSlug={yaziSlug} />
               <ThemeToggle label={ui.temaDegistir ?? ''} labelDark={ui.temaGunduz ?? ''} />
               <button
                 ref={menuBtn}

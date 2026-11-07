@@ -7,9 +7,11 @@ import { Header } from '@/components/Header'
 import { HomeBooks } from '@/components/HomeBooks'
 import { HomeDersler } from '@/components/HomeDersler'
 import { HomeHero } from '@/components/HomeHero'
-import { Hayati, Icazet, VideoSection, YazilarList } from '@/components/HomeStatic'
+import { Hayati, Icazet, VideoSection } from '@/components/HomeStatic'
 import { HomeWorks } from '@/components/HomeWorks'
+import { HomeYazilar } from '@/components/HomeYazilar'
 import { toWorks } from '@/components/works'
+import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
 import { isLocale, localizedPath } from '@/i18n/config'
 import {
   getAnasayfa,
@@ -19,6 +21,7 @@ import {
   getEserler,
   getSiteAyarlari,
   getUi,
+  getYazilar,
 } from '@/lib/data'
 
 import '../styles/anasayfa.css'
@@ -26,7 +29,7 @@ import '../styles/anasayfa.css'
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
@@ -34,7 +37,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getAnasayfaEserleri(locale),
     getAnasayfaKitaplari(locale),
     getDersler(locale),
+    getYazilar(locale),
   ])
+  const yazilar = toYazilar(yazilarDocs, ui, locale)
 
   return (
     // Ana sayfaya özgü ölçüler (.wrap 1180px, alt bilgi vb.) yalnızca .home altında geçerlidir.
@@ -69,7 +74,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       <section id="yazilar">
         <div className="wrap two">
-          <YazilarList />
+          <HomeYazilar yazilar={yazilar} ui={ui} locale={locale} />
           <div>
             <div className="sec-head" style={{ marginBottom: 24 }}>
               <div>
@@ -80,7 +85,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 {ui.tumuOk}
               </a>
             </div>
-            <HomeBooks books={toBooks(kitaplar)} ui={ui} href={localizedPath('kitaplar', locale)} />
+            <HomeBooks
+              books={toBooks(kitaplar)}
+              ui={ui}
+              href={localizedPath('kitaplar', locale)}
+              locale={locale}
+              yazili={yaziliKitaplar(yazilar)}
+            />
           </div>
         </div>
       </section>

@@ -6,6 +6,8 @@ export type BookRole = 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen'
 /** Raf, kapak ve ayrıntı penceresinin kullandığı düz (serileştirilebilir) kitap verisi. */
 export type Book = {
   id: number
+  /** Adres parçası; İlgili yazılar bağlantısı (?kitap=) için. */
+  slug: string | null
   baslik: string
   altBaslik: string | null
   rol: BookRole | null
@@ -42,6 +44,7 @@ export function toBooks(docs: Kitaplar[]): Book[] {
     const m = typeof d.kapak === 'object' ? (d.kapak as Media | null) : null
     return {
       id: d.id,
+      slug: text(d.slug),
       baslik: d.baslik,
       altBaslik: text(d.altBaslik),
       rol: d.rol ?? null,

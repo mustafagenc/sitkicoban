@@ -7,7 +7,7 @@ export type NavLink = { href: string; label: string; key?: PageKey }
 export function navLinks(locale: Locale, ui: UiMetinleri): NavLink[] {
   return [
     { key: 'eserler', href: localizedPath('eserler', locale), label: ui.navEserler ?? '' },
-    { href: TASARIM_LINKS.yazilar, label: ui.navYazilar ?? '' },
+    { key: 'yazilar', href: localizedPath('yazilar', locale), label: ui.navYazilar ?? '' },
     { key: 'kitaplar', href: localizedPath('kitaplar', locale), label: ui.navKitaplar ?? '' },
     { href: TASARIM_LINKS.videolar, label: ui.navVideolar ?? '' },
     { href: TASARIM_LINKS.hayati, label: ui.navHayati ?? '' },

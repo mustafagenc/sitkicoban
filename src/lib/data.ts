@@ -127,7 +127,7 @@ export async function findYazilar(payload: Payload, locale: Locale) {
     pagination: false,
     // Liste gövdeyi çizmez; ilgili kitaplardan yalnızca slug gerekir (?kitap= süzgeci).
     select: { govde: false },
-    populate: { kitaplar: { slug: true } },
+    populate: { kitaplar: { slug: true, baslik: true } },
     ...opts(locale),
   })
   return res.docs
@@ -169,11 +169,11 @@ export async function findYaziKategorileri(payload: Payload, locale: Locale) {
   return res.docs
 }
 
-export const getYazilar = cached('yazilar', ['yazilar', 'media'], async (locale: Locale) =>
+export const getYazilar = cached('yazilar', ['yazilar', 'media', 'kitaplar'], async (locale: Locale) =>
   findYazilar(await getPayload({ config }), locale),
 )
 
-export const getYazi = cached('yazi', ['yazilar', 'media'], async (slug: string, locale: Locale) =>
+export const getYazi = cached('yazi', ['yazilar', 'media', 'kitaplar'], async (slug: string, locale: Locale) =>
   findYazi(await getPayload({ config }), slug, locale),
 )
 

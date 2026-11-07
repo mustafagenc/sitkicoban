@@ -24,6 +24,7 @@ const mediaIds: (number | string)[] = []
 const eserIds: (number | string)[] = []
 const yaziIds: (number | string)[] = []
 const kategoriIds: (number | string)[] = []
+const kitapIds: (number | string)[] = []
 
 const BODY = {
   root: {
@@ -99,6 +100,7 @@ describe('revalidation hooks', () => {
   afterAll(async () => {
     for (const id of yaziIds) await payload.delete({ collection: 'yazilar', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of kategoriIds) await payload.delete({ collection: 'yazi-kategorileri', id, context: { disableRevalidate: true } }).catch(() => {})
+    for (const id of kitapIds) await payload.delete({ collection: 'kitaplar', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of eserIds) await payload.delete({ collection: 'eserler', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of mediaIds) await payload.delete({ collection: 'media', id, context: { disableRevalidate: true } }).catch(() => {})
     vi.unstubAllGlobals()
@@ -168,6 +170,24 @@ describe('revalidation hooks', () => {
       for (const u of detailUrls('rv-yayinda')) expect(urls).toContain(u)
       for (const u of detailUrls('rv-taslak')) expect(urls).not.toContain(u)
     }
+  })
+
+  it('warms published yazi detail pages on kitaplar saves (related books are rendered)', async () => {
+    await makeYazi('rv-kitapli', true)
+    await makeYazi('rv-kitapsiz-taslak', false)
+    const k = await payload.create({
+      collection: 'kitaplar',
+      data: { baslik: 'RV Kitap' },
+      context: { disableRevalidate: true },
+    })
+    kitapIds.push(k.id)
+    await payload.update({ collection: 'kitaplar', id: k.id, data: { yil: '2025' } })
+    expect(tagCalls().sort()).toEqual(['anasayfa', 'kitaplar'])
+    runAfter()
+    const urls = warmCalls()
+    for (const u of detailUrls('rv-kitapli')) expect(urls).toContain(u)
+    for (const u of detailUrls('rv-kitapsiz-taslak')) expect(urls).not.toContain(u)
+    for (const p of ['/kitaplar', '/yazilar']) expect(urls).toContain(`http://localhost:3999${p}`)
   })
 
   it('does not warm yazi detail pages for unrelated sources', async () => {
