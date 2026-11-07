@@ -73,6 +73,16 @@ export const UI_STRINGS: Record<UiKey, S> = {
     en: 'Anthologies of classical poetry, simplified editions of Sufi classics and wise stories for children.',
     ar: 'مختارات من الشعر الكلاسيكي، وطبعات مبسّطة لكلاسيكيات التصوف، وقصص حكيمة للأطفال.',
   },
+  derslerEyebrow: { tr: 'Meşk ve Dersler', en: 'Meşk and Classes', ar: 'المَشْق والدروس' },
+  derslerBaslik: { tr: 'Bu dönem dersler', en: 'Classes this term', ar: 'دروس هذا الفصل' },
+  derslerAciklama: {
+    tr: "Sıtkı Çoban'ın hüsn-i hat meşk ettirdiği güncel dersler.",
+    en: 'Current classes in which Sıtkı Çoban teaches calligraphy through meşk.',
+    ar: 'الدروس الحالية التي يُمارس فيها سيتكي تشوبان المَشْق في فنّ الخط.',
+  },
+  kontenjan: { tr: 'Kontenjan', en: 'Capacity', ar: 'العدد المتاح' },
+  afisiBuyut: { tr: 'Afişi büyüt', en: 'Enlarge the poster', ar: 'تكبير الملصق' },
+  bilgiAlmakIcin: { tr: 'Bilgi almak için yazın →', en: 'Write to us for details →', ar: 'راسلنا للاستفسار ←' },
   footerTelif: {
     tr: '© 2026 Sıtkı Çoban · sitkicoban.com',
     en: '© 2026 Sıtkı Çoban · sitkicoban.com',

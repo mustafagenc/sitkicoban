@@ -9,6 +9,7 @@ import { tr } from '@payloadcms/translations/languages/tr'
 
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
+import { Dersler } from './collections/Dersler'
 import { EserTurleri } from './collections/EserTurleri'
 import { Eserler } from './collections/Eserler'
 import { Kitaplar } from './collections/Kitaplar'
@@ -54,7 +55,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar],
+  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler],
   globals: [SiteAyarlari, UiMetinleri, Anasayfa],
   localization: {
     locales: [

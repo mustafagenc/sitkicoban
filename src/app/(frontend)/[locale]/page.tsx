@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import { toBooks } from '@/components/books'
+import { toDersler } from '@/components/dersler'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { HomeBooks } from '@/components/HomeBooks'
@@ -14,6 +15,7 @@ import {
   getAnasayfa,
   getAnasayfaEserleri,
   getAnasayfaKitaplari,
+  getDersler,
   getEserler,
   getSiteAyarlari,
   getUi,
@@ -24,13 +26,14 @@ import '../styles/anasayfa.css'
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
     getEserler(locale),
     getAnasayfaEserleri(locale),
     getAnasayfaKitaplari(locale),
+    getDersler(locale),
   ])
 
   return (
@@ -83,7 +86,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <VideoSection />
-      <HomeDersler />
+      <HomeDersler dersler={toDersler(dersler)} ui={ui} locale={locale} />
       <Hayati />
 
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />

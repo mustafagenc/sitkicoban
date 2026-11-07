@@ -5,13 +5,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import config from '@/payload.config'
 import { readDesign } from '@/seed/read-design'
 import { seed } from '@/seed'
+import { SEED_DERSLER } from '@/seed/dersler'
 
 let payload: Payload
 
 const dbName = () => new URL(process.env.DATABASE_URL ?? 'postgres://x/none').pathname.replace(/^\//, '')
 
 async function wipe() {
-  for (const collection of ['eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
+  for (const collection of ['dersler', 'eserler', 'kitaplar', 'eser-turleri', 'yazi-turleri', 'media', 'users'] as const) {
     await payload.delete({ collection, where: { id: { exists: true } } })
   }
 }
@@ -54,8 +55,8 @@ describe('seed', () => {
     expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(13)
     expect((await payload.count({ collection: 'kitaplar' })).totalDocs).toBe(design.kitaplar.length)
     expect((await payload.count({ collection: 'users' })).totalDocs).toBe(1)
-    // 13 works and 7 covers share images: one media doc per distinct file.
-    const files = new Set([...design.eserler.map((e) => e.f), ...design.kitaplar.filter((k) => k.img).map((k) => k.img)])
+    // works, covers and lesson posters share images: one media doc per distinct file.
+    const files = new Set([...design.eserler.map((e) => e.f), ...design.kitaplar.filter((k) => k.img).map((k) => k.img), ...SEED_DERSLER.flatMap((d) => (d.afis ? [d.afis.file] : []))])
     expect((await payload.count({ collection: 'media' })).totalDocs).toBe(files.size)
   }, 120_000)
 

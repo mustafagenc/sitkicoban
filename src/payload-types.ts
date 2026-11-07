@@ -73,6 +73,7 @@ export interface Config {
     'eser-turleri': EserTurleri;
     eserler: Eserler;
     kitaplar: Kitaplar;
+    dersler: Dersler;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     'eser-turleri': EserTurleriSelect<false> | EserTurleriSelect<true>;
     eserler: EserlerSelect<false> | EserlerSelect<true>;
     kitaplar: KitaplarSelect<false> | KitaplarSelect<true>;
+    dersler: DerslerSelect<false> | DerslerSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -166,6 +168,7 @@ export interface User {
 export interface Media {
   id: number;
   alt?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -265,6 +268,41 @@ export interface Kitaplar {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dersler".
+ */
+export interface Dersler {
+  id: number;
+  kurum: string;
+  baslik: string;
+  altBaslik?: string | null;
+  aciklama?: string | null;
+  /**
+   * Örn. Her Perşembe
+   */
+  gun: string;
+  /**
+   * Örn. 16.30–18.00
+   */
+  saat?: string | null;
+  yer?: string | null;
+  /**
+   * Örn. 25 kişi
+   */
+  kontenjan?: string | null;
+  /**
+   * Boşsa logolu boş kutu görünür.
+   */
+  afis?: (number | null) | Media;
+  /**
+   * Bu tarihten sonra ders ana sayfadan kalkar.
+   */
+  bitis: string;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -310,6 +348,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'kitaplar';
         value: number | Kitaplar;
+      } | null)
+    | ({
+        relationTo: 'dersler';
+        value: number | Dersler;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -382,6 +424,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -460,6 +503,25 @@ export interface KitaplarSelect<T extends boolean = true> {
   sira?: T;
   anasayfadaGoster?: T;
   anasayfaSira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dersler_select".
+ */
+export interface DerslerSelect<T extends boolean = true> {
+  kurum?: T;
+  baslik?: T;
+  altBaslik?: T;
+  aciklama?: T;
+  gun?: T;
+  saat?: T;
+  yer?: T;
+  kontenjan?: T;
+  afis?: T;
+  bitis?: T;
+  sira?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -578,6 +640,12 @@ export interface UiMetinleri {
   eserlerAciklama?: string | null;
   kitaplarBaslik?: string | null;
   kitaplarAciklama?: string | null;
+  derslerEyebrow?: string | null;
+  derslerBaslik?: string | null;
+  derslerAciklama?: string | null;
+  kontenjan?: string | null;
+  afisiBuyut?: string | null;
+  bilgiAlmakIcin?: string | null;
   footerTelif?: string | null;
   footerNot?: string | null;
   updatedAt?: string | null;
@@ -674,6 +742,12 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   eserlerAciklama?: T;
   kitaplarBaslik?: T;
   kitaplarAciklama?: T;
+  derslerEyebrow?: T;
+  derslerBaslik?: T;
+  derslerAciklama?: T;
+  kontenjan?: T;
+  afisiBuyut?: T;
+  bilgiAlmakIcin?: T;
   footerTelif?: T;
   footerNot?: T;
   updatedAt?: T;

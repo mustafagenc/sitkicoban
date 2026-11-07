@@ -58,6 +58,12 @@ const LABELS = {
   eserlerAciklama: 'Eserler sayfası açıklaması',
   kitaplarBaslik: 'Kitaplar sayfası başlığı',
   kitaplarAciklama: 'Kitaplar sayfası açıklaması',
+  derslerEyebrow: 'Dersler bölümü: üst etiket',
+  derslerBaslik: 'Dersler bölümü: başlık',
+  derslerAciklama: 'Dersler bölümü: açıklama',
+  kontenjan: 'Ders kartı: Kontenjan',
+  afisiBuyut: 'Ders kartı: Afişi büyüt',
+  bilgiAlmakIcin: 'Ders kartı: Bilgi almak için yazın',
   footerTelif: 'Alt bilgi: telif',
   footerNot: 'Alt bilgi: not',
 } as const

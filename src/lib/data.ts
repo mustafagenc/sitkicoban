@@ -102,3 +102,15 @@ export const getAnasayfaKitaplari = cached(
     return res.docs
   },
 )
+
+export const getDersler = cached('dersler', ['dersler', 'media'], async (locale: Locale) => {
+  const payload = await getPayload({ config })
+  const res = await payload.find({
+    collection: 'dersler',
+    sort: 'sira',
+    limit: 1000,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs
+})

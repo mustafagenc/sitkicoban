@@ -5,6 +5,7 @@ import type { Payload } from 'payload'
 import { slugify } from '@/lib/slug'
 import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
+import { SEED_DERSLER } from './dersler'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
 
@@ -172,6 +173,36 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       anasayfadaGoster: homeIdx !== -1,
       anasayfaSira: homeIdx !== -1 ? homeIdx : null,
     })
+  }
+
+  // Lessons (key: kurum + baslik in tr)
+  for (const [i, d] of SEED_DERSLER.entries()) {
+    const afis = d.afis ? await upsertMedia(payload, root, d.afis.file, d.afis.alt) : null
+    const data = {
+      kurum: d.kurum,
+      baslik: d.baslik,
+      altBaslik: d.altBaslik ?? null,
+      aciklama: d.aciklama ?? null,
+      gun: d.gun,
+      saat: d.saat,
+      yer: d.yer,
+      kontenjan: d.kontenjan ?? null,
+      afis,
+      bitis: `${d.bitis}T00:00:00.000Z`,
+      sira: i,
+    }
+    const found = await payload.find({
+      collection: 'dersler',
+      where: { and: [{ kurum: { equals: d.kurum } }, { baslik: { equals: d.baslik } }] },
+      locale: LOCALE,
+      limit: 1,
+      depth: 0,
+    })
+    if (found.docs[0]) {
+      await payload.update({ collection: 'dersler', id: found.docs[0].id, data, locale: LOCALE, context: CTX })
+    } else {
+      await payload.create({ collection: 'dersler', data, locale: LOCALE, context: CTX })
+    }
   }
 
   // Globals

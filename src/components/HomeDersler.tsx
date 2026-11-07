@@ -2,57 +2,20 @@
 
 import { useEffect, useState } from 'react'
 
+import type { Locale } from '@/i18n/config'
+import { localizedPath } from '@/i18n/config'
+import type { UiMetinleri } from '@/payload-types'
+
+import { aktifDersler, type Ders } from './dersler'
 import { LOGO_SRC } from './logo'
 
 /*
- * Meşk ve Dersler (şimdilik sabit, Türkçe). Bitiş tarihi (data-bitis) geçen kart istemcide gizlenir;
- * kart kalmazsa bölüm hiç görünmez. Afiş tıklanınca tam ekran açılır (tıklama ya da Esc kapatır).
+ * Meşk ve Dersler (panelden). Statik üretimde tüm kartlar basılır; bugünün tarihi istemcide bilinince
+ * bitiş tarihi geçenler gizlenir, kart kalmazsa bölüm hiç görünmez. Afiş tıklanınca tam ekran açılır
+ * (tıklama ya da Esc kapatır).
  */
 
-const ILETISIM_MESK = '/tasarim/iletisim.html?konu=Meşk'
-
 type Afis = { src: string; alt: string }
-type Ders = {
-  bitis: string
-  afis: Afis | null
-  kurum: string
-  baslik: React.ReactNode
-  gun: string
-  saat: string
-  yer: string
-  kontenjan?: string
-}
-
-const DERSLER: Ders[] = [
-  {
-    bitis: '2027-01-31',
-    afis: {
-      src: '/tasarim/img/duyuru-imu-mesk.jpg',
-      alt: "Bir Medeniyet Çizgisi: Hüsn-i Hat, Nokta'nın Seyri afişi",
-    },
-    kurum: 'İstanbul Medeniyet Üniversitesi',
-    baslik: (
-      <>
-        Hüsn-i Hat Meşkleri
-        <br />
-        <i style={{ fontSize: '.8em', color: 'var(--ink-soft)' }}>Nokta&apos;nın Seyri</i>
-      </>
-    ),
-    gun: 'Her Perşembe',
-    saat: '16.30–18.00',
-    yer: 'Kuzey Yerleşke, B Blok Derslik 106',
-    kontenjan: 'Kontenjan: 25 kişi',
-  },
-  {
-    bitis: '2027-06-30',
-    afis: null,
-    kurum: 'Çamlıca Kız Anadolu İmam Hatip Lisesi',
-    baslik: 'Hat Dersi',
-    gun: 'Her Cumartesi',
-    saat: '09.00–11.00',
-    yer: 'Çamlıca Kız Anadolu İmam Hatip Lisesi, Üsküdar',
-  },
-]
 
 const ICON = {
   saat: (
@@ -75,7 +38,7 @@ const ICON = {
   ),
 }
 
-export function HomeDersler() {
+export function HomeDersler({ dersler, ui, locale }: { dersler: Ders[]; ui: UiMetinleri; locale: Locale }) {
   // Statik üretimde tüm kartlar basılır; bugünün tarihi istemcide bilinince süresi geçenler gizlenir.
   const [bugun, setBugun] = useState<string | null>(null)
   const [afis, setAfis] = useState<Afis | null>(null)
@@ -93,28 +56,28 @@ export function HomeDersler() {
     return () => removeEventListener('keydown', onKey)
   }, [afis])
 
-  const gecerli = DERSLER.filter((d) => !bugun || d.bitis >= bugun)
+  const gecerli = bugun ? aktifDersler(dersler, bugun) : dersler
   if (!gecerli.length) return null
 
   return (
     <>
-      <section className="dersler" id="dersler" lang="tr" dir="ltr">
+      <section className="dersler" id="dersler">
         <div className="wrap">
           <div className="sec-head">
             <div>
-              <div className="eyebrow">Meşk ve Dersler</div>
-              <h2>Bu dönem dersler</h2>
-              <p>Sıtkı Çoban&apos;ın hüsn-i hat meşk ettirdiği güncel dersler.</p>
+              {ui.derslerEyebrow && <div className="eyebrow">{ui.derslerEyebrow}</div>}
+              {ui.derslerBaslik && <h2>{ui.derslerBaslik}</h2>}
+              {ui.derslerAciklama && <p>{ui.derslerAciklama}</p>}
             </div>
           </div>
           <div className="ders-list">
             {gecerli.map((d) => (
-              <article key={d.kurum} className="ders" data-bitis={d.bitis}>
+              <article key={d.id} className="ders" data-bitis={d.bitis}>
                 {d.afis ? (
                   <button
                     className="afis"
                     type="button"
-                    aria-label="Afişi büyüt"
+                    aria-label={ui.afisiBuyut ?? undefined}
                     onClick={() => setAfis(d.afis)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -128,28 +91,45 @@ export function HomeDersler() {
                 )}
                 <div>
                   <div className="kurum">{d.kurum}</div>
-                  <h3>{d.baslik}</h3>
+                  <h3>
+                    {d.baslik}
+                    {d.altBaslik && (
+                      <>
+                        <br />
+                        <i style={{ fontSize: '.8em', color: 'var(--ink-soft)' }}>{d.altBaslik}</i>
+                      </>
+                    )}
+                  </h3>
+                  {d.aciklama && <p>{d.aciklama}</p>}
                   <ul>
                     <li>
                       {ICON.saat}
                       <span>
-                        <b>{d.gun}</b> · {d.saat}
+                        <b>{d.gun}</b>
+                        {d.saat && <> · {d.saat}</>}
                       </span>
                     </li>
-                    <li>
-                      {ICON.yer}
-                      <span>{d.yer}</span>
-                    </li>
+                    {d.yer && (
+                      <li>
+                        {ICON.yer}
+                        <span>{d.yer}</span>
+                      </li>
+                    )}
                     {d.kontenjan && (
                       <li>
                         {ICON.kisi}
-                        <span>{d.kontenjan}</span>
+                        <span>
+                          {ui.kontenjan ? `${ui.kontenjan}: ` : ''}
+                          {d.kontenjan}
+                        </span>
                       </li>
                     )}
                   </ul>
-                  <a className="git" href={ILETISIM_MESK}>
-                    Bilgi almak için yazın →
-                  </a>
+                  {ui.bilgiAlmakIcin && (
+                    <a className="git" href={`${localizedPath('iletisim', locale)}?konu=Meşk`}>
+                      {ui.bilgiAlmakIcin}
+                    </a>
+                  )}
                 </div>
               </article>
             ))}
