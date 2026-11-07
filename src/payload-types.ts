@@ -563,6 +563,12 @@ export interface UiMetinleri {
   dilSec?: string | null;
   asagiKaydir?: string | null;
   kapat?: string | null;
+  eserTarih?: string | null;
+  eserIpucu?: string | null;
+  uzaklastir?: string | null;
+  yakinlastir?: string | null;
+  sigdir?: string | null;
+  eserSor?: string | null;
   onceki?: string | null;
   sonraki?: string | null;
   eserlerBaslik?: string | null;
@@ -650,6 +656,12 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   dilSec?: T;
   asagiKaydir?: T;
   kapat?: T;
+  eserTarih?: T;
+  eserIpucu?: T;
+  uzaklastir?: T;
+  yakinlastir?: T;
+  sigdir?: T;
+  eserSor?: T;
   onceki?: T;
   sonraki?: T;
   eserlerBaslik?: T;

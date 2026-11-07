@@ -11,36 +11,6 @@ import '../app/(frontend)/styles/eser-lb.css'
 /** Görüntüleyicinin açılışı: gezilecek eserlerin `works` içindeki sıraları ve açılacak eser. */
 export type LightboxOpen = { list: number[]; index: number }
 
-const TXT: Record<
-  Locale,
-  { tarih: string; ipucu: string; uzaklastir: string; yakinlastir: string; sigdir: string; sor: string }
-> = {
-  tr: {
-    tarih: 'Tarih',
-    ipucu: 'Yakınlaştırmak için kaydırın ya da çift tıklayın',
-    uzaklastir: 'Uzaklaştır',
-    yakinlastir: 'Yakınlaştır',
-    sigdir: 'Ekrana sığdır',
-    sor: 'Bu eser hakkında sorun →',
-  },
-  en: {
-    tarih: 'Date',
-    ipucu: 'Scroll or double-click to zoom',
-    uzaklastir: 'Zoom out',
-    yakinlastir: 'Zoom in',
-    sigdir: 'Fit to screen',
-    sor: 'Ask about this work →',
-  },
-  ar: {
-    tarih: 'التاريخ',
-    ipucu: 'مرّر أو انقر مرتين للتكبير',
-    uzaklastir: 'تصغير',
-    yakinlastir: 'تكبير',
-    sigdir: 'ملاءمة الشاشة',
-    sor: 'اسأل عن هذا العمل ←',
-  },
-}
-
 /** Hicrî yıl + karşılık gelen miladî yıllar: 1442 -> "1442 (2020–21)". Sayı değilse olduğu gibi. */
 export function tarih(y: string): string {
   if (!/^\d{3,4}$/.test(y)) return y
@@ -59,7 +29,6 @@ export function WorkLightbox({
   works,
   open,
   ui,
-  locale,
   onClose,
 }: {
   works: Work[]
@@ -68,7 +37,6 @@ export function WorkLightbox({
   locale: Locale
   onClose: () => void
 }) {
-  const t = TXT[locale]
   const [session, setSession] = useState<LightboxOpen | null>(null)
   const [cur, setCur] = useState(0)
   const [pct, setPct] = useState(100)
@@ -284,7 +252,7 @@ export function WorkLightbox({
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={imgRef} id="lb-img" alt={work?.baslik ?? ''} draggable={false} />
-        <div className="lb-hint">{t.ipucu}</div>
+        <div className="lb-hint">{ui.eserIpucu}</div>
         <button
           type="button"
           className="lb-nav prev"
@@ -315,7 +283,7 @@ export function WorkLightbox({
           </button>
           <button
             type="button"
-            aria-label={t.uzaklastir}
+            aria-label={ui.uzaklastir ?? ''}
             onClick={() => zoomAt(z.current.s / 1.5, ...center(), true)}
           >
             −
@@ -325,7 +293,7 @@ export function WorkLightbox({
           </button>
           <button
             type="button"
-            aria-label={t.yakinlastir}
+            aria-label={ui.yakinlastir ?? ''}
             onClick={() => zoomAt(z.current.s * 1.5, ...center(), true)}
           >
             +
@@ -340,7 +308,7 @@ export function WorkLightbox({
           >
             →
           </button>
-          <button type="button" aria-label={t.sigdir} onClick={() => zoomAt(1, ...center(), true)}>
+          <button type="button" aria-label={ui.sigdir ?? ''} onClick={() => zoomAt(1, ...center(), true)}>
             <svg
               width="16"
               height="16"
@@ -373,8 +341,8 @@ export function WorkLightbox({
               <h2 id="lb-title">{work.baslik}</h2>
               {tags.length > 0 && (
                 <div className="tags">
-                  {tags.map((g) => (
-                    <span className="tag" key={g}>
+                  {tags.map((g, i) => (
+                    <span className="tag" key={`${i}-${g}`}>
                       {g}
                     </span>
                   ))}
@@ -393,7 +361,7 @@ export function WorkLightbox({
               ) : null}
               {work.aciklama && <p className="desc">{work.aciklama}</p>}
               <dl>
-                {row(t.tarih, work.yil ? tarih(work.yil) : null)}
+                {row(ui.eserTarih, work.yil ? tarih(work.yil) : null)}
                 {row(ui.olcu, work.olcu)}
                 {row(ui.malzeme, work.malzeme)}
                 {row(ui.tezhip, work.tezhip)}
@@ -403,7 +371,7 @@ export function WorkLightbox({
                 className="ask"
                 href={`${TASARIM_LINKS.iletisim}?eser=${encodeURIComponent(work.baslik)}`}
               >
-                {t.sor}
+                {ui.eserSor}
               </a>
             </>
           )}
