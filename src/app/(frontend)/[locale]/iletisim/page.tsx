@@ -24,7 +24,7 @@ export default async function IletisimPage({ params }: Props) {
   const [ui, ayarlar, iletisim] = await Promise.all([getUi(locale), getSiteAyarlari(locale), getIletisim(locale)])
   const m = iletisim.metinler ?? {}
   const maddeler = iletisim.maddeler ?? []
-  const konular = (iletisim.konular ?? []).map((k) => k.ad)
+  const konular = (iletisim.konular ?? []).map((k) => ({ ad: k.ad, anahtar: k.anahtar }))
 
   return (
     <>

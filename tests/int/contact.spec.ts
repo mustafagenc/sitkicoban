@@ -12,7 +12,7 @@ vi.mock('@/lib/data', () => ({
 }))
 
 import { sendContact } from '@/app/(frontend)/[locale]/iletisim/actions'
-import { validateContact } from '@/lib/contact'
+import { onKonu, validateContact } from '@/lib/contact'
 
 const NOW = 1_000_000
 const valid = {
@@ -41,10 +41,17 @@ describe('validateContact', () => {
     })
   })
 
-  it('treats the honeypot, a missing timestamp and a fast submit as spam', () => {
+  it('treats only the honeypot and a fast submit (positive t under 3 s) as spam', () => {
     expect(validateContact({ ...valid, website: 'x' }, NOW)).toEqual({ ok: false, reason: 'spam' })
-    expect(validateContact({ ...valid, t: '' }, NOW)).toEqual({ ok: false, reason: 'spam' })
     expect(validateContact({ ...valid, t: String(NOW - 1000) }, NOW)).toEqual({ ok: false, reason: 'spam' })
+  })
+
+  it('treats a missing or non-positive timestamp (sent before JS loaded) as invalid, not spam', () => {
+    for (const t of ['', '0', '-5', 'abc']) {
+      expect(validateContact({ ...valid, t }, NOW)).toEqual({ ok: false, reason: 'invalid' })
+    }
+    const { t: _t, ...yok } = valid
+    expect(validateContact(yok, NOW)).toEqual({ ok: false, reason: 'invalid' })
   })
 
   it('rejects bad fields as invalid', () => {
@@ -91,6 +98,7 @@ describe('sendContact', () => {
 
   it('answers error for an invalid message', async () => {
     expect(await sendContact({ status: 'idle' }, form({ mesaj: 'a'.repeat(2001) }))).toEqual({ status: 'error' })
+    expect(await sendContact({ status: 'idle' }, form({ t: '0' }))).toEqual({ status: 'error' })
     expect(send).not.toHaveBeenCalled()
   })
 
@@ -118,5 +126,39 @@ describe('sendContact', () => {
     expect(await sendContact({ status: 'idle' }, form())).toEqual({ status: 'error' })
     send.mockResolvedValueOnce({ data: null, error: { message: 'bad' } })
     expect(await sendContact({ status: 'idle' }, form())).toEqual({ status: 'error' })
+  })
+})
+
+describe('onKonu', () => {
+  const tr = [
+    { ad: 'Eser talebi', anahtar: 'eser' },
+    { ad: 'Meşk', anahtar: 'mesk' },
+    { ad: 'Diğer', anahtar: 'diger' },
+  ]
+  const ar = [
+    { ad: 'طلب بشأن عمل', anahtar: 'eser' },
+    { ad: 'المَشْق', anahtar: 'mesk' },
+  ]
+
+  it('selects by the stable key in every language', () => {
+    expect(onKonu(tr, { konu: 'mesk' })).toBe('Meşk')
+    expect(onKonu(ar, { konu: 'mesk' })).toBe('المَشْق')
+  })
+
+  it('still accepts a matching (translated) name', () => {
+    expect(onKonu(tr, { konu: 'Meşk' })).toBe('Meşk')
+    expect(onKonu(ar, { konu: 'Meşk' })).toBe('')
+  })
+
+  it('selects the work topic for ?eser=, falling back to the first topic', () => {
+    const ters = [tr[2], tr[0]]
+    expect(onKonu(ters, { eser: 'Hilye' })).toBe('Eser talebi')
+    expect(onKonu([{ ad: 'Tek' }], { eser: 'Hilye' })).toBe('Tek')
+    expect(onKonu([], { eser: 'Hilye' })).toBe('')
+  })
+
+  it('selects nothing for an unknown or missing topic', () => {
+    expect(onKonu(tr, { konu: 'yok' })).toBe('')
+    expect(onKonu(tr, {})).toBe('')
   })
 })

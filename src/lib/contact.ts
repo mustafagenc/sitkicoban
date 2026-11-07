@@ -17,13 +17,15 @@ function field(input: FormData | Record<string, string>, name: string): string {
 }
 
 /**
- * `now`: şimdiki zaman (ms). Bal küpü alanı (`website`) doluysa, `t` (formun çizildiği an)
- * yoksa ya da 3 saniyeden yeniyse spam; diğer her kusur "invalid".
+ * `now`: şimdiki zaman (ms). Yalnızca bal küpü alanı (`website`) doluysa ya da `t` (formun çizildiği an)
+ * 3 saniyeden yeniyse spam (sessizce "gönderildi" denir). `t` yoksa ya da pozitif değilse form, JS
+ * yüklenmeden gönderilmiştir: ziyaretçi görünür bir hata alsın diye "invalid". Diğer her kusur da "invalid".
  */
 export function validateContact(input: FormData | Record<string, string>, now: number): ContactResult {
   if (field(input, 'website') !== '') return { ok: false, reason: 'spam' }
   const t = Number(field(input, 't'))
-  if (!Number.isFinite(t) || t <= 0 || now - t < MIN_FILL_MS) return { ok: false, reason: 'spam' }
+  if (!Number.isFinite(t) || t <= 0) return { ok: false, reason: 'invalid' }
+  if (now - t < MIN_FILL_MS) return { ok: false, reason: 'spam' }
 
   const ad = field(input, 'ad').trim()
   const eposta = field(input, 'eposta').trim()
@@ -45,4 +47,17 @@ export function validateContact(input: FormData | Record<string, string>, now: n
   if (!ok) return { ok: false, reason: 'invalid' }
 
   return { ok: true, data: { ad, eposta, konu, telefon: telefon || undefined, mesaj } }
+}
+
+export type Konu = { ad: string; anahtar?: string | null }
+
+/**
+ * Adres çubuğundan gelen hazır konu (seçilecek konunun adı; yoksa ''). `?eser=` eser konusunu
+ * (`anahtar: eser`, yoksa ilk konu) seçer; `?konu=` önce dilden bağımsız anahtarla, sonra
+ * (eski bağlantılar için) adla eşleşir.
+ */
+export function onKonu(konular: Konu[], q: { konu?: string | null; eser?: string | null }): string {
+  if (q.eser) return (konular.find((k) => k.anahtar === 'eser') ?? konular[0])?.ad ?? ''
+  if (!q.konu) return ''
+  return (konular.find((k) => k.anahtar === q.konu) ?? konular.find((k) => k.ad === q.konu))?.ad ?? ''
 }

@@ -182,6 +182,7 @@ export interface User {
 export interface Media {
   id: number;
   alt?: string | null;
+  prefix?: string | null;
   _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -602,6 +603,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1048,11 +1050,15 @@ export interface Iletisim {
       }[]
     | null;
   /**
-   * Formdaki "Konu" listesi. İlk konu, bir eserden gelen ziyaretçide (Eser hakkında sor) seçili gelir; ?konu=Ad bağlantısı adı eşleşen konuyu seçer.
+   * Formdaki "Konu" listesi. Bir eserden gelen ziyaretçide (Eser hakkında sor) anahtarı "eser" olan konu (yoksa ilk konu) seçili gelir; ?konu=anahtar bağlantısı (ör. ?konu=mesk) anahtarı eşleşen konuyu seçer.
    */
   konular?:
     | {
         ad: string;
+        /**
+         * Dilden bağımsız kısa ad (ör. eser, mesk): üç dilde aynı yazılır; bağlantılar konuyu bununla seçer.
+         */
+        anahtar?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1296,6 +1302,7 @@ export interface IletisimSelect<T extends boolean = true> {
     | T
     | {
         ad?: T;
+        anahtar?: T;
         id?: T;
       };
   metinler?:

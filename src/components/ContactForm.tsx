@@ -3,7 +3,7 @@
 import { useActionState, useState, useSyncExternalStore } from 'react'
 
 import { sendContact, type ContactState } from '@/app/(frontend)/[locale]/iletisim/actions'
-import { EPOSTA_RE, LIMITS } from '@/lib/contact'
+import { EPOSTA_RE, LIMITS, onKonu as hazirKonu, type Konu } from '@/lib/contact'
 import type { Iletisim } from '@/payload-types'
 
 import { LOGO_SRC } from './logo'
@@ -21,7 +21,7 @@ const fill = (tpl: string | null | undefined, vars: Record<string, string | numb
   Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(String(v)), tpl ?? '')
 
 /**
- * İletişim formu. `?konu=` (listede varsa) konuyu, `?eser=` konuyu (ilk konu) ve mesajı önceden doldurur;
+ * İletişim formu. `?konu=` (anahtar ya da ad; listede varsa) konuyu, `?eser=` konuyu (eser konusu) ve mesajı önceden doldurur;
  * adres çubuğu tarayıcıda okunur, sayfa statik kalır. Mesajlar yalnızca e-posta ile gider.
  */
 export function ContactForm({
@@ -32,7 +32,7 @@ export function ContactForm({
 }: {
   m: NonNullable<Iletisim['metinler']>
   locale: string
-  konular: string[]
+  konular: Konu[]
   aydinlatmaHref: string
 }) {
   const [n, setN] = useState(0)
@@ -57,7 +57,7 @@ function Inner({
 }: {
   m: NonNullable<Iletisim['metinler']>
   locale: string
-  konular: string[]
+  konular: Konu[]
   aydinlatmaHref: string
   onReset: () => void
 }) {
@@ -66,8 +66,7 @@ function Inner({
 
   const params = new URLSearchParams(search)
   const eser = params.get('eser')?.slice(0, 200) || null
-  const konuParam = params.get('konu')
-  const onKonu = eser ? (konular[0] ?? '') : konuParam && konular.includes(konuParam) ? konuParam : ''
+  const onKonu = hazirKonu(konular, { konu: params.get('konu'), eser })
   const onMesaj = eser ? `${fill(m.eserHakkinda, { eser })}\n\n` : ''
 
   // null: ziyaretçi dokunmadı, adresten gelen hazır değer geçerli.
@@ -196,8 +195,8 @@ function Inner({
             >
               <option value="">{m.formKonuSec}</option>
               {konular.map((k) => (
-                <option key={k} value={k}>
-                  {k}
+                <option key={k.ad} value={k.ad}>
+                  {k.ad}
                 </option>
               ))}
             </select>

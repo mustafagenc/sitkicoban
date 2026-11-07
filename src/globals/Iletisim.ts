@@ -90,9 +90,20 @@ export const Iletisim: GlobalConfig = {
       localized: true,
       admin: {
         description:
-          'Formdaki "Konu" listesi. İlk konu, bir eserden gelen ziyaretçide (Eser hakkında sor) seçili gelir; ?konu=Ad bağlantısı adı eşleşen konuyu seçer.',
+          'Formdaki "Konu" listesi. Bir eserden gelen ziyaretçide (Eser hakkında sor) anahtarı "eser" olan konu (yoksa ilk konu) seçili gelir; ?konu=anahtar bağlantısı (ör. ?konu=mesk) anahtarı eşleşen konuyu seçer.',
       },
-      fields: [{ name: 'ad', label: 'Konu', type: 'text', required: true }],
+      fields: [
+        { name: 'ad', label: 'Konu', type: 'text', required: true },
+        {
+          name: 'anahtar',
+          label: 'Anahtar',
+          type: 'text',
+          admin: {
+            description:
+              'Dilden bağımsız kısa ad (ör. eser, mesk): üç dilde aynı yazılır; bağlantılar konuyu bununla seçer.',
+          },
+        },
+      ],
     },
     {
       name: 'metinler',

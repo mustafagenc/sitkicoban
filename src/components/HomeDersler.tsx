@@ -126,7 +126,7 @@ export function HomeDersler({ dersler, ui, locale }: { dersler: Ders[]; ui: UiMe
                     )}
                   </ul>
                   {ui.bilgiAlmakIcin && (
-                    <a className="git" href={`${localizedPath('iletisim', locale)}?konu=Meşk`}>
+                    <a className="git" href={`${localizedPath('iletisim', locale)}?konu=mesk`}>
                       {ui.bilgiAlmakIcin}
                     </a>
                   )}
