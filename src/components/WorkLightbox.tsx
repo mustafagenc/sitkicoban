@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { TASARIM_LINKS, type Locale } from '@/i18n/config'
+import { localizedPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
 
 import { type Work } from './works'
@@ -29,6 +29,7 @@ export function WorkLightbox({
   works,
   open,
   ui,
+  locale,
   onClose,
 }: {
   works: Work[]
@@ -369,7 +370,7 @@ export function WorkLightbox({
               </dl>
               <a
                 className="ask"
-                href={`${TASARIM_LINKS.iletisim}?eser=${encodeURIComponent(work.baslik)}`}
+                href={`${localizedPath('iletisim', locale)}?eser=${encodeURIComponent(work.baslik)}`}
               >
                 {ui.eserSor}
               </a>

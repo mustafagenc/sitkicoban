@@ -23,6 +23,7 @@ import { Yazilar } from './collections/Yazilar'
 import { YaziTurleri } from './collections/YaziTurleri'
 import { Anasayfa } from './globals/Anasayfa'
 import { Hayati } from './globals/Hayati'
+import { Iletisim } from './globals/Iletisim'
 import { SiteAyarlari } from './globals/SiteAyarlari'
 import { UiMetinleri } from './globals/UiMetinleri'
 
@@ -62,7 +63,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, VideoKategorileri, Videolar],
-  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati],
+  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati, Iletisim],
   localization: {
     locales: [
       { code: 'tr', label: 'Türkçe' },

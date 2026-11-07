@@ -239,3 +239,9 @@ export const getVideolar = cached('videolar', ['videolar', 'media'], async (loca
 export const getVideoKategorileri = cached('video-kategorileri', ['videolar'], async (locale: Locale) =>
   findVideoKategorileri(await getPayload({ config }), locale),
 )
+
+// İletişim sayfası ve aydınlatma metni.
+export const getIletisim = cached('iletisim', ['iletisim'], async (locale: Locale) => {
+  const payload = await getPayload({ config })
+  return payload.findGlobal({ slug: 'iletisim', ...opts(locale) })
+})

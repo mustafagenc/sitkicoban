@@ -112,12 +112,14 @@ export interface Config {
     'ui-metinleri': UiMetinleri;
     anasayfa: Anasayfa;
     hayati: Hayati;
+    iletisim: Iletisim;
   };
   globalsSelect: {
     'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
     'ui-metinleri': UiMetinleriSelect<false> | UiMetinleriSelect<true>;
     anasayfa: AnasayfaSelect<false> | AnasayfaSelect<true>;
     hayati: HayatiSelect<false> | HayatiSelect<true>;
+    iletisim: IletisimSelect<false> | IletisimSelect<true>;
   };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
@@ -1030,6 +1032,85 @@ export interface Hayati {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "iletisim".
+ */
+export interface Iletisim {
+  id: number;
+  /**
+   * Sayfa başlığının altındaki cümle.
+   */
+  aciklama: string;
+  maddeler?:
+    | {
+        baslik: string;
+        metin: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Formdaki "Konu" listesi. İlk konu, bir eserden gelen ziyaretçide (Eser hakkında sor) seçili gelir; ?konu=Ad bağlantısı adı eşleşen konuyu seçer.
+   */
+  konular?:
+    | {
+        ad: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Formdaki etiketler, hata iletileri ve düğme metinleri.
+   */
+  metinler?: {
+    iletisimNeIcin?: string | null;
+    iletisimNot?: string | null;
+    iletisimEposta?: string | null;
+    formBaslik?: string | null;
+    formAciklama?: string | null;
+    formAd?: string | null;
+    formEposta?: string | null;
+    formKonu?: string | null;
+    formKonuSec?: string | null;
+    formTelefon?: string | null;
+    formIstegeBagli?: string | null;
+    formMesaj?: string | null;
+    formAdHata?: string | null;
+    formEpostaHata?: string | null;
+    formKonuHata?: string | null;
+    formMesajHata?: string | null;
+    formOnayHata?: string | null;
+    formSayac?: string | null;
+    formOnay?: string | null;
+    formAydinlatma?: string | null;
+    formGonder?: string | null;
+    formGonderiliyor?: string | null;
+    formBasariBaslik?: string | null;
+    formBasariMetin?: string | null;
+    formYeniMesaj?: string | null;
+    formHata?: string | null;
+    formKullanilamaz?: string | null;
+    eserHakkinda?: string | null;
+    aydinlatmaBaslik?: string | null;
+    iletisimeDon?: string | null;
+  };
+  aydinlatmaMetni: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-ayarlari_select".
  */
 export interface SiteAyarlariSelect<T extends boolean = true> {
@@ -1194,6 +1275,64 @@ export interface HayatiSelect<T extends boolean = true> {
   kapanis?: T;
   anasayfaOzet?: T;
   anasayfaSoz?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "iletisim_select".
+ */
+export interface IletisimSelect<T extends boolean = true> {
+  aciklama?: T;
+  maddeler?:
+    | T
+    | {
+        baslik?: T;
+        metin?: T;
+        id?: T;
+      };
+  konular?:
+    | T
+    | {
+        ad?: T;
+        id?: T;
+      };
+  metinler?:
+    | T
+    | {
+        iletisimNeIcin?: T;
+        iletisimNot?: T;
+        iletisimEposta?: T;
+        formBaslik?: T;
+        formAciklama?: T;
+        formAd?: T;
+        formEposta?: T;
+        formKonu?: T;
+        formKonuSec?: T;
+        formTelefon?: T;
+        formIstegeBagli?: T;
+        formMesaj?: T;
+        formAdHata?: T;
+        formEpostaHata?: T;
+        formKonuHata?: T;
+        formMesajHata?: T;
+        formOnayHata?: T;
+        formSayac?: T;
+        formOnay?: T;
+        formAydinlatma?: T;
+        formGonder?: T;
+        formGonderiliyor?: T;
+        formBasariBaslik?: T;
+        formBasariMetin?: T;
+        formYeniMesaj?: T;
+        formHata?: T;
+        formKullanilamaz?: T;
+        eserHakkinda?: T;
+        aydinlatmaBaslik?: T;
+        iletisimeDon?: T;
+      };
+  aydinlatmaMetni?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

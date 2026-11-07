@@ -1,0 +1,68 @@
+/* İletişim sayfası (tasarim/iletisim.html). Her kural .iletisim altındadır. */
+
+.iletisim .contact { display:grid; grid-template-columns:1fr 1.35fr; gap:70px; padding:10px 0 110px; align-items:start; }
+
+/* Sol: ne için yazılabilir, bağlantılar */
+.iletisim .side h2 { font-size:30px; margin-bottom:14px; }
+.iletisim .side > p { color:var(--ink-soft); margin:0 0 26px; }
+.iletisim .topics { list-style:none; margin:0 0 34px; padding:0; }
+.iletisim .topics li { display:grid; grid-template-columns:30px 1fr; gap:6px 12px; padding:14px 0; border-bottom:1px solid var(--line); }
+.iletisim .topics li:first-child { border-top:1px solid var(--line); }
+.iletisim .topics .ic { color:var(--gold); font-size:14px; padding-top:4px; }
+.iletisim .topics b { font-family:var(--f-display); font-weight:400; font-size:20px; color:var(--head); display:block; }
+.iletisim .topics span { font-size:15px; color:var(--ink-soft); }
+.iletisim .social { display:flex; gap:10px; flex-wrap:wrap; }
+.iletisim .social a { display:flex; align-items:center; gap:8px; border:1px solid var(--line-strong); border-radius:22px; padding:6px 16px 6px 12px; padding-inline:12px 16px; font-size:15px; transition:.2s; }
+.iletisim .social a:hover { border-color:var(--gold); color:var(--gold); }
+.iletisim .social svg { width:16px; height:16px; }
+
+/* Sağ: form, kâğıt zemin üzerinde */
+.iletisim .card { background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:42px 44px 38px; position:relative; }
+.iletisim .card::before { content:''; position:absolute; inset:7px; border:1px solid var(--line); pointer-events:none; }
+.iletisim .card h2 { font-size:30px; margin-bottom:6px; }
+/* Tasarımda `.card > p` formun içindeki paragrafa uymaz; görünen hâli (varsayılan paragraf) korunur. */
+.iletisim .row { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.iletisim .field { margin-bottom:20px; position:relative; }
+.iletisim label { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.iletisim label .opt { text-transform:none; letter-spacing:0; color:var(--ink-soft); font-style:italic; font-size:13px; }
+.iletisim input, .iletisim select, .iletisim textarea { width:100%; font:inherit; font-size:17px; color:var(--ink); background:transparent; border:0; border-bottom:1px solid var(--line-strong); padding:8px 0 9px; border-radius:0; transition:border-color .2s; }
+.iletisim select { appearance:none; cursor:pointer; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b08a3e' stroke-width='1.4'/%3E%3C/svg%3E") right 4px center no-repeat; }
+[dir="rtl"] .iletisim select { background-position:left 4px center; }
+.iletisim select option { background:var(--bg); color:var(--ink); }
+.iletisim textarea { resize:vertical; min-height:150px; line-height:1.6; }
+.iletisim input:focus, .iletisim select:focus, .iletisim textarea:focus { outline:none; border-bottom-color:var(--gold); border-bottom-width:2px; padding-bottom:8px; }
+.iletisim .field.err input, .iletisim .field.err textarea, .iletisim .field.err select { border-bottom-color:#b5452f; }
+.iletisim .field .msg { font-size:13px; color:#b5452f; margin-top:5px; display:none; }
+.iletisim .field.err .msg { display:block; }
+.iletisim .count { position:absolute; inset-inline-end:0; bottom:-20px; font-size:12px; color:var(--ink-soft); }
+.iletisim .check { display:flex; gap:12px; align-items:flex-start; font-size:14px; color:var(--ink-soft); margin:26px 0 26px; text-transform:none; letter-spacing:0; line-height:1.5; cursor:pointer; }
+.iletisim .check.err { color:#b5452f; }
+.iletisim .check input { width:18px; height:18px; margin:2px 0 0; padding:0; border:0; accent-color:var(--gold); flex-shrink:0; }
+.iletisim .check a { border-bottom:1px solid var(--line-strong); }
+.iletisim .hp { position:absolute; inset-inline-start:0; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; } /* ekran dışına itmek RTL'de yatay kaydırma doğurur */
+.iletisim .send { display:inline-flex; align-items:center; gap:10px; background:var(--head); color:var(--bg); border:0; padding:13px 30px; font:inherit; font-size:16px; letter-spacing:.04em; cursor:pointer; transition:.2s; }
+.iletisim .send:hover { background:var(--gold); }
+.iletisim .send:disabled { opacity:.6; cursor:wait; }
+[dir="rtl"] .iletisim .send .arr { display:inline-block; transform:scaleX(-1); }
+.iletisim .status { margin:18px 0 0; font-size:15px; color:#b5452f; }
+
+.iletisim .done { text-align:center; padding:50px 10px; }
+.iletisim .done img { height:90px; filter:var(--logo-filter); }
+.iletisim .done h2 { margin:18px 0 10px; }
+.iletisim .done p { color:var(--ink-soft); max-width:40ch; margin:0 auto 24px; }
+.iletisim .done button { background:none; border:0; font:inherit; color:var(--gold); border-bottom:1px solid var(--gold); cursor:pointer; padding:0; }
+
+@media (max-width: 960px) {
+  .iletisim .contact { grid-template-columns:1fr; gap:44px; }
+  .iletisim .card { padding:30px 22px 28px; }
+  .iletisim .row { grid-template-columns:1fr; gap:0; }
+}
+
+/* Aydınlatma metni sayfası */
+.iletisim-metin { max-width:760px; padding:10px 0 110px; }
+.iletisim-metin .prose { font-size:18px; }
+.iletisim-metin .prose h2 { font-size:28px; margin:34px 0 12px; }
+.iletisim-metin .prose h3 { font-size:22px; margin:26px 0 10px; }
+.iletisim-metin .prose p { margin:0 0 1.1em; }
+.iletisim-metin .prose a { border-bottom:1px solid var(--gold); }
+.iletisim-metin .back { display:inline-block; margin-top:30px; color:var(--gold); border-bottom:1px solid var(--gold); }

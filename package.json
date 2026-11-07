@@ -34,6 +34,7 @@
     "payload": "3.93.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "resend": "^6.37.0",
     "sharp": "0.35.4"
   },
   "devDependencies": {

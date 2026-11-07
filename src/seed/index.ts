@@ -7,6 +7,7 @@ import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
 import { SEED_DERSLER } from './dersler'
 import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
+import { SEED_ILETISIM } from './iletisim'
 import { SEED_VIDEO_KATEGORILERI, SEED_VIDEOLAR } from './videolar'
 import { SEED_YAZI_KATEGORILERI, SEED_YAZILAR } from './yazilar'
 import { readDesign } from './read-design'
@@ -284,6 +285,16 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     locale: LOCALE,
     context: CTX,
   })
+
+  // İletişim sayfası (hedef e-posta adresi seed'de yok: panelden girilir).
+  for (const locale of LOCALES) {
+    await payload.updateGlobal({
+      slug: 'iletisim',
+      data: SEED_ILETISIM[locale] as never,
+      locale,
+      context: CTX,
+    })
+  }
 
   for (const locale of LOCALES) {
     await payload.updateGlobal({
