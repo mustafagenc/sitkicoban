@@ -79,6 +79,12 @@ const LABELS = {
   sonrakiYazi: 'Yazı: Sonraki yazı',
   tumYazilar: 'Yazı: Tüm yazılar',
   yazilarSayfasinaDon: 'Yazı: Yazılar sayfasına dön',
+  hayatiBuSayfada: 'Hayatı: "Bu sayfada" (içindekiler)',
+  hayatiPortreAlt: 'Hayatı: portre alternatif metni',
+  icazetEyebrow: 'Ana sayfa icazet bölümü: üst etiket',
+  icazetBaslik: 'Ana sayfa icazet bölümü: başlık',
+  anasayfaHayatiBaslik: 'Ana sayfa Hayatı bölümü: başlık',
+  devaminiOku: 'Devamını oku',
   footerTelif: 'Alt bilgi: telif',
   footerNot: 'Alt bilgi: not',
 } as const

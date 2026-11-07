@@ -1,5 +1,7 @@
 /** tasarim/yazilar.html (öne çıkan yazı + `posts` dizisi) ve tasarim/yazi.html (örnek gövde). */
 
+import { BOLD, block, h2, p, root, text } from './lexical'
+
 export const SEED_YAZI_KATEGORILERI = ['Tefsir', 'Sanat', 'Edebiyat'] as const
 
 export type SeedYazi = {
@@ -15,32 +17,6 @@ export type SeedYazi = {
   kaynaklar?: string[]
   yayinda: boolean
 }
-
-// --- Lexical JSON helpers -------------------------------------------------------------------
-
-const BOLD = 1
-const text = (t: string, format = 0) => ({ type: 'text', version: 1, text: t, format, detail: 0, mode: 'normal', style: '' })
-const p = (...children: ReturnType<typeof text>[]) => ({
-  type: 'paragraph',
-  version: 1,
-  children,
-  direction: 'ltr',
-  format: '',
-  indent: 0,
-  textFormat: 0,
-  textStyle: '',
-})
-const h2 = (t: string) => ({ type: 'heading', tag: 'h2', version: 1, children: [text(t)], direction: 'ltr', format: '', indent: 0 })
-// Sabit blok id'leri: seed tekrar çalıştığında gövde aynı kalır.
-const block = (id: string, fields: Record<string, unknown>) => ({
-  type: 'block',
-  version: 2,
-  format: '',
-  fields: { id, blockName: '', ...fields },
-})
-const root = (...children: unknown[]) => ({
-  root: { type: 'root', version: 1, children, direction: 'ltr', format: '', indent: 0 },
-})
 
 /** tasarim/yazi.html `.prose` içeriği. */
 const IHLAS_GOVDE = root(

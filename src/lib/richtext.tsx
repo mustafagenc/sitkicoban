@@ -20,6 +20,9 @@ type Node = {
 
 type Data = SerializedEditorState | null | undefined
 
+/** Sayfaya özgü ek bloklar (ör. Hayatı sayfasındaki hoca kartları). */
+export type Blocks = Record<string, (props: { node: Node }) => ReactNode>
+
 function plainText(node: Node): string {
   if (node.type === 'text') return typeof node.text === 'string' ? node.text : ''
   return (node.children ?? []).map(plainText).join('')
@@ -27,17 +30,31 @@ function plainText(node: Node): string {
 
 type HeadingInfo = { id: string; text: string; tag: string }
 
-/** Heading ids in document order: slugify(text), "bolum" when empty, duplicates get -2, -3… */
+/** Id allocator: slugify(text), "bolum" when empty, duplicates get -2, -3… */
+function idAllocator() {
+  const seen = new Map<string, number>()
+  return (text: string) => {
+    const base = slugify(text) || 'bolum'
+    const n = (seen.get(base) ?? 0) + 1
+    seen.set(base, n)
+    return n === 1 ? base : `${base}-${n}`
+  }
+}
+
+/** Anchor ids for a list of section titles, the same rule headings use. */
+export function sectionIds(titles: string[]): string[] {
+  const next = idAllocator()
+  return titles.map((t) => next(t.trim()))
+}
+
+/** Heading ids in document order. */
 function headingIds(data: Data): Map<Node, HeadingInfo> {
   const ids = new Map<Node, HeadingInfo>()
-  const seen = new Map<string, number>()
+  const next = idAllocator()
   const walk = (node: Node) => {
     if (node.type === 'heading') {
       const text = plainText(node).trim()
-      const base = slugify(text) || 'bolum'
-      const n = (seen.get(base) ?? 0) + 1
-      seen.set(base, n)
-      ids.set(node, { id: n === 1 ? base : `${base}-${n}`, text, tag: node.tag ?? 'h2' })
+      ids.set(node, { id: next(text), text, tag: node.tag ?? 'h2' })
     }
     for (const c of node.children ?? []) walk(c)
   }
@@ -71,7 +88,7 @@ function linkHref(fields: LinkFields, locale: Locale): string {
   return fields.url ?? ''
 }
 
-function converters(ids: Map<Node, HeadingInfo>, locale: Locale): JSXConvertersFunction {
+function converters(ids: Map<Node, HeadingInfo>, locale: Locale, extraBlocks: Blocks): JSXConvertersFunction {
   const link: JSXConverter = ({ node, nodesToJSX }) => {
     const fields = (node as unknown as { fields: LinkFields }).fields
     const href = linkHref(fields, locale)
@@ -106,17 +123,28 @@ function converters(ids: Map<Node, HeadingInfo>, locale: Locale): JSXConvertersF
         )
       },
       oneCikanSoz: ({ node }: { node: Node }) => <blockquote className="pull">{str(node.fields?.metin)}</blockquote>,
+      ...extraBlocks,
     },
   })
 }
 
 /** Renders a Lexical body: headings with anchor ids, Âyet and Öne çıkan söz blocks. */
-export function RichText({ data, locale, className }: { data: Data; locale: Locale; className?: string }): ReactNode {
+export function RichText({
+  data,
+  locale,
+  className,
+  blocks = {},
+}: {
+  data: Data
+  locale: Locale
+  className?: string
+  blocks?: Blocks
+}): ReactNode {
   if (!data?.root) return null
   return (
     <LexicalRichText
       data={data}
-      converters={converters(headingIds(data), locale)}
+      converters={converters(headingIds(data), locale, blocks)}
       className={className}
       disableContainer={!className}
     />

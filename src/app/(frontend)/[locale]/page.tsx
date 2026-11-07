@@ -7,9 +7,12 @@ import { Header } from '@/components/Header'
 import { HomeBooks } from '@/components/HomeBooks'
 import { HomeDersler } from '@/components/HomeDersler'
 import { HomeHero } from '@/components/HomeHero'
-import { Hayati, Icazet, VideoSection } from '@/components/HomeStatic'
+import { HomeHayati } from '@/components/HomeHayati'
+import { HomeIcazet } from '@/components/HomeIcazet'
+import { VideoSection } from '@/components/HomeStatic'
 import { HomeWorks } from '@/components/HomeWorks'
 import { HomeYazilar } from '@/components/HomeYazilar'
+import { toHocalar } from '@/components/hayati'
 import { toWorks } from '@/components/works'
 import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
 import { isLocale, localizedPath } from '@/i18n/config'
@@ -19,6 +22,8 @@ import {
   getAnasayfaKitaplari,
   getDersler,
   getEserler,
+  getHayati,
+  getHocalar,
   getSiteAyarlari,
   getUi,
   getYazilar,
@@ -29,7 +34,7 @@ import '../styles/anasayfa.css'
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, hocalar] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
@@ -38,6 +43,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getAnasayfaKitaplari(locale),
     getDersler(locale),
     getYazilar(locale),
+    getHayati(locale),
+    getHocalar(locale),
   ])
   const yazilar = toYazilar(yazilarDocs, ui, locale)
 
@@ -70,7 +77,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      <Icazet />
+      <HomeIcazet hocalar={toHocalar(hocalar)} ui={ui} ad={anasayfa.heroBaslik ?? ''} />
 
       <section id="yazilar">
         <div className="wrap two">
@@ -98,7 +105,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       <VideoSection />
       <HomeDersler dersler={toDersler(dersler)} ui={ui} locale={locale} />
-      <Hayati />
+      <HomeHayati hayati={hayati} ui={ui} locale={locale} eyebrow={ui.navHayati ?? ''} />
 
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
     </div>

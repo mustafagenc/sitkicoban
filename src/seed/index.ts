@@ -6,6 +6,7 @@ import { slugify } from '@/lib/slug'
 import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
 import { SEED_DERSLER } from './dersler'
+import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
 import { SEED_YAZI_KATEGORILERI, SEED_YAZILAR } from './yazilar'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
@@ -205,6 +206,24 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       await payload.create({ collection: 'dersler', data, locale: LOCALE, context: CTX })
     }
   }
+
+  // Teachers (key: ad in tr) and the Hayatı global
+  for (const [i, h] of SEED_HOCALAR.entries()) {
+    const imza = await upsertMedia(payload, root, h.imza.file, h.imza.alt)
+    const data = { ad: h.ad, kalemler: h.kalemler, aciklama: h.aciklama, sayfaAciklama: h.sayfaAciklama, imza, sira: i }
+    const found = await payload.find({ collection: 'hocalar', where: { ad: { equals: h.ad } }, locale: LOCALE, limit: 1, depth: 0 })
+    if (found.docs[0]) {
+      await payload.update({ collection: 'hocalar', id: found.docs[0].id, data, locale: LOCALE, context: CTX })
+    } else {
+      await payload.create({ collection: 'hocalar', data, locale: LOCALE, context: CTX })
+    }
+  }
+  await payload.updateGlobal({
+    slug: 'hayati',
+    data: { ...SEED_HAYATI, portre: await upsertMedia(payload, root, SEED_PORTRE.file, SEED_PORTRE.alt) } as never,
+    locale: LOCALE,
+    context: CTX,
+  })
 
   // Posts: only the first has the sample body and is published. Drafts keep the design's
   // reading minutes (no body to count); the published one is computed from its body.

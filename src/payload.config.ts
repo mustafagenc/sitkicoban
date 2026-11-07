@@ -12,6 +12,7 @@ import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { Dersler } from './collections/Dersler'
 import { EserTurleri } from './collections/EserTurleri'
 import { Eserler } from './collections/Eserler'
+import { Hocalar } from './collections/Hocalar'
 import { Kitaplar } from './collections/Kitaplar'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
@@ -19,6 +20,7 @@ import { YaziKategorileri } from './collections/YaziKategorileri'
 import { Yazilar } from './collections/Yazilar'
 import { YaziTurleri } from './collections/YaziTurleri'
 import { Anasayfa } from './globals/Anasayfa'
+import { Hayati } from './globals/Hayati'
 import { SiteAyarlari } from './globals/SiteAyarlari'
 import { UiMetinleri } from './globals/UiMetinleri'
 
@@ -57,8 +59,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, YaziKategorileri, Yazilar],
-  globals: [SiteAyarlari, UiMetinleri, Anasayfa],
+  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar],
+  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati],
   localization: {
     locales: [
       { code: 'tr', label: 'Türkçe' },

@@ -106,6 +106,20 @@ export const UI_STRINGS: Record<UiKey, S> = {
   sonrakiYazi: { tr: 'Sonraki yazı →', en: 'Next article →', ar: '← المقال التالي' },
   tumYazilar: { tr: 'Tüm yazılar →', en: 'All articles →', ar: 'جميع المقالات ←' },
   yazilarSayfasinaDon: { tr: 'Yazılar sayfasına dön', en: 'Back to the articles page', ar: 'العودة إلى صفحة المقالات' },
+  hayatiBuSayfada: { tr: 'Bu sayfada', en: 'On this page', ar: 'في هذه الصفحة' },
+  hayatiPortreAlt: {
+    tr: 'Sıtkı Çoban, çalışma masasında',
+    en: 'Sıtkı Çoban at his desk',
+    ar: 'سيتكي تشوبان على مكتب عمله',
+  },
+  icazetEyebrow: { tr: 'İcazet Silsilesi', en: 'Chain of Ijazah', ar: 'سلسلة الإجازة' },
+  icazetBaslik: { tr: 'Dört kalemde icazet', en: 'Ijazah in four scripts', ar: 'إجازة في أربعة أقلام' },
+  anasayfaHayatiBaslik: {
+    tr: 'Hattat, müellif, muallim',
+    en: 'Calligrapher, author, teacher',
+    ar: 'خطّاط ومؤلّف ومعلّم',
+  },
+  devaminiOku: { tr: 'Devamını oku →', en: 'Read more →', ar: 'اقرأ المزيد ←' },
   footerTelif: {
     tr: '© 2026 Sıtkı Çoban · sitkicoban.com',
     en: '© 2026 Sıtkı Çoban · sitkicoban.com',

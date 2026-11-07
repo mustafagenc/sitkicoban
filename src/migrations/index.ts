@@ -3,6 +3,7 @@ import * as migration_20261107_174902_ui_ek from './20261107_174902_ui_ek';
 import * as migration_20261107_190425_dersler from './20261107_190425_dersler';
 import * as migration_20261107_205950_yazilar from './20261107_205950_yazilar';
 import * as migration_20261107_210556_yazilar_ui from './20261107_210556_yazilar_ui';
+import * as migration_20261107_212248_hayati from './20261107_212248_hayati';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261107_210556_yazilar_ui.up,
     down: migration_20261107_210556_yazilar_ui.down,
-    name: '20261107_210556_yazilar_ui'
+    name: '20261107_210556_yazilar_ui',
+  },
+  {
+    up: migration_20261107_212248_hayati.up,
+    down: migration_20261107_212248_hayati.down,
+    name: '20261107_212248_hayati'
   },
 ];

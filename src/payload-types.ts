@@ -74,6 +74,7 @@ export interface Config {
     eserler: Eserler;
     kitaplar: Kitaplar;
     dersler: Dersler;
+    hocalar: Hocalar;
     'yazi-kategorileri': YaziKategorileri;
     yazilar: Yazilar;
     'payload-kv': PayloadKv;
@@ -90,6 +91,7 @@ export interface Config {
     eserler: EserlerSelect<false> | EserlerSelect<true>;
     kitaplar: KitaplarSelect<false> | KitaplarSelect<true>;
     dersler: DerslerSelect<false> | DerslerSelect<true>;
+    hocalar: HocalarSelect<false> | HocalarSelect<true>;
     'yazi-kategorileri': YaziKategorileriSelect<false> | YaziKategorileriSelect<true>;
     yazilar: YazilarSelect<false> | YazilarSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -105,11 +107,13 @@ export interface Config {
     'site-ayarlari': SiteAyarlari;
     'ui-metinleri': UiMetinleri;
     anasayfa: Anasayfa;
+    hayati: Hayati;
   };
   globalsSelect: {
     'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
     'ui-metinleri': UiMetinleriSelect<false> | UiMetinleriSelect<true>;
     anasayfa: AnasayfaSelect<false> | AnasayfaSelect<true>;
+    hayati: HayatiSelect<false> | HayatiSelect<true>;
   };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
@@ -307,6 +311,33 @@ export interface Dersler {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hocalar".
+ */
+export interface Hocalar {
+  id: number;
+  ad: string;
+  /**
+   * Örn. Rik'a · Ta'lik
+   */
+  kalemler: string;
+  /**
+   * Ana sayfadaki icazet silsilesinde görünür.
+   */
+  aciklama: string;
+  /**
+   * Hayatı sayfasındaki karta yazılır; boşsa kartta açıklama görünmez.
+   */
+  sayfaAciklama?: string | null;
+  /**
+   * Koyu temada otomatik açık renge çevrilir.
+   */
+  imza?: (number | null) | Media;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "yazi-kategorileri".
  */
 export interface YaziKategorileri {
@@ -416,6 +447,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'dersler';
         value: number | Dersler;
+      } | null)
+    | ({
+        relationTo: 'hocalar';
+        value: number | Hocalar;
       } | null)
     | ({
         relationTo: 'yazi-kategorileri';
@@ -599,6 +634,20 @@ export interface DerslerSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hocalar_select".
+ */
+export interface HocalarSelect<T extends boolean = true> {
+  ad?: T;
+  kalemler?: T;
+  aciklama?: T;
+  sayfaAciklama?: T;
+  imza?: T;
+  sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "yazi-kategorileri_select".
  */
 export interface YaziKategorileriSelect<T extends boolean = true> {
@@ -768,6 +817,12 @@ export interface UiMetinleri {
   sonrakiYazi?: string | null;
   tumYazilar?: string | null;
   yazilarSayfasinaDon?: string | null;
+  hayatiBuSayfada?: string | null;
+  hayatiPortreAlt?: string | null;
+  icazetEyebrow?: string | null;
+  icazetBaslik?: string | null;
+  anasayfaHayatiBaslik?: string | null;
+  devaminiOku?: string | null;
   footerTelif?: string | null;
   footerNot?: string | null;
   updatedAt?: string | null;
@@ -787,6 +842,78 @@ export interface Anasayfa {
   eserlerAciklama?: string | null;
   kitaplarEyebrow?: string | null;
   kitaplarBaslik?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hayati".
+ */
+export interface Hayati {
+  id: number;
+  girisCumlesi: string;
+  portre?: (number | null) | Media;
+  /**
+   * Giriş bölümündeki kısa bilgi kutusu (Doğum, Eğitim…).
+   */
+  kunye?:
+    | {
+        etiket: string;
+        /**
+         * Her satır ayrı satır olarak görünür.
+         */
+        deger: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Sayfadaki sıra numarası (I, II…) ve "Bu sayfada" listesi başlıklardan üretilir.
+   */
+  bolumler?:
+    | {
+        baslik: string;
+        govde: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        baglantilar?:
+          | {
+              etiket: string;
+              sayfa: 'eserler' | 'kitaplar' | 'yazilar' | 'videolar';
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  kapanis?: string | null;
+  anasayfaOzet: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  anasayfaSoz?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -885,6 +1012,12 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   sonrakiYazi?: T;
   tumYazilar?: T;
   yazilarSayfasinaDon?: T;
+  hayatiBuSayfada?: T;
+  hayatiPortreAlt?: T;
+  icazetEyebrow?: T;
+  icazetBaslik?: T;
+  anasayfaHayatiBaslik?: T;
+  devaminiOku?: T;
   footerTelif?: T;
   footerNot?: T;
   updatedAt?: T;
@@ -904,6 +1037,41 @@ export interface AnasayfaSelect<T extends boolean = true> {
   eserlerAciklama?: T;
   kitaplarEyebrow?: T;
   kitaplarBaslik?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hayati_select".
+ */
+export interface HayatiSelect<T extends boolean = true> {
+  girisCumlesi?: T;
+  portre?: T;
+  kunye?:
+    | T
+    | {
+        etiket?: T;
+        deger?: T;
+        id?: T;
+      };
+  bolumler?:
+    | T
+    | {
+        baslik?: T;
+        govde?: T;
+        baglantilar?:
+          | T
+          | {
+              etiket?: T;
+              sayfa?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  kapanis?: T;
+  anasayfaOzet?: T;
+  anasayfaSoz?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

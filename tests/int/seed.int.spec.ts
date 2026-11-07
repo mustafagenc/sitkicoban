@@ -6,6 +6,7 @@ import config from '@/payload.config'
 import { readDesign } from '@/seed/read-design'
 import { seed } from '@/seed'
 import { SEED_DERSLER } from '@/seed/dersler'
+import { SEED_HOCALAR, SEED_PORTRE } from '@/seed/hayati'
 
 let payload: Payload
 
@@ -55,8 +56,8 @@ describe('seed', () => {
     expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(13)
     expect((await payload.count({ collection: 'kitaplar' })).totalDocs).toBe(design.kitaplar.length)
     expect((await payload.count({ collection: 'users' })).totalDocs).toBe(1)
-    // works, covers and lesson posters share images: one media doc per distinct file.
-    const files = new Set([...design.eserler.map((e) => e.f), ...design.kitaplar.filter((k) => k.img).map((k) => k.img), ...SEED_DERSLER.flatMap((d) => (d.afis ? [d.afis.file] : []))])
+    // works, covers, lesson posters, teacher signatures and the portrait share images: one media doc per distinct file.
+    const files = new Set([...design.eserler.map((e) => e.f), ...design.kitaplar.filter((k) => k.img).map((k) => k.img), ...SEED_DERSLER.flatMap((d) => (d.afis ? [d.afis.file] : [])), ...SEED_HOCALAR.map((h) => h.imza.file), SEED_PORTRE.file])
     expect((await payload.count({ collection: 'media' })).totalDocs).toBe(files.size)
   }, 120_000)
 

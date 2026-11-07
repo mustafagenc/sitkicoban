@@ -184,3 +184,27 @@ export const getYaziSluglari = cached('yazi-sluglari', ['yazilar'], async () =>
 export const getYaziKategorileri = cached('yazi-kategorileri', ['yazilar'], async (locale: Locale) =>
   findYaziKategorileri(await getPayload({ config }), locale),
 )
+
+// Hayatı sayfası ve ana sayfadaki İcazet/Hayatı bölümleri.
+export async function findHayati(payload: Payload, locale: Locale) {
+  return payload.findGlobal({ slug: 'hayati', ...opts(locale) })
+}
+
+export async function findHocalar(payload: Payload, locale: Locale) {
+  const res = await payload.find({
+    collection: 'hocalar',
+    sort: 'sira',
+    limit: 1000,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs
+}
+
+export const getHayati = cached('hayati', ['hayati', 'media'], async (locale: Locale) =>
+  findHayati(await getPayload({ config }), locale),
+)
+
+export const getHocalar = cached('hocalar', ['hayati', 'media'], async (locale: Locale) =>
+  findHocalar(await getPayload({ config }), locale),
+)
