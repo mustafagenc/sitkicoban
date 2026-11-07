@@ -1,0 +1,55 @@
+/* Filtre çipleri Yazılar sayfasındaki gibi: başlığın altında, çizgisiz */
+.fgroup { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin:6px 0 0; }
+.chip { white-space:nowrap; flex-shrink:0; border:1px solid var(--line-strong); border-radius:20px; padding:3px 16px; font:inherit; font-size:15px; background:none; color:var(--ink); cursor:pointer; transition:.2s; }
+.chip:hover { border-color:var(--gold); color:var(--gold); }
+.chip.on { background:var(--head); border-color:var(--head); color:var(--bg); }
+
+.gallery { padding:44px 0 100px; }
+.card { display:block; cursor:pointer; }
+.card .mat { background:var(--paper); outline:1px solid var(--line); box-shadow:var(--shadow); padding:12px; position:relative; overflow:hidden; }
+.card img { display:block; width:100%; height:auto; aspect-ratio:var(--r); transition:transform .6s ease; } /* aspect-ratio: lazy görsel yerini önceden tutsun */
+.card:hover img { transform:scale(1.025); }
+.card .cap { margin-top:12px; }
+.card h3 { font-size:20px; line-height:1.25; transition:color .2s; }
+.card:hover h3 { color:var(--gold); }
+.card .meta { font-size:14px; color:var(--ink-soft); margin-top:3px; }
+.card .meta .dot { color:var(--gold); margin:0 6px; }
+.card.hide { display:none !important; }
+
+/* A · Duvar: sütunlar, eserler kendi oranında alt alta */
+[data-layout="a"] .gallery .grid { columns:3 300px; column-gap:32px; }
+[data-layout="a"] .card { break-inside:avoid; margin-bottom:38px; }
+
+/* B · Sıralı: eşit yükseklikte satırlar, eser genişliği oranına göre */
+[data-layout="b"] .gallery .grid { display:flex; flex-wrap:wrap; gap:26px; }
+[data-layout="b"] .card { width:var(--w); }
+[data-layout="b"] .card .mat { padding:10px; }
+[data-layout="b"] .card img { aspect-ratio:var(--r); height:auto; }
+
+/* C · Müze: eşit kareler, eser paspartunun ortasında, bol boşluk */
+[data-layout="c"] .gallery .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:48px 40px; }
+[data-layout="c"] .card .mat { aspect-ratio:1; display:grid; place-items:center; padding:28px; }
+[data-layout="c"] .card img { width:100%; height:100%; object-fit:contain; }
+[data-layout="c"] .card .cap { text-align:center; }
+
+/* Görünüm seçici: ziyaretçi galerinin düzenini kendisi seçer; seçim hatırlanır */
+.switch { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:30; display:flex; gap:2px; padding:4px; border-radius:30px; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border:1px solid var(--line-strong); box-shadow:0 10px 30px rgba(40,25,10,.18); }
+.switch button { position:relative; width:42px; height:36px; display:grid; place-items:center; border:0; border-radius:20px; background:none; color:var(--ink-soft); cursor:pointer; transition:.2s; }
+.switch button:hover { color:var(--gold); }
+.switch button.on { background:var(--head); color:var(--bg); }
+.switch svg { width:20px; height:20px; }
+.switch button::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(4px); white-space:nowrap; font-size:13px; padding:4px 10px; border-radius:4px; background:var(--head); color:var(--bg); opacity:0; pointer-events:none; transition:.2s; }
+.switch button:hover::after, .switch button:focus-visible::after { opacity:1; transform:translateX(-50%); }
+/* Alt bilgiye gelince seçici kaybolur, alttaki yazıların üstüne binmez */
+.switch { transition:opacity .3s, transform .3s; }
+.switch.away { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(16px); }
+
+
+@media (max-width: 860px) {
+  .fgroup { flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; padding-bottom:2px; scrollbar-width:none; }
+  .fgroup::-webkit-scrollbar { display:none; }
+  [data-layout="b"] .card { flex-basis:calc(var(--r) * 150px); }
+  [data-layout="c"] .gallery .grid { grid-template-columns:1fr 1fr; gap:28px 16px; }
+  [data-layout="c"] .card .mat { padding:12px; }
+  [data-layout="c"] .card h3 { font-size:16px; }
+}

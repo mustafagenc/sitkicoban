@@ -39,6 +39,7 @@ const LABELS = {
   menuAc: 'Menüyü aç',
   menuKapat: 'Menüyü kapat',
   temaDegistir: 'Temayı değiştir',
+  temaGunduz: 'Gündüz görünümü',
   dilSec: 'Dil seç',
   asagiKaydir: 'Aşağı kaydır',
   kapat: 'Kapat',

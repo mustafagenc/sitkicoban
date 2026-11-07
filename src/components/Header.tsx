@@ -54,7 +54,7 @@ export function Header({ locale, ui, activeKey = 'home' }: Omit<LayoutProps, 'ay
             </nav>
             <div className="tools">
               <LangMenu locale={locale} activeKey={activeKey} label={ui.dilSec ?? ''} />
-              <ThemeToggle label={ui.temaDegistir ?? ''} />
+              <ThemeToggle label={ui.temaDegistir ?? ''} labelDark={ui.temaGunduz ?? ''} />
               <button
                 ref={menuBtn}
                 type="button"

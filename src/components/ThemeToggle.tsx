@@ -1,7 +1,24 @@
 'use client'
 
-/** Gece/gündüz düğmesi; seçimi localStorage "tema"ya yazar. Simgeler CSS ile değişir. */
-export function ThemeToggle({ label }: { label: string }) {
+import { useEffect, useState } from 'react'
+
+/**
+ * Gece/gündüz düğmesi; seçimi localStorage "tema"ya yazar. Simgeler CSS ile değişir.
+ * Etiket açık temada `label`, koyu temada `labelDark` olur.
+ */
+export function ThemeToggle({ label, labelDark }: { label: string; labelDark: string }) {
+  const [dark, setDark] = useState(false)
+
+  useEffect(() => {
+    const root = document.documentElement
+    const sync = () => setDark(root.dataset.theme === 'dark')
+    sync()
+    const mo = new MutationObserver(sync)
+    mo.observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => mo.disconnect()
+  }, [])
+
+  const text = dark ? labelDark : label
   const toggle = () => {
     const root = document.documentElement
     const t = root.dataset.theme === 'dark' ? 'light' : 'dark'
@@ -16,8 +33,8 @@ export function ThemeToggle({ label }: { label: string }) {
       type="button"
       className="circle"
       id="tbtn"
-      aria-label={label}
-      title={label}
+      aria-label={text}
+      title={text}
       onClick={toggle}
     >
       <svg

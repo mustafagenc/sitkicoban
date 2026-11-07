@@ -559,6 +559,7 @@ export interface UiMetinleri {
   menuAc?: string | null;
   menuKapat?: string | null;
   temaDegistir?: string | null;
+  temaGunduz?: string | null;
   dilSec?: string | null;
   asagiKaydir?: string | null;
   kapat?: string | null;
@@ -645,6 +646,7 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   menuAc?: T;
   menuKapat?: T;
   temaDegistir?: T;
+  temaGunduz?: T;
   dilSec?: T;
   asagiKaydir?: T;
   kapat?: T;

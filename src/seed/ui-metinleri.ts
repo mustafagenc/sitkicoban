@@ -42,6 +42,7 @@ export const UI_STRINGS: Record<UiKey, S> = {
   menuAc: { tr: 'Menüyü aç', en: 'Open menu', ar: 'فتح القائمة' },
   menuKapat: { tr: 'Menüyü kapat', en: 'Close menu', ar: 'إغلاق القائمة' },
   temaDegistir: { tr: 'Gece görünümüne geç', en: 'Switch theme', ar: 'تبديل المظهر' },
+  temaGunduz: { tr: 'Gündüz görünümüne geç', en: 'Switch to day view', ar: 'التبديل إلى الوضع النهاري' },
   dilSec: { tr: 'Dil seçin', en: 'Choose language', ar: 'اختر اللغة' },
   asagiKaydir: { tr: 'Aşağı kaydır', en: 'Scroll down', ar: 'مرّر للأسفل' },
   kapat: { tr: 'Kapat', en: 'Close', ar: 'إغلاق' },
