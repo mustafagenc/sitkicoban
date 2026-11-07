@@ -27,12 +27,6 @@ export const ROUTES: Record<PageKey, Record<Locale, string>> = {
 
 const SLUG_RE = /^[a-z0-9-]+$/
 
-export const TASARIM_LINKS: Record<'yazilar' | 'hayati' | 'iletisim', string> = {
-  yazilar: '/tasarim/yazilar.html',
-  hayati: '/tasarim/hayati.html',
-  iletisim: '/tasarim/iletisim.html',
-}
-
 export const isLocale = (s: string): s is Locale => (LOCALES as readonly string[]).includes(s)
 
 const keyFor = (segment: string, l: Locale): PageKey | null =>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { TASARIM_LINKS, dir, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
+import { dir, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
 
 describe('i18n routing', () => {
   it('localizedPath', () => {
@@ -49,7 +49,8 @@ describe('i18n routing', () => {
     expect(dir('ar')).toBe('rtl')
     expect(dir('tr')).toBe('ltr')
   })
-  it('TASARIM_LINKS', () => {
-    expect(TASARIM_LINKS.hayati).toBe('/tasarim/hayati.html')
+  it('no longer serves the static design copies', () => {
+    expect(resolvePath('/tasarim')).toBeNull()
+    expect(resolvePath('/tasarim/hayati')).toBeNull()
   })
 })

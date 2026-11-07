@@ -3,7 +3,7 @@ import { getPayload, type Payload } from 'payload'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 // Blob'a hiç gidilmez: dosya varlığı sorgusu taklit edilir (varsayılan: dosya var).
-const { head } = vi.hoisted(() => ({ head: vi.fn(async () => ({})) }))
+const { head } = vi.hoisted(() => ({ head: vi.fn(async (_key: string) => ({})) }))
 vi.mock('@vercel/blob', async (orig) => ({ ...(await orig<typeof import('@vercel/blob')>()), head }))
 
 import { BlobNotFoundError } from '@vercel/blob'
