@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { resolvePath } from '@/i18n/config'
+import { internalPath, resolvePath } from '@/i18n/config'
 
 const NOT_FOUND_PATH = '/_yok'
 
@@ -18,7 +18,7 @@ export function proxy(request: NextRequest) {
     url.pathname = result.redirect
     return NextResponse.redirect(url, 308)
   }
-  url.pathname = result.key === 'home' ? `/${result.locale}` : `/${result.locale}/${result.key}`
+  url.pathname = internalPath(result)
   return NextResponse.rewrite(url)
 }
 

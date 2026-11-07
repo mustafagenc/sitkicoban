@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { pathsForTags } from '@/lib/cache/revalidate'
+import { pathsForChange, pathsForTags } from '@/lib/cache/revalidate'
 import { TAGS_BY_SOURCE } from '@/lib/cache/tags'
 
 describe('pathsForTags', () => {
@@ -20,6 +20,34 @@ describe('pathsForTags', () => {
   })
 
   it('maps ui to every page in every locale', () => {
-    expect(pathsForTags(['ui'])).toHaveLength(9)
+    expect(pathsForTags(['ui'])).toHaveLength(24)
+  })
+
+  it('maps dersler to home only', () => {
+    expect(new Set(pathsForTags(['dersler']))).toEqual(new Set(['/', '/en', '/ar']))
+  })
+
+  it('maps iletisim to contact and privacy pages', () => {
+    expect(new Set(pathsForTags(TAGS_BY_SOURCE.iletisim))).toEqual(
+      new Set([
+        '/iletisim', '/en/contact', '/ar/contact',
+        '/iletisim/aydinlatma', '/en/contact/privacy', '/ar/contact/privacy',
+      ]),
+    )
+  })
+
+  it('maps new sources', () => {
+    expect(TAGS_BY_SOURCE['yazi-kategorileri']).toEqual(['yazilar'])
+    expect(TAGS_BY_SOURCE.hocalar).toEqual(['hayati'])
+    expect(TAGS_BY_SOURCE['video-kategorileri']).toEqual(['videolar'])
+    expect(new Set(pathsForTags(['yazilar']))).toContain('/en/books')
+  })
+
+  it('pathsForChange adds yazi detail paths for old and new slug', () => {
+    const paths = pathsForChange('yazilar', { slug: 'b' }, { slug: 'a' })
+    for (const p of ['/yazilar/a', '/yazilar/b', '/en/writings/b', '/ar/writings/a', '/yazilar'])
+      expect(paths).toContain(p)
+    expect(paths.length).toBe(new Set(paths).size)
+    expect(pathsForChange('eserler', { slug: 'b' })).not.toContain('/yazilar/b')
   })
 })

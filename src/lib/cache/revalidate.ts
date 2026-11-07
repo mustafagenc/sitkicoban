@@ -6,11 +6,20 @@ import type {
   GlobalAfterChangeHook,
 } from 'payload'
 
-import { LOCALES, localizedPath, type PageKey } from '@/i18n/config'
+import { LOCALES, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
 
 import { TAGS_BY_SOURCE, type Tag } from './tags'
 
-const ALL_PAGES: PageKey[] = ['home', 'eserler', 'kitaplar']
+const ALL_PAGES: PageKey[] = [
+  'home',
+  'eserler',
+  'kitaplar',
+  'yazilar',
+  'videolar',
+  'hayati',
+  'iletisim',
+  'aydinlatma',
+]
 
 const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   eserler: ['eserler'],
@@ -20,6 +29,11 @@ const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   ui: ALL_PAGES,
   turler: ['eserler', 'home'],
   media: ALL_PAGES,
+  dersler: ['home'],
+  yazilar: ['yazilar', 'home', 'kitaplar'],
+  hayati: ['hayati', 'home'],
+  videolar: ['videolar', 'home'],
+  iletisim: ['iletisim', 'aydinlatma'],
 }
 
 /** Public paths that render data behind the given tags (deduplicated). */
@@ -33,7 +47,27 @@ export function pathsForTags(tags: Tag[]): string[] {
   return [...paths]
 }
 
-function invalidate(source: string): void {
+/** Tag paths plus, for `yazilar`, the detail pages of the changed doc's current and previous slug. */
+export function pathsForChange(
+  source: string,
+  doc?: { slug?: unknown } | null,
+  previousDoc?: { slug?: unknown } | null,
+): string[] {
+  const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
+  if (source === 'yazilar') {
+    for (const d of [doc, previousDoc]) {
+      if (typeof d?.slug !== 'string' || !d.slug) continue
+      for (const locale of LOCALES) paths.add(yaziPath(d.slug, locale))
+    }
+  }
+  return [...paths]
+}
+
+function invalidate(
+  source: string,
+  doc?: { slug?: unknown } | null,
+  previousDoc?: { slug?: unknown } | null,
+): void {
   const tags = TAGS_BY_SOURCE[source] ?? []
   for (const tag of tags) {
     try {
@@ -44,7 +78,7 @@ function invalidate(source: string): void {
     }
   }
 
-  const paths = pathsForTags(tags)
+  const paths = pathsForChange(source, doc, previousDoc)
   if (paths.length === 0) return
 
   // Ordering matters: the hook runs before Payload commits its DB transaction, and
@@ -81,12 +115,12 @@ export function revalidateHooks(source: string): {
   afterDelete: CollectionAfterDeleteHook
 } {
   return {
-    afterChange: ({ doc, context }) => {
-      if (!context?.disableRevalidate) invalidate(source)
+    afterChange: ({ doc, previousDoc, context }) => {
+      if (!context?.disableRevalidate) invalidate(source, doc, previousDoc)
       return doc
     },
     afterDelete: ({ doc, context }) => {
-      if (!context?.disableRevalidate) invalidate(source)
+      if (!context?.disableRevalidate) invalidate(source, doc)
       return doc
     },
   }

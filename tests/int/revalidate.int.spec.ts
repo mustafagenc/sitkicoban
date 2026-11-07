@@ -12,6 +12,7 @@ vi.mock('next/cache', () => ({
 
 import { revalidateTag } from 'next/cache'
 import config from '@/payload.config'
+import { revalidateHooks } from '@/lib/cache/revalidate'
 
 let payload: Payload
 const prevSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
@@ -94,5 +95,20 @@ describe('revalidation hooks', () => {
     expect(warmCalls()).toHaveLength(0) // deferred until after the response
     runAfter()
     expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
+  })
+
+  // The yazilar collection arrives in a later task; exercise its hook directly.
+  it('warms yazi detail paths for old and new slug on a slug change', () => {
+    const hooks = revalidateHooks('yazilar')
+    hooks.afterChange({
+      doc: { slug: 'b' },
+      previousDoc: { slug: 'a' },
+      context: {},
+    } as unknown as Parameters<typeof hooks.afterChange>[0])
+    runAfter()
+    const urls = warmCalls()
+    for (const p of ['/yazilar/a', '/yazilar/b', '/en/writings/b', '/ar/writings/a'])
+      expect(urls).toContain(`http://localhost:3999${p}`)
+    expect(tagCalls()).toEqual(['yazilar'])
   })
 })
