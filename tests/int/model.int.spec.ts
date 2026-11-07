@@ -72,4 +72,19 @@ describe('content model', () => {
       if (saved) process.env.BLOB_READ_WRITE_TOKEN = saved
     }
   })
+
+  it('mediaUrl never returns the access-controlled /api/media/file route, even with a Blob token', () => {
+    const saved = process.env.BLOB_READ_WRITE_TOKEN
+    process.env.BLOB_READ_WRITE_TOKEN = 'vercel_blob_rw_test_x'
+    try {
+      // Blob açıkken yerelde kalmış eski kayıt: diskteki dosyaya gider
+      expect(mediaUrl({ filename: 'a.jpg', url: '/api/media/file/a.jpg' } as never)).toBe('/media/a.jpg')
+      // Blob'a yüklenmiş kayıt: doğrudan Blob adresi
+      const blob = 'https://abc.public.blob.vercel-storage.com/a.jpg'
+      expect(mediaUrl({ filename: 'a.jpg', url: blob } as never)).toBe(blob)
+    } finally {
+      if (saved) process.env.BLOB_READ_WRITE_TOKEN = saved
+      else delete process.env.BLOB_READ_WRITE_TOKEN
+    }
+  })
 })

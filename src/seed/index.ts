@@ -68,7 +68,7 @@ async function upsertMedia(payload: Payload, root: string, filename: string, alt
   const mediaDir = path.resolve(process.cwd(), process.env.MEDIA_DIR || 'public/media')
   const found = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, depth: 0 })
   const doc = found.docs[0]
-  if (doc && process.env.BLOB_READ_WRITE_TOKEN && doc.url) return doc.id // Blob: dosya uzakta, yerelde aranmaz
+  if (doc?.url && /^https?:\/\//.test(doc.url)) return doc.id // Blob'daki dosya: yerelde aranmaz
   if (doc && existsSync(path.join(mediaDir, filename))) return doc.id
   if (doc) await payload.delete({ collection: 'media', id: doc.id, context: CTX }) // file went missing: recreate
   const created = await payload.create({
