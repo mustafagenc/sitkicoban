@@ -9,6 +9,6 @@ export const Media: CollectionConfig = {
   admin: { useAsTitle: 'filename' },
   access: { read: () => true, create: isLoggedIn, update: isLoggedIn, delete: isLoggedIn },
   hooks: { afterChange: [revalidateHooks('media').afterChange], afterDelete: [revalidateHooks('media').afterDelete] },
-  upload: { staticDir: 'public/media', mimeTypes: ['image/*'] },
+  upload: { staticDir: process.env.MEDIA_DIR || 'public/media', mimeTypes: ['image/*'] },
   fields: [{ name: 'alt', label: 'Alternatif metin', type: 'text', localized: true }],
 }
