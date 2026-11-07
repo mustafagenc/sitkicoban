@@ -9,7 +9,7 @@ export function navLinks(locale: Locale, ui: UiMetinleri): NavLink[] {
     { key: 'eserler', href: localizedPath('eserler', locale), label: ui.navEserler ?? '' },
     { key: 'yazilar', href: localizedPath('yazilar', locale), label: ui.navYazilar ?? '' },
     { key: 'kitaplar', href: localizedPath('kitaplar', locale), label: ui.navKitaplar ?? '' },
-    { href: TASARIM_LINKS.videolar, label: ui.navVideolar ?? '' },
+    { key: 'videolar', href: localizedPath('videolar', locale), label: ui.navVideolar ?? '' },
     { key: 'hayati', href: localizedPath('hayati', locale), label: ui.navHayati ?? '' },
     { href: TASARIM_LINKS.iletisim, label: ui.navIletisim ?? '' },
   ]

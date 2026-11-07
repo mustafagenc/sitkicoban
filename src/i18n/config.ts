@@ -27,9 +27,8 @@ export const ROUTES: Record<PageKey, Record<Locale, string>> = {
 
 const SLUG_RE = /^[a-z0-9-]+$/
 
-export const TASARIM_LINKS: Record<'yazilar' | 'videolar' | 'hayati' | 'iletisim', string> = {
+export const TASARIM_LINKS: Record<'yazilar' | 'hayati' | 'iletisim', string> = {
   yazilar: '/tasarim/yazilar.html',
-  videolar: '/tasarim/videolar.html',
   hayati: '/tasarim/hayati.html',
   iletisim: '/tasarim/iletisim.html',
 }

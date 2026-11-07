@@ -9,11 +9,12 @@ import { HomeDersler } from '@/components/HomeDersler'
 import { HomeHero } from '@/components/HomeHero'
 import { HomeHayati } from '@/components/HomeHayati'
 import { HomeIcazet } from '@/components/HomeIcazet'
-import { VideoSection } from '@/components/HomeStatic'
+import { HomeVideo } from '@/components/HomeVideo'
 import { HomeWorks } from '@/components/HomeWorks'
 import { HomeYazilar } from '@/components/HomeYazilar'
 import { toHocalar } from '@/components/hayati'
 import { toWorks } from '@/components/works'
+import { anasayfaVideosu, toVideolar } from '@/components/videolar'
 import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
 import { isLocale, localizedPath } from '@/i18n/config'
 import {
@@ -26,6 +27,7 @@ import {
   getHocalar,
   getSiteAyarlari,
   getUi,
+  getVideolar,
   getYazilar,
 } from '@/lib/data'
 
@@ -34,7 +36,7 @@ import '../styles/anasayfa.css'
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, hocalar] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, hocalar, videoDocs] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
@@ -45,8 +47,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getYazilar(locale),
     getHayati(locale),
     getHocalar(locale),
+    getVideolar(locale),
   ])
   const yazilar = toYazilar(yazilarDocs, ui, locale)
+  const videolar = toVideolar(videoDocs, ui, locale)
+  const anaVideo = anasayfaVideosu(videolar)
 
   return (
     // Ana sayfaya özgü ölçüler (.wrap 1180px, alt bilgi vb.) yalnızca .home altında geçerlidir.
@@ -103,7 +108,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      <VideoSection />
+      {anaVideo && <HomeVideo video={anaVideo} list={videolar} ui={ui} locale={locale} />}
       <HomeDersler dersler={toDersler(dersler)} ui={ui} locale={locale} />
       <HomeHayati hayati={hayati} ui={ui} locale={locale} eyebrow={ui.navHayati ?? ''} />
 

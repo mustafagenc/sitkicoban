@@ -7,6 +7,7 @@ import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
 import { SEED_DERSLER } from './dersler'
 import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
+import { SEED_VIDEO_KATEGORILERI, SEED_VIDEOLAR } from './videolar'
 import { SEED_YAZI_KATEGORILERI, SEED_YAZILAR } from './yazilar'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
@@ -60,7 +61,7 @@ const ROL: Record<string, 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen'> 
 
 export type SeedResult = { eserler: number; kitaplar: number }
 
-async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-turleri' | 'yazi-kategorileri', ad: string, extra: { sira?: number } = {}) {
+async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-turleri' | 'yazi-kategorileri' | 'video-kategorileri', ad: string, extra: { sira?: number } = {}) {
   const found = await payload.find({ collection, where: { ad: { equals: ad } }, locale: LOCALE, limit: 1, depth: 0 })
   if (found.docs[0]) return found.docs[0].id
   const created = await payload.create({ collection, data: { ad, ...extra }, locale: LOCALE, context: CTX })
@@ -246,6 +247,30 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       kaynaklar: (y.kaynaklar ?? []).map((metin) => ({ metin })),
       yayinda: y.yayinda,
     })
+  }
+
+  // Videos (key: youtube id): categories first, then the one real video.
+  const videoKatIds = new Map<string, number | string>()
+  for (const [i, ad] of SEED_VIDEO_KATEGORILERI.entries()) {
+    videoKatIds.set(ad, await upsertByAd(payload, 'video-kategorileri', ad, { sira: i }))
+  }
+  for (const [i, v] of SEED_VIDEOLAR.entries()) {
+    const data = {
+      baslik: v.baslik,
+      altBaslik: v.altBaslik,
+      youtube: v.youtube,
+      kategori: videoKatIds.get(v.kategori),
+      kanal: v.kanal,
+      aciklama: v.aciklama,
+      anasayfada: v.anasayfada,
+      sira: i,
+    }
+    const found = await payload.find({ collection: 'videolar', where: { youtube: { equals: v.youtube } }, locale: LOCALE, limit: 1, depth: 0 })
+    if (found.docs[0]) {
+      await payload.update({ collection: 'videolar', id: found.docs[0].id, data: data as never, locale: LOCALE, context: CTX })
+    } else {
+      await payload.create({ collection: 'videolar', data: data as never, locale: LOCALE, context: CTX })
+    }
   }
 
   // Globals

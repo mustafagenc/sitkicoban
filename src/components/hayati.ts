@@ -1,4 +1,4 @@
-import { localizedPath, TASARIM_LINKS, type Locale } from '@/i18n/config'
+import { localizedPath, type Locale } from '@/i18n/config'
 import { mediaUrl } from '@/lib/media'
 import type { Hayati, Hocalar } from '@/payload-types'
 
@@ -31,7 +31,7 @@ export function portreUrl(h: Pick<Hayati, 'portre'>): string | null {
   return h.portre && typeof h.portre === 'object' ? mediaUrl(h.portre) : null
 }
 
-/** Bölüm sonu bağlantısının adresi. Videolar sayfası Next'e taşınana dek tasarım sayfasına gider. */
+/** Bölüm sonu bağlantısının adresi. */
 export function sayfaHref(sayfa: 'eserler' | 'kitaplar' | 'yazilar' | 'videolar', locale: Locale): string {
-  return sayfa === 'videolar' ? TASARIM_LINKS.videolar : localizedPath(sayfa, locale)
+  return localizedPath(sayfa, locale)
 }

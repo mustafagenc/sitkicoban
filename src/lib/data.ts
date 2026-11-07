@@ -208,3 +208,34 @@ export const getHayati = cached('hayati', ['hayati', 'media'], async (locale: Lo
 export const getHocalar = cached('hocalar', ['hayati', 'media'], async (locale: Locale) =>
   findHocalar(await getPayload({ config }), locale),
 )
+
+// Videolar ve kategorileri: tek getirme; ana sayfa videosu istemci tarafında değil sunucuda seçilir.
+export async function findVideolar(payload: Payload, locale: Locale) {
+  const res = await payload.find({
+    collection: 'videolar',
+    sort: ['sira', '-tarih'],
+    limit: 1000,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs
+}
+
+export async function findVideoKategorileri(payload: Payload, locale: Locale) {
+  const res = await payload.find({
+    collection: 'video-kategorileri',
+    sort: 'sira',
+    limit: 1000,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs
+}
+
+export const getVideolar = cached('videolar', ['videolar', 'media'], async (locale: Locale) =>
+  findVideolar(await getPayload({ config }), locale),
+)
+
+export const getVideoKategorileri = cached('video-kategorileri', ['videolar'], async (locale: Locale) =>
+  findVideoKategorileri(await getPayload({ config }), locale),
+)

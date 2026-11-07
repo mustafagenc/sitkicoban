@@ -77,6 +77,8 @@ export interface Config {
     hocalar: Hocalar;
     'yazi-kategorileri': YaziKategorileri;
     yazilar: Yazilar;
+    'video-kategorileri': VideoKategorileri;
+    videolar: Videolar;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +96,8 @@ export interface Config {
     hocalar: HocalarSelect<false> | HocalarSelect<true>;
     'yazi-kategorileri': YaziKategorileriSelect<false> | YaziKategorileriSelect<true>;
     yazilar: YazilarSelect<false> | YazilarSelect<true>;
+    'video-kategorileri': VideoKategorileriSelect<false> | VideoKategorileriSelect<true>;
+    videolar: VideolarSelect<false> | VideolarSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -398,6 +402,63 @@ export interface Yazilar {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-kategorileri".
+ */
+export interface VideoKategorileri {
+  id: number;
+  ad: string;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videolar".
+ */
+export interface Videolar {
+  id: number;
+  baslik: string;
+  /**
+   * Örn. Ramazan Sosyolojisi · 2. Bölüm
+   */
+  altBaslik?: string | null;
+  /**
+   * Video adresi ya da 11 karakterlik video kimliği. Kapak YouTube’dan gelir; isterseniz aşağıdan kendi kapağınızı yükleyin.
+   */
+  youtube: string;
+  kategori?: (number | null) | VideoKategorileri;
+  /**
+   * Aynı seriye yazılan videolar pencerede yan yana listelenir. Örn. Ta’lik meşki
+   */
+  seri?: string | null;
+  /**
+   * Seri içindeki sırası.
+   */
+  bolum?: number | null;
+  /**
+   * Örn. 14:32
+   */
+  sure?: string | null;
+  tarih?: string | null;
+  /**
+   * Örn. TRT 2
+   */
+  kanal?: string | null;
+  aciklama?: string | null;
+  /**
+   * Boşsa YouTube kapağı kullanılır.
+   */
+  kapak?: (number | null) | Media;
+  /**
+   * Yalnızca bir video kullanılır: işaretlenenlerden en son güncellenen.
+   */
+  anasayfada?: boolean | null;
+  sira?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -459,6 +520,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'yazilar';
         value: number | Yazilar;
+      } | null)
+    | ({
+        relationTo: 'video-kategorileri';
+        value: number | VideoKategorileri;
+      } | null)
+    | ({
+        relationTo: 'videolar';
+        value: number | Videolar;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -683,6 +752,37 @@ export interface YazilarSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-kategorileri_select".
+ */
+export interface VideoKategorileriSelect<T extends boolean = true> {
+  ad?: T;
+  sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videolar_select".
+ */
+export interface VideolarSelect<T extends boolean = true> {
+  baslik?: T;
+  altBaslik?: T;
+  youtube?: T;
+  kategori?: T;
+  seri?: T;
+  bolum?: T;
+  sure?: T;
+  tarih?: T;
+  kanal?: T;
+  aciklama?: T;
+  kapak?: T;
+  anasayfada?: T;
+  sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -822,6 +922,17 @@ export interface UiMetinleri {
   icazetEyebrow?: string | null;
   icazetBaslik?: string | null;
   anasayfaHayatiBaslik?: string | null;
+  videolarBaslik?: string | null;
+  videolarAciklama?: string | null;
+  videolarListeBaslik?: string | null;
+  videoKategoriGrubu?: string | null;
+  videoSayisi?: string | null;
+  videolarBos?: string | null;
+  videoOynat?: string | null;
+  dersNo?: string | null;
+  videoSeriBaslik?: string | null;
+  youtubedaAc?: string | null;
+  tumVideolarOk?: string | null;
   devaminiOku?: string | null;
   footerTelif?: string | null;
   footerNot?: string | null;
@@ -1017,6 +1128,17 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   icazetEyebrow?: T;
   icazetBaslik?: T;
   anasayfaHayatiBaslik?: T;
+  videolarBaslik?: T;
+  videolarAciklama?: T;
+  videolarListeBaslik?: T;
+  videoKategoriGrubu?: T;
+  videoSayisi?: T;
+  videolarBos?: T;
+  videoOynat?: T;
+  dersNo?: T;
+  videoSeriBaslik?: T;
+  youtubedaAc?: T;
+  tumVideolarOk?: T;
   devaminiOku?: T;
   footerTelif?: T;
   footerNot?: T;

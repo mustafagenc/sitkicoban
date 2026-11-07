@@ -92,14 +92,16 @@ html:has(.home) { scroll-behavior:smooth; }
 
 /* Video */
 .home .video-wrap { display:grid; grid-template-columns:1.6fr 1fr; gap:46px; align-items:center; }
-.home .player { aspect-ratio:16/9; background:url('/tasarim/img/e-rika-1.jpg') center/cover; position:relative; outline:1px solid var(--line); box-shadow:var(--shadow); }
+.home .player { display:block; width:100%; padding:0; border:0; font:inherit; cursor:pointer; aspect-ratio:16/9; background:var(--paper); position:relative; outline:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; }
+.home .player img { width:100%; height:100%; object-fit:cover; display:block; }
 .home .player::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.35); }
 .home .player .play { position:absolute; z-index:1; left:50%; top:50%; transform:translate(-50%,-50%); width:78px; height:78px; border-radius:50%; background:rgba(255,248,234,.92); display:grid; place-items:center; color:#3a2a1a; font-size:26px; padding-left:5px; }
 .home .video-wrap h3 { font-size:30px; margin-top:8px; }
 .home .video-wrap p { color:var(--ink-soft); }
 .home .vlist { margin-top:16px; font-size:15px; }
-.home .vlist div { padding:8px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between; }
-.home .vlist span { color:var(--ink-soft); }
+.home .vlist button { width:100%; padding:8px 0; border:0; border-top:1px solid var(--line); background:none; font:inherit; color:inherit; text-align:start; cursor:pointer; display:flex; justify-content:space-between; }
+.home .vlist button:hover { color:var(--gold); }
+.home .vlist button span { color:var(--ink-soft); }
 
 /* Meşk ve Dersler: bitiş tarihi geçen kart, kart kalmazsa bölüm gizlenir */
 .home .ders-list { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
