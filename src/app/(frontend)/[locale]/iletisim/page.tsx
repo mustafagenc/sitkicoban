@@ -80,6 +80,15 @@ export default async function IletisimPage({ params }: Props) {
                   Facebook
                 </a>
               )}
+              {ayarlar.youtube && (
+                <a href={ayarlar.youtube} target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+                    <path d="M10.2 9.4v5.2l4.5-2.6z" fill="currentColor" />
+                  </svg>
+                  YouTube
+                </a>
+              )}
               {ayarlar.eposta && (
                 <a href={`mailto:${ayarlar.eposta}`}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">

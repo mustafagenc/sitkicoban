@@ -111,6 +111,13 @@ describe('seed', () => {
     expect(new Set(contexts).size).toBe(contexts.length)
   }, 120_000)
 
+  it('fills the social links, YouTube included', async () => {
+    const ayarlar = await payload.findGlobal({ slug: 'site-ayarlari' })
+    expect(ayarlar.youtube).toBe('https://www.youtube.com/@HattatSitkiCoban')
+    expect(ayarlar.instagram).toBeTruthy()
+    expect(ayarlar.facebook).toBeTruthy()
+  })
+
   it('writes Arabic UI strings, not Turkish', async () => {
     const ar = await payload.findGlobal({ slug: 'ui-metinleri', locale: 'ar', fallbackLocale: false })
     const tr = await payload.findGlobal({ slug: 'ui-metinleri', locale: 'tr' })

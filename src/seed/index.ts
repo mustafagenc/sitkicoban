@@ -286,6 +286,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     data: {
       instagram: 'https://www.instagram.com/hattatstkcoban/',
       facebook: 'https://www.facebook.com/s.tk.coban.619408',
+      youtube: 'https://www.youtube.com/@HattatSitkiCoban',
     },
     locale: LOCALE,
     context: ctx(),

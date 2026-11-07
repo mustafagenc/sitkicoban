@@ -58,6 +58,14 @@ export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) 
                 </svg>
               </a>
             )}
+            {ayarlar.youtube && (
+              <a href={ayarlar.youtube} target="_blank" rel="noopener" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                  <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+                  <path d="M10.2 9.4v5.2l4.5-2.6z" fill="currentColor" />
+                </svg>
+              </a>
+            )}
           </div>
           <small>{ui.footerTelif}</small>
           <small className="credit">
