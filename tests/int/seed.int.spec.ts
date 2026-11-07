@@ -1,6 +1,12 @@
 // @vitest-environment node
 import { getPayload, type Payload } from 'payload'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+
+// Blob'a hiç gidilmez: dosya varlığı sorgusu taklit edilir (varsayılan: dosya var).
+const { head } = vi.hoisted(() => ({ head: vi.fn(async () => ({})) }))
+vi.mock('@vercel/blob', async (orig) => ({ ...(await orig<typeof import('@vercel/blob')>()), head }))
+
+import { BlobNotFoundError } from '@vercel/blob'
 
 import config from '@/payload.config'
 import { readDesign } from '@/seed/read-design'
@@ -94,4 +100,28 @@ describe('seed', () => {
     expect(ar.navEserler).toBe('الأعمال')
     expect(ar.navEserler).not.toBe(tr.navEserler)
   })
+
+  it('re-uploads a media file that Blob reports missing (the stored url is not trusted)', async () => {
+    const find = async (filename: string) =>
+      (await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, depth: 0 })).docs[0]
+    const eksik = await find('e-hilye.jpg')
+    const duran = await find('e-subhanallah.jpg')
+    process.env.BLOB_READ_WRITE_TOKEN = 'vercel_blob_rw_test_test'
+    head.mockImplementation(async (key: string) => {
+      if (key === 'e-hilye.jpg') throw new BlobNotFoundError()
+      return {}
+    })
+    let sorulan: unknown[] = []
+    try {
+      await seed(payload)
+      sorulan = head.mock.calls.map((c) => c[0])
+    } finally {
+      delete process.env.BLOB_READ_WRITE_TOKEN
+      head.mockReset()
+      head.mockImplementation(async () => ({}))
+    }
+    expect(sorulan).toEqual(expect.arrayContaining(['e-hilye.jpg', 'e-subhanallah.jpg']))
+    expect((await find('e-hilye.jpg'))?.id).not.toBe(eksik.id)
+    expect((await find('e-subhanallah.jpg'))?.id).toBe(duran.id)
+  }, 120_000)
 })

@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs'
 import path from 'node:path'
 import type { Payload } from 'payload'
 
@@ -10,6 +9,7 @@ import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
 import { SEED_ILETISIM } from './iletisim'
 import { SEED_VIDEO_KATEGORILERI, SEED_VIDEOLAR } from './videolar'
 import { SEED_YAZI_KATEGORILERI, SEED_YAZILAR } from './yazilar'
+import { mediaDosyasiVar } from './media-var'
 import { readDesign } from './read-design'
 import { UI_STRINGS } from './ui-metinleri'
 
@@ -73,8 +73,8 @@ async function upsertMedia(payload: Payload, root: string, filename: string, alt
   const mediaDir = path.resolve(process.cwd(), process.env.MEDIA_DIR || 'public/media')
   const found = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, depth: 0 })
   const doc = found.docs[0]
-  if (doc?.url && /^https?:\/\//.test(doc.url)) return doc.id // Blob'daki dosya: yerelde aranmaz
-  if (doc && existsSync(path.join(mediaDir, filename))) return doc.id
+  // Kayıttaki url'ye güvenilmez (Blob açıkken her url Blob adresine çevrilir): dosyanın kendisine bakılır.
+  if (doc && (await mediaDosyasiVar(doc, mediaDir))) return doc.id
   if (doc) await payload.delete({ collection: 'media', id: doc.id, context: CTX }) // file went missing: recreate
   const created = await payload.create({
     collection: 'media',
