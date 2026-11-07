@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 
+import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, publicRead } from '@/lib/access'
 
 const t = (name: string, label: string, type: 'text' | 'textarea' = 'text'): Field =>
@@ -11,6 +12,7 @@ export const Anasayfa: GlobalConfig = {
   slug: 'anasayfa',
   label: 'Ana sayfa',
   access: { read: publicRead.read, update: adminWrite.update },
+  hooks: { afterChange: [revalidateHooks('anasayfa').afterChange] },
   fields: [
     t('heroEyebrow', 'Hero üst yazı'),
     t('heroBaslik', 'Hero başlık'),

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, publicRead } from '@/lib/access'
 
 /** Anahtar -> yönetici paneli etiketi. Anahtar eklemek için buraya satır ekleyin. */
@@ -58,5 +59,6 @@ export const UiMetinleri: GlobalConfig = {
   slug: 'ui-metinleri',
   label: 'Arayüz metinleri',
   access: { read: publicRead.read, update: adminWrite.update },
+  hooks: { afterChange: [revalidateHooks('ui-metinleri').afterChange] },
   fields: UI_KEYS.map((k) => ({ name: k, label: LABELS[k], type: 'text' as const, localized: true })),
 }

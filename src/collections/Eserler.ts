@@ -1,5 +1,6 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
+import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, publicRead } from '@/lib/access'
 import { uniqueSlug } from '@/lib/slug'
 
@@ -25,7 +26,7 @@ export const Eserler: CollectionConfig = {
   labels: { singular: 'Eser', plural: 'Eserler' },
   admin: { useAsTitle: 'baslik', defaultColumns: ['baslik', 'tur', 'yil', 'sira'] },
   access: { ...publicRead, ...adminWrite },
-  hooks: { beforeChange: [computeOran] },
+  hooks: { beforeChange: [computeOran], afterChange: [revalidateHooks('eserler').afterChange], afterDelete: [revalidateHooks('eserler').afterDelete] },
   fields: [
     { name: 'baslik', label: 'Başlık', type: 'text', required: true, localized: true },
     {

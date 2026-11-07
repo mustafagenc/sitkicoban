@@ -27,3 +27,7 @@ node_modules/
 # yerel medya ve kopyalanan tasarım
 public/media/
 public/tasarim/
+
+# Next dev ile otomatik üretilen
+AGENTS.md
+CLAUDE.md
