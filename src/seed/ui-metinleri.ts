@@ -9,7 +9,7 @@ export const UI_STRINGS: Record<UiKey, S> = {
   navKitaplar: { tr: 'Kitaplar', en: 'Books', ar: 'الكتب' },
   navVideolar: { tr: 'Videolar', en: 'Videos', ar: 'الفيديوهات' },
   navHayati: { tr: 'Hayatı', en: 'Biography', ar: 'السيرة' },
-  navIletisim: { tr: 'İletişim', en: 'Contact', ar: 'اتصل' },
+  navIletisim: { tr: 'İletişim', en: 'Contact', ar: 'اتصل بنا' },
   tumu: { tr: 'Tümü', en: 'All', ar: 'الكل' },
   tumuOk: { tr: 'Tümü →', en: 'View all →', ar: 'عرض الكل ←' },
   bilgiGirilecek: { tr: 'Bilgi girilecek', en: 'To be added', ar: 'سيُضاف لاحقًا' },
@@ -31,7 +31,7 @@ export const UI_STRINGS: Record<UiKey, S> = {
   sayfa: { tr: 'Sayfa', en: 'Pages', ar: 'عدد الصفحات' },
   isbn: { tr: 'ISBN', en: 'ISBN', ar: 'ردمك (ISBN)' },
   gorunumDuvar: { tr: 'Duvar', en: 'Wall', ar: 'الجدار' },
-  gorunumSirali: { tr: 'Sıralı', en: 'Rows', ar: 'صفوف' },
+  gorunumSirali: { tr: 'Sıralı', en: 'Rows', ar: 'صفّي' },
   gorunumMuze: { tr: 'Müze', en: 'Museum', ar: 'المتحف' },
   gorunumEtiket: { tr: 'Galeri görünümü', en: 'Gallery view', ar: 'طريقة عرض المعرض' },
   bosSecim: {
@@ -67,6 +67,6 @@ export const UI_STRINGS: Record<UiKey, S> = {
   footerNot: {
     tr: 'Tasarım ve geliştirme: Mustafa Genç',
     en: 'Design and development: Mustafa Genç',
-    ar: 'التصميم والتطوير: مصطفى جنج',
+    ar: 'التصميم والتطوير: Mustafa Genç',
   },
 }
