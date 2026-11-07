@@ -3,6 +3,8 @@ import sharp from 'sharp'
 import { getPayload, type Payload } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
+const afterCallbacks: Array<() => void> = []
+vi.mock('next/server', () => ({ after: (fn: () => void) => void afterCallbacks.push(fn) }))
 vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
   unstable_cache: (fn: unknown) => fn,
@@ -12,6 +14,10 @@ import { revalidateTag } from 'next/cache'
 import config from '@/payload.config'
 
 let payload: Payload
+const prevSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+const runAfter = () => {
+  while (afterCallbacks.length) afterCallbacks.shift()!()
+}
 const fetchMock = vi.fn(async () => new Response('ok'))
 const mediaIds: (number | string)[] = []
 const eserIds: (number | string)[] = []
@@ -33,7 +39,12 @@ async function makeMedia() {
 }
 
 const warmCalls = () =>
-  (fetchMock.mock.calls as unknown as [string][]).filter((c) => String(c[0]).startsWith('http://localhost:3999'))
+  (fetchMock.mock.calls as unknown as [string][])
+    .map((c) => String(c[0]))
+    .filter((u) => u.startsWith('http://localhost:3999'))
+const EXPECTED_URLS = ['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works']
+  .map((p) => `http://localhost:3999${p === '/' ? '/' : p}`)
+  .sort()
 const tagCalls = () => vi.mocked(revalidateTag).mock.calls.map((c) => c[0])
 
 describe('revalidation hooks', () => {
@@ -46,12 +57,15 @@ describe('revalidation hooks', () => {
   beforeEach(() => {
     vi.mocked(revalidateTag).mockClear()
     fetchMock.mockClear()
+    afterCallbacks.length = 0
   })
 
   afterAll(async () => {
     for (const id of eserIds) await payload.delete({ collection: 'eserler', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of mediaIds) await payload.delete({ collection: 'media', id, context: { disableRevalidate: true } }).catch(() => {})
     vi.unstubAllGlobals()
+    if (prevSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL
+    else process.env.NEXT_PUBLIC_SITE_URL = prevSiteUrl
   })
 
   it('revalidates and warms on update and delete, not when disabled', async () => {
@@ -66,13 +80,19 @@ describe('revalidation hooks', () => {
     expect(warmCalls()).toHaveLength(0)
 
     await payload.update({ collection: 'eserler', id: e.id, data: { yil: '2024' } })
-    expect(tagCalls()).toEqual(expect.arrayContaining(['eserler', 'anasayfa']))
-    expect(warmCalls()).toHaveLength(6)
+    expect(tagCalls().sort()).toEqual(['anasayfa', 'eserler'])
+    expect(tagCalls()).not.toContain('kitaplar')
+    expect(warmCalls()).toHaveLength(0) // deferred until after the response
+    runAfter()
+    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
 
     vi.mocked(revalidateTag).mockClear()
     fetchMock.mockClear()
     await payload.delete({ collection: 'eserler', id: e.id })
-    expect(tagCalls()).toEqual(expect.arrayContaining(['eserler', 'anasayfa']))
-    expect(warmCalls()).toHaveLength(6)
+    expect(tagCalls().sort()).toEqual(['anasayfa', 'eserler'])
+    expect(tagCalls()).not.toContain('kitaplar')
+    expect(warmCalls()).toHaveLength(0) // deferred until after the response
+    runAfter()
+    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
   })
 })

@@ -1,4 +1,5 @@
 import { revalidateTag } from 'next/cache'
+import { after } from 'next/server'
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -45,12 +46,28 @@ function invalidate(source: string): void {
 
   const paths = pathsForTags(tags)
   if (paths.length === 0) return
+
+  // Ordering matters: the hook runs before Payload commits its DB transaction, and
+  // revalidateTag only queues the invalidation until the route handler returns.
+  // Warming now would read the old row and hit a still-valid cache. So defer the
+  // warm-up until after the response (by then the commit is done and the pending
+  // revalidates are applied).
+  const warm = () => warmUp(paths)
+  try {
+    after(warm)
+  } catch {
+    // Outside a Next request context (scripts, tests): defer on the event loop instead.
+    setTimeout(warm, 250)
+  }
+}
+
+function warmUp(paths: string[]): void {
   console.log(`[yenile] ${paths.join(',')}`)
 
   const base = process.env.NEXT_PUBLIC_SITE_URL
   if (!base) return
   for (const path of paths) {
-    // Fire-and-forget warm-up; must never fail a save.
+    // Fire-and-forget; must never fail a save.
     try {
       fetch(new URL(path, base).toString()).catch(() => {})
     } catch {
