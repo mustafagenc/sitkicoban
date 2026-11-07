@@ -93,6 +93,24 @@ describe('seed', () => {
     expect(tur.ad).toBe('Levha')
   })
 
+  it('gives every write its own context object (plugins store per-request state in it)', async () => {
+    const contexts: unknown[] = []
+    const spies = (['create', 'update', 'updateGlobal', 'delete'] as const).map((m) => {
+      const orig = payload[m].bind(payload) as (args: unknown) => unknown
+      return vi.spyOn(payload, m).mockImplementation(((args: { context?: unknown }) => {
+        if (args.context) contexts.push(args.context)
+        return orig(args)
+      }) as never)
+    })
+    try {
+      await seed(payload)
+    } finally {
+      for (const s of spies) s.mockRestore()
+    }
+    expect(contexts.length).toBeGreaterThan(10)
+    expect(new Set(contexts).size).toBe(contexts.length)
+  }, 120_000)
+
   it('writes Arabic UI strings, not Turkish', async () => {
     const ar = await payload.findGlobal({ slug: 'ui-metinleri', locale: 'ar', fallbackLocale: false })
     const tr = await payload.findGlobal({ slug: 'ui-metinleri', locale: 'tr' })

@@ -47,7 +47,12 @@ const ANASAYFA = {
   },
 } satisfies Record<(typeof LOCALES)[number], Record<string, string>>
 
-const CTX = { disableRevalidate: true }
+/**
+ * Her yazma işlemine yeni bir bağlam nesnesi: Payload ve eklentiler istek durumunu bağlama yazar
+ * (ör. Blob eklentisi yüklenen dosyayı `context._payloadCloudStorage`'a koyar). Ortak bir nesne,
+ * sonraki her görselde ilk dosyanın yeniden yüklenmesine yol açıyordu.
+ */
+const ctx = () => ({ disableRevalidate: true })
 const LOCALE = 'tr' as const
 
 const HOME_WORKS = ['e-hilye.jpg', 'e-subhanallah.jpg', 'e-seyen-lillah.jpg', 'e-emrolundugun.jpg', 'e-sulus-2.jpg']
@@ -65,7 +70,7 @@ export type SeedResult = { eserler: number; kitaplar: number }
 async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-turleri' | 'yazi-kategorileri' | 'video-kategorileri', ad: string, extra: { sira?: number } = {}) {
   const found = await payload.find({ collection, where: { ad: { equals: ad } }, locale: LOCALE, limit: 1, depth: 0 })
   if (found.docs[0]) return found.docs[0].id
-  const created = await payload.create({ collection, data: { ad, ...extra }, locale: LOCALE, context: CTX })
+  const created = await payload.create({ collection, data: { ad, ...extra }, locale: LOCALE, context: ctx() })
   return created.id
 }
 
@@ -75,13 +80,13 @@ async function upsertMedia(payload: Payload, root: string, filename: string, alt
   const doc = found.docs[0]
   // Kayıttaki url'ye güvenilmez (Blob açıkken her url Blob adresine çevrilir): dosyanın kendisine bakılır.
   if (doc && (await mediaDosyasiVar(doc, mediaDir))) return doc.id
-  if (doc) await payload.delete({ collection: 'media', id: doc.id, context: CTX }) // file went missing: recreate
+  if (doc) await payload.delete({ collection: 'media', id: doc.id, context: ctx() }) // file went missing: recreate
   const created = await payload.create({
     collection: 'media',
     data: { alt },
     locale: LOCALE,
     filePath: path.resolve(process.cwd(), root, 'img', filename),
-    context: CTX,
+    context: ctx(),
   })
   return created.id
 }
@@ -99,7 +104,7 @@ function slugsFor(titles: string[]): string[] {
 
 async function upsertBySlug(payload: Payload, collection: 'eserler' | 'kitaplar' | 'yazilar', slug: string, data: Record<string, unknown>) {
   const found = await payload.find({ collection, where: { slug: { equals: slug } }, locale: LOCALE, limit: 1, depth: 0 })
-  const args = { data: { ...data, slug }, locale: LOCALE, context: CTX } as const
+  const args = { data: { ...data, slug }, locale: LOCALE, context: ctx() } as const
   if (found.docs[0]) {
     await payload.update({ collection, id: found.docs[0].id, ...args } as never)
   } else {
@@ -117,7 +122,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
   if (!email || !password) throw new Error('SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set')
   const existing = await payload.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0 })
   if (!existing.docs[0]) {
-    await payload.create({ collection: 'users', data: { email, password }, context: CTX })
+    await payload.create({ collection: 'users', data: { email, password }, context: ctx() })
   }
 
   // Taxonomies, in first-seen order.
@@ -203,9 +208,9 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       depth: 0,
     })
     if (found.docs[0]) {
-      await payload.update({ collection: 'dersler', id: found.docs[0].id, data, locale: LOCALE, context: CTX })
+      await payload.update({ collection: 'dersler', id: found.docs[0].id, data, locale: LOCALE, context: ctx() })
     } else {
-      await payload.create({ collection: 'dersler', data, locale: LOCALE, context: CTX })
+      await payload.create({ collection: 'dersler', data, locale: LOCALE, context: ctx() })
     }
   }
 
@@ -215,16 +220,16 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     const data = { ad: h.ad, kalemler: h.kalemler, aciklama: h.aciklama, sayfaAciklama: h.sayfaAciklama, imza, sira: i }
     const found = await payload.find({ collection: 'hocalar', where: { ad: { equals: h.ad } }, locale: LOCALE, limit: 1, depth: 0 })
     if (found.docs[0]) {
-      await payload.update({ collection: 'hocalar', id: found.docs[0].id, data, locale: LOCALE, context: CTX })
+      await payload.update({ collection: 'hocalar', id: found.docs[0].id, data, locale: LOCALE, context: ctx() })
     } else {
-      await payload.create({ collection: 'hocalar', data, locale: LOCALE, context: CTX })
+      await payload.create({ collection: 'hocalar', data, locale: LOCALE, context: ctx() })
     }
   }
   await payload.updateGlobal({
     slug: 'hayati',
     data: { ...SEED_HAYATI, portre: await upsertMedia(payload, root, SEED_PORTRE.file, SEED_PORTRE.alt) } as never,
     locale: LOCALE,
-    context: CTX,
+    context: ctx(),
   })
 
   // Posts: only the first has the sample body and is published. Drafts keep the design's
@@ -268,9 +273,9 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     }
     const found = await payload.find({ collection: 'videolar', where: { youtube: { equals: v.youtube } }, locale: LOCALE, limit: 1, depth: 0 })
     if (found.docs[0]) {
-      await payload.update({ collection: 'videolar', id: found.docs[0].id, data: data as never, locale: LOCALE, context: CTX })
+      await payload.update({ collection: 'videolar', id: found.docs[0].id, data: data as never, locale: LOCALE, context: ctx() })
     } else {
-      await payload.create({ collection: 'videolar', data: data as never, locale: LOCALE, context: CTX })
+      await payload.create({ collection: 'videolar', data: data as never, locale: LOCALE, context: ctx() })
     }
   }
 
@@ -283,7 +288,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       facebook: 'https://www.facebook.com/s.tk.coban.619408',
     },
     locale: LOCALE,
-    context: CTX,
+    context: ctx(),
   })
 
   // İletişim sayfası (hedef e-posta adresi seed'de yok: panelden girilir).
@@ -292,7 +297,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       slug: 'iletisim',
       data: SEED_ILETISIM[locale] as never,
       locale,
-      context: CTX,
+      context: ctx(),
     })
   }
 
@@ -301,7 +306,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       slug: 'anasayfa',
       data: ANASAYFA[locale],
       locale,
-      context: CTX,
+      context: ctx(),
     })
   }
 
@@ -310,7 +315,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       slug: 'ui-metinleri',
       data: Object.fromEntries(UI_KEYS.map((key) => [key, UI_STRINGS[key][locale]])),
       locale,
-      context: CTX,
+      context: ctx(),
     })
   }
 
