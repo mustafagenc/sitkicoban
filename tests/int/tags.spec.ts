@@ -59,4 +59,11 @@ describe('pathsForTags', () => {
     expect(paths.length).toBe(new Set(paths).size)
     expect(pathsForChange('eserler', { slug: 'b' })).not.toContain('/yazilar/b')
   })
+
+  it('re-renders the sitemap only when published yazı slugs can change', () => {
+    expect(pathsForChange('yazilar', { slug: 'b' })).toContain('/sitemap.xml')
+    expect(pathsForChange('yazi-kategorileri')).toContain('/sitemap.xml')
+    expect(pathsForChange('eserler')).not.toContain('/sitemap.xml')
+    expect(pathsForChange('dersler')).not.toContain('/sitemap.xml')
+  })
 })

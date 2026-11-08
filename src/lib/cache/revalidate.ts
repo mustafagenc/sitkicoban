@@ -59,6 +59,8 @@ export function pathsForChange(
   publishedSlugs: string[] = [],
 ): string[] {
   const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
+  // The sitemap lists published yazı slugs, so it is re-rendered whenever they can change.
+  if ((TAGS_BY_SOURCE[source] ?? []).includes('yazilar')) paths.add('/sitemap.xml')
   const slugs = [...publishedSlugs]
   if (source === 'yazilar') {
     for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) slugs.push(d.slug)
