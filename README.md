@@ -93,48 +93,24 @@ Yönetici bilgisi gönderdiği ve içerik düzenlediği için `SITE_URL` ana mak
 `127.0.0.1` veya `::1` değilse çalışmayı reddeder. REST/GraphQL okuması yalnızca giriş yapmış kullanıcıya
 açıktır (anonim istek 401/403 alır); site verisini Local API ile okur, `/media` dosyaları statik sunulur.
 
-## Neon'a geçiş
+## Yayın
 
-1. İki bağlantı adresi kullanılır: `payload migrate` ve seed için **doğrudan** (adında `-pooler` olmayan)
-   adres, Vercel çalışma zamanı için **pooled** (`-pooler`) adres. Şema `push` yalnızca ana makine
-   `localhost`/`127.0.0.1`/`::1` ise açıktır; uzak veritabanında kapalıdır. Yine de **Neon ile asla
-   `pnpm dev` çalıştırmayın**.
-2. CLI'yı Neon'a yöneltmek için kabuk ortamı `.env` dosyasını ezer. Neon adreslerini ayrı bir dosyada
-   (git dışında, ör. `.env.neon`: `DATABASE_URL` pooled, `DATABASE_URL_DIRECT` doğrudan) tutup:
+Site Vercel'de yayındadır (`main` dalı → sitkicoban.com; `develop` otomatik yayınlanmaz). Veritabanı Neon
+(Postgres), görseller Vercel Blob, e-posta Resend. Ortam değişkenleri Doppler üzerinden Vercel'e senkronlanır:
+`DATABASE_URL` (Neon **pooled** adres), `PAYLOAD_SECRET`, `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`,
+`RESEND_FROM`; `SITE_URL` isteğe bağlıdır. `pnpm build` veritabanını sorguladığı için bu değişkenler derleme
+sırasında da gerekir; Preview ortamı da aynılarına ihtiyaç duyar.
 
-   ```bash
-   set -a; . ./.env.neon; set +a
-   DATABASE_URL=$DATABASE_URL_DIRECT pnpm payload migrate
-   DATABASE_URL=$DATABASE_URL_DIRECT pnpm seed
-   ```
-
-   Seed, boş bir veritabanında yerel geliştirme sitesinin içeriğini (koleksiyonlar, üç dilde globaller,
-   sosyal bağlantılar, form konuları) birebir kurar. İlk kullanıcı seed ile oluşur; arada kalan süre
-   içinde `/admin/create-first-user` herkese açıktır, bu yüzden iki komutu art arda çalıştırın.
-   Seed `NODE_ENV=production` gerektirmez (uzak veritabanında `push` zaten kapalıdır); isterseniz yine de
-   verebilirsiniz, fazladan koruma sağlar.
-3. Görseller Vercel Blob'a gidecekse seed'den önce `BLOB_READ_WRITE_TOKEN` ayarlayın. Seed her görsel kaydı
-   için dosyanın Blob'da gerçekten durup durmadığını sorar; yoksa `tasarim/img`'den yeniden yükler (aynı ad,
-   rastgele ek yok; aynı adlı nesnenin üzerine yazılır). Blob açıkken `public/media` görsel adlarını etkilemez.
-   Media şeması (`prefix`, `_objectKey`) token olsa da olmasa da aynıdır; migration'lar iki durumda geçerlidir.
-   **Vercel'e bağlı Blob deposu üretim deposudur.** Yerel geliştirmede ayrı bir geliştirme deposu/token
-   kullanın; üretim token'ıyla yerelde medya silmek üretim dosyalarını siler.
-4. Vercel ortam değişkenleri: `DATABASE_URL` (pooled), `PAYLOAD_SECRET` (güçlü, sabit, yerelden farklı),
-   `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_FROM`; isteğe bağlı `SITE_URL` (boşsa Vercel'in
-   yayın/önizleme adresi kullanılır). Bunlar **derleme sırasında da** tanımlı olmalıdır: `pnpm build`
-   veritabanını sorgular (beklenen davranış). Preview ortamı da aynı değişkenlere ihtiyaç duyar. Sorgu günlüğü
-   (`SORGU_LOG`) yalnızca `pnpm start` sırasında anlamlıdır.
-5. İletişim formu, panelden `formHedefEposta` girilene ve Resend alan adı doğrulanana kadar "kullanılamıyor"
-   durumunda kalır.
-
-### Yayından önce
-
-- [ ] İletişim e-postası, telefon ve adres (site ayarları / iletişim)
-- [ ] `formHedefEposta` ve Resend alan adı doğrulaması
-- [ ] Gerçek aydınlatma (KVKK) metni
-- [ ] Yayındaki yazıda "Kaynak 1 (örnek)" kaynaklarını gerçekleriyle değiştirme
-- [ ] Seed'in oluşturduğu yönetici e-postasını ve parolasını panelden değiştirme
-
-Uyarı: seed'i yeniden çalıştırmak, panelde düzenlenmiş olsa bile seed'in yazdığı alanların üzerine yazar.
-Şema değişikliklerinde `pnpm payload migrate:create <ad>` ile yeni migration oluşturup dağıtımda
-`pnpm payload migrate` çalıştırın.
+- **Şema değişikliği:** `pnpm payload migrate:create <ad>` ile migration oluşturup commitleyin; yayından
+  önce Neon'un **doğrudan** (adında `-pooler` olmayan) adresiyle `DATABASE_URL=<doğrudan adres> pnpm payload migrate`
+  çalıştırın. Uzak veritabanında şema `push` kapalıdır; Neon'a bağlıyken `pnpm dev` çalıştırmayın.
+- **Seed'i canlıda yeniden çalıştırmayın:** seed boş bir veritabanını kurmak içindir; panelde düzenlenmiş
+  alanların üzerine yazar (içerik silmez).
+- **Blob deposu:** Vercel'e bağlı depo canlı sitenin deposudur. Yerelde ayrı bir geliştirme deposu/token
+  kullanın; canlı token'la yerelde görsel silmek canlıdaki dosyayı da siler.
+- **Sitemap ve robots:** `/sitemap.xml` sayfaları ve yayındaki yazıları üç dilde listeler, yazı kaydında
+  yenilenir; `/robots.txt` `/admin` ve `/api`'yi tarama dışı tutar.
+- **Google Analytics:** Ölçüm kimliği `Site ayarları > Google Analytics ölçüm kimliği`ndedir; boşsa etiket ve
+  çerez bildirimi hiç çıkmaz. Etiket Google'ın izin moduyla (Consent Mode v2) yüklenir: ziyaretçi kabul
+  edene kadar çerez yazılmaz, yalnızca çerezsiz sinyal gider; kabul edilince analiz çerezleri açılır, reklam
+  izinleri hiç açılmaz. Bildirim metinleri `Site ayarları > Çerez bildirimi`ndedir.
