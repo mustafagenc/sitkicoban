@@ -7,7 +7,14 @@ import config from '@/payload.config'
 import { seed } from '@/seed'
 
 const dbName = () => new URL(process.env.DATABASE_URL ?? 'postgres://x/none').pathname.replace(/^\//, '')
-const FEATURED = 'ihlasin-ilk-ayeti-ve-uc-mertebe'
+const SLUGS = [
+  'zikir-fikir-dua',
+  'ihlasin-ilk-ayeti-ve-uc-mertebe',
+  'herkes-ona-muhtac',
+  'soyleyip-de-yapmayanlar',
+  'inciten-kirip-doken-var-ya',
+]
+const FEATURED = SLUGS[0]
 
 let payload: Payload
 
@@ -30,53 +37,47 @@ describe('yazilar', () => {
     if (dbName().endsWith('_test') && payload) await wipe()
   }, 60_000)
 
-  it('seeds 7 posts, 3 categories, exactly 1 published', async () => {
-    expect((await payload.count({ collection: 'yazilar' })).totalDocs).toBe(7)
+  it('seeds 5 posts, 3 categories, all 5 published', async () => {
+    expect((await payload.count({ collection: 'yazilar' })).totalDocs).toBe(5)
     expect((await payload.count({ collection: 'yazi-kategorileri' })).totalDocs).toBe(3)
-    expect((await payload.count({ collection: 'yazilar', where: { yayinda: { equals: true } } })).totalDocs).toBe(1)
+    expect((await payload.count({ collection: 'yazilar', where: { yayinda: { equals: true } } })).totalDocs).toBe(5)
   })
 
-  it('maps design dates and keeps design minutes for drafts', async () => {
-    const { docs } = await payload.find({ collection: 'yazilar', where: { slug: { equals: 'herkes-ona-muhtac' } }, locale: 'tr', depth: 1 })
-    expect(docs[0].tarih?.slice(0, 10)).toBe('2025-02-01')
-    expect(docs[0].okumaSuresi).toBe(7)
-    expect((docs[0].kategori as { ad: string }).ad).toBe('Tefsir')
-  })
-
-  it('computes reading time for the published sample body', async () => {
-    const { docs } = await payload.find({ collection: 'yazilar', where: { slug: { equals: FEATURED } }, locale: 'tr' })
+  it('maps dates, categories, cover images and computes reading time from body', async () => {
+    const { docs } = await payload.find({ collection: 'yazilar', where: { slug: { equals: FEATURED } }, locale: 'tr', depth: 1 })
+    expect(docs[0].tarih?.slice(0, 10)).toBe('2025-03-01')
     expect(docs[0].okumaSuresiOtomatik).toBe(true)
-    expect(docs[0].okumaSuresi).toBeGreaterThanOrEqual(1)
-    expect(docs[0].kaynaklar?.length).toBe(3)
+    expect(docs[0].okumaSuresi).toBeGreaterThanOrEqual(5)
+    expect((docs[0].kategori as { ad: string }).ad).toBe('Tefsir')
+    expect((docs[0].kapak as { filename: string }).filename).toBe('yazi-zikir-fikir-dua.jpg')
+    expect(docs[0].kaynaklar?.length).toBeGreaterThan(5)
   })
 
-  it('getters return published posts only', async () => {
+  it('getters return published posts sorted by tarih descending', async () => {
     const list = await findYazilar(payload, 'tr')
-    expect(list.map((y) => y.slug)).toEqual([FEATURED])
-    expect(await findYaziSluglari(payload)).toEqual([FEATURED])
-    expect(await findYazi(payload, 'herkes-ona-muhtac', 'tr')).toBeNull()
+    expect(list.map((y) => y.slug)).toEqual(SLUGS)
+    expect(await findYaziSluglari(payload)).toEqual(SLUGS)
     expect(await findYazi(payload, 'yok', 'tr')).toBeNull()
     const y = await findYazi(payload, FEATURED, 'en')
-    expect(y?.baslik).toBe("İhlâs'ın İlk Âyeti ve Üç Mertebe") // falls back to tr
+    expect(y?.baslik).toBe('Zikir, Fikir, Dua') // falls back to tr
     expect((await findYaziKategorileri(payload, 'tr')).map((k) => k.ad)).toEqual(['Tefsir', 'Sanat', 'Edebiyat'])
   })
 
-  it('sorts by tarih descending', async () => {
+  it('hides unpublished posts from getters', async () => {
     const { docs } = await payload.find({ collection: 'yazilar', where: { slug: { equals: 'herkes-ona-muhtac' } }, depth: 0 })
-    const featured = await payload.find({ collection: 'yazilar', where: { slug: { equals: FEATURED } }, depth: 0, locale: 'tr' })
-    const govde = featured.docs[0].govde
-    await payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: true, govde }, locale: 'tr', context: { disableRevalidate: true } })
+    await payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: false }, locale: 'tr', context: { disableRevalidate: true } })
     try {
-      expect((await findYazilar(payload, 'tr')).map((y) => y.slug)).toEqual([FEATURED, 'herkes-ona-muhtac'])
+      expect(await findYazi(payload, 'herkes-ona-muhtac', 'tr')).toBeNull()
+      expect((await findYazilar(payload, 'tr')).map((y) => y.slug)).toEqual(SLUGS.filter((s) => s !== 'herkes-ona-muhtac'))
     } finally {
-      await payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: false, govde: null }, locale: 'tr', context: { disableRevalidate: true } })
+      await payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: true }, locale: 'tr', context: { disableRevalidate: true } })
     }
   })
 
   it('requires a body before publishing', async () => {
     const { docs } = await payload.find({ collection: 'yazilar', where: { slug: { equals: 'zikir-fikir-dua' } }, depth: 0 })
     await expect(
-      payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: true }, context: { disableRevalidate: true } }),
+      payload.update({ collection: 'yazilar', id: docs[0].id, data: { yayinda: true, govde: null }, locale: 'tr', context: { disableRevalidate: true } }),
     ).rejects.toThrow()
   })
 })

@@ -112,6 +112,32 @@ async function upsertBySlug(payload: Payload, collection: 'eserler' | 'kitaplar'
   }
 }
 
+export async function seedYazilar(payload: Payload, opts: { root?: string } = {}): Promise<number> {
+  const root = opts.root ?? 'tasarim'
+  const kategoriIds = new Map<string, number | string>()
+  for (const [i, ad] of SEED_YAZI_KATEGORILERI.entries()) {
+    kategoriIds.set(ad, await upsertByAd(payload, 'yazi-kategorileri', ad, { sira: i }))
+  }
+  const yaziSlugs = slugsFor(SEED_YAZILAR.map((y) => y.baslik))
+  // Seed hiçbir zaman içerik silmez: panelden eklenen yazılar korunur.
+  for (const [i, y] of SEED_YAZILAR.entries()) {
+    const kapak = y.kapak ? await upsertMedia(payload, root, y.kapak.file, y.kapak.alt) : null
+    await upsertBySlug(payload, 'yazilar', yaziSlugs[i], {
+      baslik: y.baslik,
+      kategori: kategoriIds.get(y.kategori),
+      ozet: y.ozet,
+      govde: y.govde ?? null,
+      tarih: `${y.tarih}T00:00:00.000Z`,
+      okumaSuresiOtomatik: Boolean(y.govde),
+      okumaSuresi: y.govde ? null : (y.dakika ?? null),
+      kapak,
+      kaynaklar: (y.kaynaklar ?? []).map((metin) => ({ metin })),
+      yayinda: y.yayinda,
+    })
+  }
+  return SEED_YAZILAR.length
+}
+
 export async function seed(payload: Payload, opts: { root?: string } = {}): Promise<SeedResult> {
   const root = opts.root ?? 'tasarim'
   const design = readDesign(root)
@@ -232,44 +258,26 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     context: ctx(),
   })
 
-  // Posts: only the first has the sample body and is published. Drafts keep the design's
-  // reading minutes (no body to count); the published one is computed from its body.
-  const kategoriIds = new Map<string, number | string>()
-  for (const [i, ad] of SEED_YAZI_KATEGORILERI.entries()) {
-    kategoriIds.set(ad, await upsertByAd(payload, 'yazi-kategorileri', ad, { sira: i }))
-  }
-  const yaziSlugs = slugsFor(SEED_YAZILAR.map((y) => y.baslik))
-  for (const [i, y] of SEED_YAZILAR.entries()) {
-    const kapak = y.kapak ? await upsertMedia(payload, root, y.kapak.file, y.kapak.alt) : null
-    await upsertBySlug(payload, 'yazilar', yaziSlugs[i], {
-      baslik: y.baslik,
-      kategori: kategoriIds.get(y.kategori),
-      ozet: y.ozet,
-      govde: y.govde ?? null,
-      tarih: `${y.tarih}T00:00:00.000Z`,
-      okumaSuresiOtomatik: Boolean(y.govde),
-      okumaSuresi: y.govde ? null : y.dakika,
-      kapak,
-      kaynaklar: (y.kaynaklar ?? []).map((metin) => ({ metin })),
-      yayinda: y.yayinda,
-    })
-  }
+  // Posts: 5 Tefsir articles with full Lexical bodies, cover images, and sources.
+  await seedYazilar(payload, { root })
 
   // Videos (key: youtube id): categories first, then the one real video.
   const videoKatIds = new Map<string, number | string>()
   for (const [i, ad] of SEED_VIDEO_KATEGORILERI.entries()) {
     videoKatIds.set(ad, await upsertByAd(payload, 'video-kategorileri', ad, { sira: i }))
   }
-  for (const [i, v] of SEED_VIDEOLAR.entries()) {
+  for (const v of SEED_VIDEOLAR) {
     const data = {
       baslik: v.baslik,
       altBaslik: v.altBaslik,
       youtube: v.youtube,
       kategori: videoKatIds.get(v.kategori),
       kanal: v.kanal,
+      sure: v.sure,
       aciklama: v.aciklama,
       anasayfada: v.anasayfada,
-      sira: i,
+      kapak: v.kapak ? await upsertMedia(payload, root, v.kapak, v.baslik) : null,
+      sira: 0, // panelde girildiği gibi; sıralama tarih/güncelleme ile
     }
     const found = await payload.find({ collection: 'videolar', where: { youtube: { equals: v.youtube } }, locale: LOCALE, limit: 1, depth: 0 })
     if (found.docs[0]) {
@@ -280,10 +288,12 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
   }
 
   // Globals
-  // E-mail, phone and address do not appear in tasarim/iletisim.html, so they are left for the admin to fill.
+  // E-posta ve form hedefi panelde girildiği gibi; telefon ve adres boş kalır (panelden girilir).
   await payload.updateGlobal({
     slug: 'site-ayarlari',
     data: {
+      eposta: 'hattatsitkicoban@gmail.com',
+      formHedefEposta: 'hattatsitkicoban@gmail.com',
       instagram: 'https://www.instagram.com/hattatstkcoban/',
       facebook: 'https://www.facebook.com/s.tk.coban.619408',
       youtube: 'https://www.youtube.com/@HattatSitkiCoban',

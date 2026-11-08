@@ -82,14 +82,18 @@ describe('videolar seed', () => {
     }
   }, 60_000)
 
-  it('seeds three categories and the one real video, idempotently', async () => {
+  it('seeds three categories and the real videos, idempotently', async () => {
     await seed(payload)
     await seed(payload)
     expect((await payload.count({ collection: 'video-kategorileri' })).totalDocs).toBe(3)
-    const { docs } = await payload.find({ collection: 'videolar', locale: 'tr', depth: 1 })
-    expect(docs).toHaveLength(1)
-    expect(docs[0]).toMatchObject({ baslik: 'Affetmenin Hafifliği', youtube: 'aLry4uypqxs', kanal: 'TRT 2', anasayfada: true })
+    const { docs } = await payload.find({ collection: 'videolar', locale: 'tr', depth: 1, sort: 'createdAt' })
+    expect(docs).toHaveLength(3)
+    expect(docs[0]).toMatchObject({ baslik: 'Affetmenin Hafifliği', youtube: 'aLry4uypqxs', kanal: 'TRT 2', sure: '25:29', anasayfada: true })
     expect((docs[0].kategori as { ad: string }).ad).toBe('Program')
+    // Panelde değiştirilen kapak seed'de de var; kapaksız video YouTube kapağını kullanır.
+    expect((docs[0].kapak as { filename: string }).filename).toBe('Affetmenin Hafifliği.png'.normalize('NFD'))
+    expect(docs.find((d) => d.youtube === 'LzfHw8Da_D8')?.kapak ?? null).toBeNull()
+    expect(docs.filter((d) => d.anasayfada)).toHaveLength(1)
   }, 180_000)
 
   it('rejects an invalid YouTube link', async () => {

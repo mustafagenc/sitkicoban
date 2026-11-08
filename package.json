@@ -13,6 +13,7 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/run.ts",
+    "seed:yazilar": "cross-env NODE_OPTIONS=--no-deprecation SEED_ONLY=yazilar payload run src/seed/run.ts",
     "sorgu-kontrol": "node scripts/sorgu-kontrol.mjs",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
