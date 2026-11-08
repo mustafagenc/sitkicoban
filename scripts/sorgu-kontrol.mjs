@@ -35,8 +35,10 @@ const onEk = (l) => (l === 'tr' ? '' : `/${l}`)
 const SAYFALAR = Object.entries(YOLLAR).flatMap(([l, yollar]) => yollar.map((y) => `${onEk(l)}/${y}`.replace(/\/$/, '') || '/'))
 const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
 const ANASAYFA = ['/', '/en', '/ar']
-const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar']
+const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography']
 const ILK_ZIYARET = ['/eserler', '/en/works', '/']
+// Eser başlığını göstermeyen ama aynı etiketle ısıtılan sayfalar: yalnızca sorgusuz açıldığı doğrulanır.
+const ILK_ZIYARET_SORGUSUZ = ['/en/biography']
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -157,6 +159,12 @@ async function ilkZiyaret(baslik) {
     if (!icerir(html, baslik)) hata(`${p} yeni başlığı ("${baslik}") içermiyor`)
     if (yeni.length) hata(`${p} ilk ziyarette ${yeni.length} sorgu gönderdi:\n${yeni.join('\n')}`)
   }
+  for (const p of ILK_ZIYARET_SORGUSUZ) {
+    const ofs = boyut(SORGU_LOG)
+    await getHtml(p)
+    const yeni = sorgular(ofs)
+    if (yeni.length) hata(`${p} ilk ziyarette ${yeni.length} sorgu gönderdi:\n${yeni.join('\n')}`)
+  }
 }
 
 /** İletişim sayfasının sunucu eylemi kimliği (derleme çıktısından). */
@@ -239,7 +247,7 @@ async function main() {
     console.log(`yenilendi: ${yollar.join(', ')}`)
 
     await ilkZiyaret(yeniBaslik)
-    console.log(`ilk ziyarette yeni başlık, 0 sorgu: ${ILK_ZIYARET.join(', ')}`)
+    console.log(`ilk ziyarette yeni başlık, 0 sorgu: ${[...ILK_ZIYARET, ...ILK_ZIYARET_SORGUSUZ].join(', ')}`)
   } catch (e) {
     asilHata = e
   }

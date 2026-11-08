@@ -7,7 +7,10 @@ describe('pathsForTags', () => {
   it('maps eserler to the works page in all locales plus home', () => {
     const paths = pathsForTags(TAGS_BY_SOURCE.eserler)
     expect(new Set(paths)).toEqual(
-      new Set(['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works']),
+      new Set([
+        '/', '/en', '/ar', '/eserler', '/en/works', '/ar/works',
+        '/hayati', '/en/biography', '/ar/biography',
+      ]),
     )
     expect(paths).not.toContain('/kitaplar')
     expect(paths.length).toBe(new Set(paths).size)
@@ -21,6 +24,12 @@ describe('pathsForTags', () => {
 
   it('maps ui to every page in every locale', () => {
     expect(pathsForTags(['ui'])).toHaveLength(24)
+  })
+
+  it('maps anasayfa to home and the biography page', () => {
+    expect(new Set(pathsForTags(['anasayfa']))).toEqual(
+      new Set(['/', '/en', '/ar', '/hayati', '/en/biography', '/ar/biography']),
+    )
   })
 
   it('maps dersler to home only', () => {

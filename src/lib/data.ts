@@ -16,7 +16,12 @@ const cached = <A extends unknown[], R>(
   name: string,
   tags: Tag[],
   fn: (...args: A) => Promise<R>,
-) => unstable_cache(async (...args: A) => plain(await fn(...args)), [name], { tags })
+) =>
+  // `tags` is exposed so tests can check every page's getters are covered by the revalidation map.
+  Object.assign(
+    unstable_cache(async (...args: A) => plain(await fn(...args)), [name], { tags }),
+    { tags },
+  )
 
 export const getEserler = cached('eserler', ['eserler', 'turler', 'media'], async (locale: Locale) => {
   const payload = await getPayload({ config })

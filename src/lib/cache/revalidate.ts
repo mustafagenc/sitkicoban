@@ -22,10 +22,10 @@ const ALL_PAGES: PageKey[] = [
   'aydinlatma',
 ]
 
-const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
-  eserler: ['eserler'],
-  kitaplar: ['kitaplar', 'yazilar'], // yazı listesi ilgili kitap adlarını (?kitap= süzgeci) gösterir
-  anasayfa: ['home'],
+export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
+  eserler: ['eserler', 'home'], // ana sayfa eser seçkisi
+  kitaplar: ['kitaplar', 'yazilar', 'home'], // yazı listesi ilgili kitap adlarını (?kitap= süzgeci) gösterir
+  anasayfa: ['home', 'hayati'], // hayatı sayfası da getAnasayfa() okur
   ayarlar: ALL_PAGES,
   ui: ALL_PAGES,
   turler: ['eserler', 'home'],
@@ -68,7 +68,7 @@ export function pathsForChange(
 }
 
 /** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books). */
-const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar']
+export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar']
 
 /** Whether a save to this source changes data shown on every published yazı detail page. */
 export function rendersYaziDetail(source: string): boolean {
