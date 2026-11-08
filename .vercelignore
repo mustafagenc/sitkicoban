@@ -1,0 +1,10 @@
+# CLI ile deploy ederken yüklenmeyecekler: gizli bilgiler, ham görseller, yerel çalışma dosyaları
+.env
+.env.*
+!.env.example
+assets/
+public/media/
+.superpowers/
+.claude/
+AGENTS.md
+CLAUDE.md
