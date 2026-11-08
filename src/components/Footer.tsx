@@ -1,6 +1,7 @@
 import { localizedPath } from '@/i18n/config'
 
 import { CerezIzni } from './CerezIzni'
+import { GoogleTag } from './GoogleTag'
 import { navLinks } from './navLinks'
 import { LOGO_SRC } from './logo'
 import type { LayoutProps } from './types'
@@ -27,6 +28,7 @@ function Credit({ text }: { text: string }) {
 export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) {
   return (
     <footer>
+      {ayarlar.gaOlcumKimligi && <GoogleTag id={ayarlar.gaOlcumKimligi} />}
       <div className="wrap">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={LOGO_SRC} alt="" />
@@ -72,12 +74,11 @@ export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) 
           </div>
           <small className="telif">
             {ui.footerTelif}
-            {/* Ölçüm kimliği girilmemişse ne bağlantı ne bildirim ne analiz betiği olur. */}
+            {/* Ölçüm kimliği girilmemişse ne etiket ne bağlantı ne bildirim olur. */}
             {ayarlar.gaOlcumKimligi && (
               <>
                 {' · '}
                 <CerezIzni
-                  gaId={ayarlar.gaOlcumKimligi}
                   metin={ayarlar.cerez?.metin ?? ''}
                   kabul={ayarlar.cerez?.kabul ?? ''}
                   reddet={ayarlar.cerez?.reddet ?? ''}

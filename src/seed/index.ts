@@ -50,21 +50,21 @@ const ANASAYFA = {
 /** Çerez bildirimi (Google Analytics yalnızca izinle yüklenir). */
 const CEREZ = {
   tr: {
-    metin: 'Sitenin nasıl kullanıldığını anlamak için, izin verirseniz Google Analytics çerezleri kullanıyoruz. Reddederseniz hiçbir analiz çerezi yazılmaz.',
+    metin: "Sitenin nasıl kullanıldığını anlamak için Google Analytics kullanıyoruz. Analiz çerezleri yalnızca izin verirseniz yazılır; izin vermezseniz Google'a çerezsiz, sizi tanımlamayan ölçüm sinyalleri gider.",
     kabul: 'Kabul ediyorum',
     reddet: 'Reddediyorum',
     aydinlatma: 'Aydınlatma metni',
     tercihler: 'Çerez tercihleri',
   },
   en: {
-    metin: 'With your permission, we use Google Analytics cookies to understand how the site is used. If you decline, no analytics cookies are set.',
+    metin: 'We use Google Analytics to understand how the site is used. Analytics cookies are set only with your permission; if you decline, Google receives only cookieless signals that do not identify you.',
     kabul: 'Accept',
     reddet: 'Decline',
     aydinlatma: 'Privacy notice',
     tercihler: 'Cookie preferences',
   },
   ar: {
-    metin: 'نستخدم ملفات تعريف الارتباط من Google Analytics بإذنك لفهم كيفية استخدام الموقع. إذا رفضت، فلن يُحفظ أي ملف تحليلي.',
+    metin: 'نستخدم Google Analytics لفهم كيفية استخدام الموقع. لا تُحفظ ملفات تعريف الارتباط التحليلية إلا بإذنك؛ وإذا رفضت، تتلقى Google إشارات قياس دون ملفات تعريف ارتباط ولا تحدد هويتك.',
     kabul: 'أوافق',
     reddet: 'أرفض',
     aydinlatma: 'نص الإفصاح',

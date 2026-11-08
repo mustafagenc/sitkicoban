@@ -7,7 +7,6 @@ const ANAHTAR = 'cerez'
 type Karar = 'kabul' | 'red'
 
 type Props = {
-  gaId: string
   metin: string
   kabul: string
   reddet: string
@@ -38,24 +37,12 @@ function yazKarar(k: Karar) {
   } catch {}
 }
 
-/** Google Analytics yalnızca izin verildikten sonra, bir kez yüklenir. */
-function gaYukle(id: string) {
-  if (window.gtag) return
-  window.dataLayer = window.dataLayer || []
-  // gtag, `arguments` nesnesinin kendisini bekler (dizi değil).
-  window.gtag = function gtag() {
-    // eslint-disable-next-line prefer-rest-params
-    window.dataLayer!.push(arguments)
-  }
-  window.gtag('js', new Date())
-  window.gtag('config', id, { anonymize_ip: true })
-  const s = document.createElement('script')
-  s.async = true
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`
-  document.head.appendChild(s)
+/** Google etiketi (GoogleTag) izin modunda zaten yüklü; burada yalnızca analiz izni açılır/kapanır. */
+function izinVer(granted: boolean) {
+  window.gtag?.('consent', 'update', { analytics_storage: granted ? 'granted' : 'denied' })
 }
 
-/** İzin geri alınınca GA çerezleri silinir; yüklenmiş betik ancak sayfa yenilenince gider. */
+/** İzin geri alınınca daha önce yazılmış GA çerezleri de silinir. */
 function gaCerezleriniSil() {
   for (const c of document.cookie.split(';')) {
     const ad = c.split('=')[0].trim()
@@ -68,33 +55,26 @@ function gaCerezleriniSil() {
 }
 
 /**
- * Çerez bildirimi ve izinli Google Analytics. Karar verilene kadar hiçbir analiz isteği gitmez;
- * alt bilgideki "Çerez tercihleri" bağlantısı bildirimi yeniden açar.
+ * Çerez bildirimi. Karar verilene kadar Google etiketi çerez yazmaz (izin modu: yalnızca çerezsiz
+ * sinyaller); kabul edilirse analiz çerezleri açılır. Alt bilgideki "Çerez tercihleri" bağlantısı
+ * bildirimi yeniden açar.
  */
-export function CerezIzni({ gaId, metin, kabul, reddet, aydinlatma, aydinlatmaHref, tercihler }: Props) {
+export function CerezIzni({ metin, kabul, reddet, aydinlatma, aydinlatmaHref, tercihler }: Props) {
   const [acik, setAcik] = useState(false)
 
   useEffect(() => {
-    const k = okuKarar()
-    if (k === 'kabul') gaYukle(gaId)
-    // Karar verilmemişse bildirim gösterilir (ilk boyamadan sonra: sayfa statik kalır).
+    // Varsayılan izin GoogleTag'de kayıtlı karardan kurulur; karar yoksa bildirim gösterilir
+    // (ilk boyamadan sonra: sayfa statik kalır).
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    else if (k === null) setAcik(true)
-  }, [gaId])
+    if (okuKarar() === null) setAcik(true)
+  }, [])
 
-  const sec = useCallback(
-    (k: Karar) => {
-      const onceki = okuKarar()
-      yazKarar(k)
-      setAcik(false)
-      if (k === 'kabul') gaYukle(gaId)
-      else if (onceki === 'kabul') {
-        gaCerezleriniSil()
-        location.reload()
-      }
-    },
-    [gaId],
-  )
+  const sec = useCallback((k: Karar) => {
+    yazKarar(k)
+    setAcik(false)
+    izinVer(k === 'kabul')
+    if (k === 'red') gaCerezleriniSil()
+  }, [])
 
   return (
     <>
