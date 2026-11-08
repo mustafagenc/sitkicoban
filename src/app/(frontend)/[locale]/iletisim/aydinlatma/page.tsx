@@ -14,8 +14,9 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
-  const iletisim = await getIletisim(locale)
-  return { title: `${iletisim.metinler?.aydinlatmaBaslik} · Sıtkı Çoban` }
+  const [iletisim, ui] = await Promise.all([getIletisim(locale), getUi(locale)])
+  const baslik = iletisim.metinler?.aydinlatmaBaslik || ui.navIletisim
+  return { title: baslik ? `${baslik} · Sıtkı Çoban` : 'Sıtkı Çoban' }
 }
 
 export default async function AydinlatmaPage({ params }: Props) {

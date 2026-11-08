@@ -46,11 +46,20 @@ export default async function YaziPage({ params }: Props) {
     yazi.kategori && typeof yazi.kategori === 'object' ? (yazi.kategori as YaziKategorileri).ad : null
   const listHref = localizedPath('yazilar', locale)
   const kaynaklar = (yazi.kaynaklar ?? []).filter((k) => k.metin)
-  const gezinti = [
-    onceki && { href: onceki.href, etiket: ui.oncekiYazi, baslik: onceki.baslik },
-    sonraki && { href: sonraki.href, etiket: ui.sonrakiYazi, baslik: sonraki.baslik },
-  ].filter((x): x is { href: string; etiket: string | null | undefined; baslik: string } => Boolean(x))
-  if (gezinti.length < 2) gezinti.push({ href: listHref, etiket: ui.tumYazilar, baslik: ui.yazilarSayfasinaDon ?? '' })
+  type Gezinti = { href: string; etiket: string | null | undefined; baslik: string; sonraki?: boolean }
+  const tumu: Gezinti = { href: listHref, etiket: ui.tumYazilar, baslik: ui.yazilarSayfasinaDon ?? '' }
+  const oncekiLink: Gezinti | undefined = onceki && { href: onceki.href, etiket: ui.oncekiYazi, baslik: onceki.baslik }
+  const sonrakiLink: Gezinti | undefined = sonraki && {
+    href: sonraki.href,
+    etiket: ui.sonrakiYazi,
+    baslik: sonraki.baslik,
+    sonraki: true,
+  }
+  // `.next` sağ sütundur: sonraki yazı (yoksa liste bağlantısı) hep sağda; en eski yazıda liste solda.
+  const gezinti: Gezinti[] =
+    oncekiLink || sonrakiLink
+      ? [oncekiLink ?? tumu, sonrakiLink ?? { ...tumu, sonraki: true }]
+      : [{ ...tumu, sonraki: true }]
 
   return (
     <>
@@ -84,8 +93,8 @@ export default async function YaziPage({ params }: Props) {
         )}
 
         <nav className="pn" aria-label={ui.yazilarGezinti ?? undefined}>
-          {gezinti.map((g, n) => (
-            <a key={g.href} className={n === 1 || gezinti.length === 1 ? 'next' : undefined} href={g.href}>
+          {gezinti.map((g) => (
+            <a key={g.href} className={g.sonraki ? 'next' : undefined} href={g.href}>
               <small>{g.etiket}</small>
               <b>{g.baslik}</b>
             </a>
