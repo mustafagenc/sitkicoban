@@ -32,3 +32,5 @@ public/tasarim/
 AGENTS.md
 CLAUDE.md
 .claude/
+.env.*
+!.env.example
