@@ -41,6 +41,8 @@ html:has(.home) { scroll-behavior:smooth; }
 .home .hero .down:hover { color:var(--gold); }
 
 .home section { padding:96px 0; }
+/* Bölüm zeminleri sıraya göre değişir: bir bölüm kalkınca ya da süresi biten dersler gizlenince aynı renkte iki bölüm yan yana gelmez. */
+.home > section:nth-of-type(even) { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .home .sec-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; gap:20px; }
 .home .sec-head h2 { font-size:42px; }
 .home .sec-head p { margin:6px 0 0; color:var(--ink-soft); }

@@ -29,10 +29,7 @@ export function HomeVideo({
   const others = list.filter((x) => x.id !== video.id).slice(0, 3)
 
   return (
-    <section
-      id="video"
-      style={{ background: 'var(--bg-2)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}
-    >
+    <section id="video">
       <div className="wrap video-wrap">
         <button type="button" className="player" aria-label={ui.videoOynat ?? undefined} onClick={() => setOpen(video.id)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}

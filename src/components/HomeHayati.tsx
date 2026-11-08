@@ -18,7 +18,7 @@ export function HomeHayati({
 }) {
   const portre = portreUrl(hayati)
   return (
-    <section id="hayati" style={{ background: 'var(--bg-2)', borderTop: '1px solid var(--line)' }}>
+    <section id="hayati">
       <div className="wrap about">
         {portre ? (
           <div

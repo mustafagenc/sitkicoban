@@ -8,11 +8,12 @@ import { HomeBooks } from '@/components/HomeBooks'
 import { HomeDersler } from '@/components/HomeDersler'
 import { HomeHero } from '@/components/HomeHero'
 import { HomeHayati } from '@/components/HomeHayati'
-import { HomeIcazet } from '@/components/HomeIcazet'
+// İcazet bölümü şimdilik kapalı; geri koymak için bu satırı ve aşağıdaki <HomeIcazet> satırını açın.
+// import { HomeIcazet } from '@/components/HomeIcazet'
 import { HomeVideo } from '@/components/HomeVideo'
 import { HomeWorks } from '@/components/HomeWorks'
 import { HomeYazilar } from '@/components/HomeYazilar'
-import { toHocalar } from '@/components/hayati'
+// import { toHocalar } from '@/components/hayati' // İcazet bölümüyle birlikte açılır
 import { toWorks } from '@/components/works'
 import { anasayfaVideosu, toVideolar } from '@/components/videolar'
 import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
@@ -36,7 +37,7 @@ import '../styles/anasayfa.css'
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, hocalar, videoDocs] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, _hocalar, videoDocs] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
@@ -82,7 +83,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      <HomeIcazet hocalar={toHocalar(hocalar)} ui={ui} ad={anasayfa.heroBaslik ?? ''} />
+      {/* <HomeIcazet hocalar={toHocalar(hocalar)} ui={ui} ad={anasayfa.heroBaslik ?? ''} /> */}
 
       <section id="yazilar">
         <div className="wrap two">
