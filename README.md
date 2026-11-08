@@ -75,7 +75,7 @@ pnpm test:int
 ## Kabul kontrolü
 
 Doğrular: üç dilde bütün sayfaların ve yayındaki bir yazının gezintisi veritabanına sorgu göndermez; bir eser
-kaydedilince yalnızca Eserler ile ana sayfa (üç dilde), bir ders kaydedilince yalnızca ana sayfa (üç dilde)
+kaydedilince yalnızca Eserler, ana sayfa ve Hayatı sayfası (üç dilde), bir ders kaydedilince yalnızca ana sayfa (üç dilde)
 yeniden üretilir; iletişim formu gönderimi (sunucu eylemi) sorgu göndermez.
 
 ```sh
@@ -95,22 +95,45 @@ açıktır (anonim istek 401/403 alır); site verisini Local API ile okur, `/med
 
 ## Neon'a geçiş
 
-1. `DATABASE_URL` değerini Neon'un **pooled** bağlantı adresi yapın. Şema `push` yalnızca ana makine
-   `localhost`/`127.0.0.1`/`::1` ise açıktır; uzak veritabanında kapalıdır. Yine de **Neon
-   `DATABASE_URL` ile asla `pnpm dev` çalıştırmayın**.
-2. Görseller Vercel Blob'a gidecekse seed'den önce `BLOB_READ_WRITE_TOKEN` ayarlayın. Seed her görsel kaydı
+1. İki bağlantı adresi kullanılır: `payload migrate` ve seed için **doğrudan** (adında `-pooler` olmayan)
+   adres, Vercel çalışma zamanı için **pooled** (`-pooler`) adres. Şema `push` yalnızca ana makine
+   `localhost`/`127.0.0.1`/`::1` ise açıktır; uzak veritabanında kapalıdır. Yine de **Neon ile asla
+   `pnpm dev` çalıştırmayın**.
+2. CLI'yı Neon'a yöneltmek için kabuk ortamı `.env` dosyasını ezer. Neon adreslerini ayrı bir dosyada
+   (git dışında, ör. `.env.neon`: `DATABASE_URL` pooled, `DATABASE_URL_DIRECT` doğrudan) tutup:
+
+   ```bash
+   set -a; . ./.env.neon; set +a
+   DATABASE_URL=$DATABASE_URL_DIRECT pnpm payload migrate
+   DATABASE_URL=$DATABASE_URL_DIRECT pnpm seed
+   ```
+
+   Seed, boş bir veritabanında yerel geliştirme sitesinin içeriğini (koleksiyonlar, üç dilde globaller,
+   sosyal bağlantılar, form konuları) birebir kurar. İlk kullanıcı seed ile oluşur; arada kalan süre
+   içinde `/admin/create-first-user` herkese açıktır, bu yüzden iki komutu art arda çalıştırın.
+   Seed `NODE_ENV=production` gerektirmez (uzak veritabanında `push` zaten kapalıdır); isterseniz yine de
+   verebilirsiniz, fazladan koruma sağlar.
+3. Görseller Vercel Blob'a gidecekse seed'den önce `BLOB_READ_WRITE_TOKEN` ayarlayın. Seed her görsel kaydı
    için dosyanın Blob'da gerçekten durup durmadığını sorar; yoksa `tasarim/img`'den yeniden yükler (aynı ad,
    rastgele ek yok; aynı adlı nesnenin üzerine yazılır). Blob açıkken `public/media` görsel adlarını etkilemez.
    Media şeması (`prefix`, `_objectKey`) token olsa da olmasa da aynıdır; migration'lar iki durumda geçerlidir.
-3. `pnpm payload migrate` ve hemen ardından `NODE_ENV=production pnpm seed` çalıştırın. Seed, boş bir
-   veritabanında yerel geliştirme sitesinin içeriğini (koleksiyonlar, üç dilde globaller, sosyal bağlantılar,
-   form konuları) birebir kurar; yalnızca form hedef e-postası panelden girilir.
-   `NODE_ENV=production`, seed'in uzak veritabanında `push` yapmasını önler. İlk kullanıcı seed ile
-   oluşur; arada kalan süre içinde `/admin/create-first-user` herkese açıktır, bu yüzden iki komutu art arda
-   çalıştırın.
-4. Üretimde `NEXT_PUBLIC_SITE_URL` ayarlayın; yoksa içerik kaydedilince sayfa ısıtması yapılmaz.
-5. `pnpm build` veritabanını sorgular (beklenen davranış); sorgu günlüğü (`SORGU_LOG`) yalnızca `pnpm start`
-   sırasında anlamlıdır.
+   **Vercel'e bağlı Blob deposu üretim deposudur.** Yerel geliştirmede ayrı bir geliştirme deposu/token
+   kullanın; üretim token'ıyla yerelde medya silmek üretim dosyalarını siler.
+4. Vercel ortam değişkenleri: `DATABASE_URL` (pooled), `PAYLOAD_SECRET` (güçlü, sabit, yerelden farklı),
+   `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_SITE_URL`. `NEXT_PUBLIC_SITE_URL` **derleme sırasında da**
+   tanımlı olmalıdır: `pnpm build` veritabanını sorgular (beklenen davranış) ve `NEXT_PUBLIC_*` değerleri
+   pakete derleme anında gömülür. Yoksa içerik kaydedilince sayfa ısıtması yapılmaz. Sorgu günlüğü
+   (`SORGU_LOG`) yalnızca `pnpm start` sırasında anlamlıdır.
+5. İletişim formu, panelden `formHedefEposta` girilene ve Resend alan adı doğrulanana kadar "kullanılamıyor"
+   durumunda kalır.
+
+### Yayından önce
+
+- [ ] İletişim e-postası, telefon ve adres (site ayarları / iletişim)
+- [ ] `formHedefEposta` ve Resend alan adı doğrulaması
+- [ ] Gerçek aydınlatma (KVKK) metni
+- [ ] Yayındaki yazıda "Kaynak 1 (örnek)" kaynaklarını gerçekleriyle değiştirme
+- [ ] Seed'in oluşturduğu yönetici e-postasını ve parolasını panelden değiştirme
 
 Uyarı: seed'i yeniden çalıştırmak, panelde düzenlenmiş olsa bile seed'in yazdığı alanların üzerine yazar.
 Şema değişikliklerinde `pnpm payload migrate:create <ad>` ile yeni migration oluşturup dağıtımda
