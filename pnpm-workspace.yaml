@@ -2,3 +2,7 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+# Güvenlik düzeltmeleri: üst paketler henüz yükseltmediği için alt bağımlılıklar zorlanır.
+overrides:
+  dompurify: ^3.4.17 # monaco-editor üzerinden (Payload paneli)
+  happy-dom: ^21.0.4 # @lexical/headless ve vitest üzerinden
