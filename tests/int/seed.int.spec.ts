@@ -77,6 +77,16 @@ describe('seed', () => {
     expect((await payload.count({ collection: 'media' })).totalDocs).toBe(files.size)
   }, 120_000)
 
+  it('seeds contact e-mail and cookie texts in every locale, but never an analytics id', async () => {
+    const tr = await payload.findGlobal({ slug: 'site-ayarlari', locale: 'tr' })
+    expect(tr.formHedefEposta).toBe('hattatsitkicoban@gmail.com')
+    expect(tr.gaOlcumKimligi ?? null).toBeNull() // ölçüm kimliği panelden girilir; seed onu ezmez
+    const en = await payload.findGlobal({ slug: 'site-ayarlari', locale: 'en', fallbackLocale: false })
+    expect(en.cerez?.kabul).toBe('Accept')
+    const ar = await payload.findGlobal({ slug: 'site-ayarlari', locale: 'ar', fallbackLocale: false })
+    expect(ar.cerez?.tercihler).toBeTruthy()
+  })
+
   it('keeps counts when a work is edited and seed re-runs', async () => {
     const { docs } = await payload.find({ collection: 'eserler', where: { slug: { equals: 'subhanellah' } }, locale: 'tr' })
     expect(docs.length).toBe(1)

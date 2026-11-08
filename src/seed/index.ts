@@ -47,6 +47,31 @@ const ANASAYFA = {
   },
 } satisfies Record<(typeof LOCALES)[number], Record<string, string>>
 
+/** Çerez bildirimi (Google Analytics yalnızca izinle yüklenir). */
+const CEREZ = {
+  tr: {
+    metin: 'Sitenin nasıl kullanıldığını anlamak için, izin verirseniz Google Analytics çerezleri kullanıyoruz. Reddederseniz hiçbir analiz çerezi yazılmaz.',
+    kabul: 'Kabul ediyorum',
+    reddet: 'Reddediyorum',
+    aydinlatma: 'Aydınlatma metni',
+    tercihler: 'Çerez tercihleri',
+  },
+  en: {
+    metin: 'With your permission, we use Google Analytics cookies to understand how the site is used. If you decline, no analytics cookies are set.',
+    kabul: 'Accept',
+    reddet: 'Decline',
+    aydinlatma: 'Privacy notice',
+    tercihler: 'Cookie preferences',
+  },
+  ar: {
+    metin: 'نستخدم ملفات تعريف الارتباط من Google Analytics بإذنك لفهم كيفية استخدام الموقع. إذا رفضت، فلن يُحفظ أي ملف تحليلي.',
+    kabul: 'أوافق',
+    reddet: 'أرفض',
+    aydinlatma: 'نص الإفصاح',
+    tercihler: 'تفضيلات ملفات تعريف الارتباط',
+  },
+} satisfies Record<(typeof LOCALES)[number], Record<string, string>>
+
 /**
  * Her yazma işlemine yeni bir bağlam nesnesi: Payload ve eklentiler istek durumunu bağlama yazar
  * (ör. Blob eklentisi yüklenen dosyayı `context._payloadCloudStorage`'a koyar). Ortak bir nesne,
@@ -301,8 +326,12 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
     locale: LOCALE,
     context: ctx(),
   })
+  // Çerez bildirimi metinleri; ölçüm kimliği (gaOlcumKimligi) seed'de yok, panelden girilir.
+  for (const locale of LOCALES) {
+    await payload.updateGlobal({ slug: 'site-ayarlari', data: { cerez: CEREZ[locale] }, locale, context: ctx() })
+  }
 
-  // İletişim sayfası (hedef e-posta adresi seed'de yok: panelden girilir).
+  // İletişim sayfası metinleri.
   for (const locale of LOCALES) {
     await payload.updateGlobal({
       slug: 'iletisim',

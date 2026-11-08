@@ -838,6 +838,20 @@ export interface SiteAyarlari {
   facebook?: string | null;
   youtube?: string | null;
   formHedefEposta?: string | null;
+  /**
+   * G-XXXXXXXXXX biçiminde. Boş bırakılırsa ölçüm yapılmaz ve çerez bildirimi gösterilmez.
+   */
+  gaOlcumKimligi?: string | null;
+  /**
+   * Ziyaretçi analiz çerezlerine izin vermeden Google Analytics yüklenmez (KVKK).
+   */
+  cerez?: {
+    metin?: string | null;
+    kabul?: string | null;
+    reddet?: string | null;
+    aydinlatma?: string | null;
+    tercihler?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1127,6 +1141,16 @@ export interface SiteAyarlariSelect<T extends boolean = true> {
   facebook?: T;
   youtube?: T;
   formHedefEposta?: T;
+  gaOlcumKimligi?: T;
+  cerez?:
+    | T
+    | {
+        metin?: T;
+        kabul?: T;
+        reddet?: T;
+        aydinlatma?: T;
+        tercihler?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

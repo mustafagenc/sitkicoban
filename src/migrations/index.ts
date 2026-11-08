@@ -8,6 +8,7 @@ import * as migration_20261107_213629_videolar from './20261107_213629_videolar'
 import * as migration_20261107_215705_iletisim from './20261107_215705_iletisim';
 import * as migration_20261107_221311_blob_anahtari from './20261107_221311_blob_anahtari';
 import * as migration_20261107_221414_konu_anahtari from './20261107_221414_konu_anahtari';
+import * as migration_20261108_020414_cerez from './20261108_020414_cerez';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261107_221414_konu_anahtari.up,
     down: migration_20261107_221414_konu_anahtari.down,
-    name: '20261107_221414_konu_anahtari'
+    name: '20261107_221414_konu_anahtari',
+  },
+  {
+    up: migration_20261108_020414_cerez.up,
+    down: migration_20261108_020414_cerez.down,
+    name: '20261108_020414_cerez'
   },
 ];

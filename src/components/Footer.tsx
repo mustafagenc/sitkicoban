@@ -1,3 +1,6 @@
+import { localizedPath } from '@/i18n/config'
+
+import { CerezIzni } from './CerezIzni'
 import { navLinks } from './navLinks'
 import { LOGO_SRC } from './logo'
 import type { LayoutProps } from './types'
@@ -71,6 +74,20 @@ export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) 
           <small className="credit">
             <Credit text={ui.footerNot ?? ''} />
           </small>
+          {/* Ölçüm kimliği girilmemişse ne bildirim ne analiz betiği olur. */}
+          {ayarlar.gaOlcumKimligi && (
+            <small>
+              <CerezIzni
+                gaId={ayarlar.gaOlcumKimligi}
+                metin={ayarlar.cerez?.metin ?? ''}
+                kabul={ayarlar.cerez?.kabul ?? ''}
+                reddet={ayarlar.cerez?.reddet ?? ''}
+                aydinlatma={ayarlar.cerez?.aydinlatma ?? ''}
+                aydinlatmaHref={localizedPath('aydinlatma', locale)}
+                tercihler={ayarlar.cerez?.tercihler ?? ''}
+              />
+            </small>
+          )}
         </div>
       </div>
     </footer>
