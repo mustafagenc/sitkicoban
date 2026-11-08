@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { BookShelf } from '@/components/BookShelf'
@@ -9,6 +10,13 @@ import { toYazilar, yaziliKitaplar } from '@/components/yazilar'
 import { getKitaplar, getSiteAyarlari, getUi, getYazilar } from '@/lib/data'
 
 import '../../styles/kitaplar.css'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  if (!isLocale(locale)) return {}
+  const ui = await getUi(locale)
+  return { title: ui.navKitaplar ?? undefined, description: ui.kitaplarAciklama ?? undefined }
+}
 
 export default async function KitaplarPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

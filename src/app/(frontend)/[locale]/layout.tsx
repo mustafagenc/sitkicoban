@@ -18,7 +18,8 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: 'Sıtkı Çoban',
+  // Sayfalar yalnızca kendi adlarını verir; site adı burada eklenir (ör. "Eserler · Sıtkı Çoban").
+  title: { default: 'Sıtkı Çoban', template: '%s · Sıtkı Çoban' },
   description: 'Hattat Sıtkı Çoban',
   icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
 }

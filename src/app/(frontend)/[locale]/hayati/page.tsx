@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: `${ui.navHayati} · Sıtkı Çoban` }
+  return { title: ui.navHayati ?? undefined }
 }
 
 function hocaKartlari(hocalar: Hoca[]): Blocks {

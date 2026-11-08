@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale)) return {}
   const [iletisim, ui] = await Promise.all([getIletisim(locale), getUi(locale)])
   const baslik = iletisim.metinler?.aydinlatmaBaslik || ui.navIletisim
-  return { title: baslik ? `${baslik} · Sıtkı Çoban` : 'Sıtkı Çoban' }
+  return { title: baslik || undefined }
 }
 
 export default async function AydinlatmaPage({ params }: Props) {
