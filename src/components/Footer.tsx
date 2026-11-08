@@ -70,24 +70,27 @@ export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) 
               </a>
             )}
           </div>
-          <small>{ui.footerTelif}</small>
+          <small className="telif">
+            {ui.footerTelif}
+            {/* Ölçüm kimliği girilmemişse ne bağlantı ne bildirim ne analiz betiği olur. */}
+            {ayarlar.gaOlcumKimligi && (
+              <>
+                {' · '}
+                <CerezIzni
+                  gaId={ayarlar.gaOlcumKimligi}
+                  metin={ayarlar.cerez?.metin ?? ''}
+                  kabul={ayarlar.cerez?.kabul ?? ''}
+                  reddet={ayarlar.cerez?.reddet ?? ''}
+                  aydinlatma={ayarlar.cerez?.aydinlatma ?? ''}
+                  aydinlatmaHref={localizedPath('aydinlatma', locale)}
+                  tercihler={ayarlar.cerez?.tercihler ?? ''}
+                />
+              </>
+            )}
+          </small>
           <small className="credit">
             <Credit text={ui.footerNot ?? ''} />
           </small>
-          {/* Ölçüm kimliği girilmemişse ne bildirim ne analiz betiği olur. */}
-          {ayarlar.gaOlcumKimligi && (
-            <small>
-              <CerezIzni
-                gaId={ayarlar.gaOlcumKimligi}
-                metin={ayarlar.cerez?.metin ?? ''}
-                kabul={ayarlar.cerez?.kabul ?? ''}
-                reddet={ayarlar.cerez?.reddet ?? ''}
-                aydinlatma={ayarlar.cerez?.aydinlatma ?? ''}
-                aydinlatmaHref={localizedPath('aydinlatma', locale)}
-                tercihler={ayarlar.cerez?.tercihler ?? ''}
-              />
-            </small>
-          )}
         </div>
       </div>
     </footer>

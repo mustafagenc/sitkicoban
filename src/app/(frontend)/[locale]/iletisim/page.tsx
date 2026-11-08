@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: `${ui.navIletisim} · Sıtkı Çoban` }
+  return { title: ui.navIletisim ?? undefined }
 }
 
 export default async function IletisimPage({ params }: Props) {

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: `${ui.navVideolar} · Sıtkı Çoban` }
+  return { title: ui.navVideolar ?? undefined }
 }
 
 export default async function VideolarPage({ params }: Props) {

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { Footer } from '@/components/Footer'
@@ -8,6 +9,13 @@ import { isLocale } from '@/i18n/config'
 import { getEserler, getSiteAyarlari, getUi, getYaziTurleri } from '@/lib/data'
 
 import '../../styles/eserler.css'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  if (!isLocale(locale)) return {}
+  const ui = await getUi(locale)
+  return { title: ui.navEserler ?? undefined, description: ui.eserlerAciklama ?? undefined }
+}
 
 export default async function EserlerPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

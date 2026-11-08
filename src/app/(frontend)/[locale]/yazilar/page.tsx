@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { Footer } from '@/components/Footer'
@@ -8,6 +9,13 @@ import { dir, isLocale, localizedPath } from '@/i18n/config'
 import { getSiteAyarlari, getUi, getYaziKategorileri, getYazilar } from '@/lib/data'
 
 import '../../styles/yazilar.css'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  if (!isLocale(locale)) return {}
+  const ui = await getUi(locale)
+  return { title: ui.navYazilar ?? undefined }
+}
 
 export default async function YazilarPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

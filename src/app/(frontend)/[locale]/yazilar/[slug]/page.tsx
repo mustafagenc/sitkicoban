@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale) || !(await getYaziSluglari()).includes(slug)) return {}
   const yazi = await getYazi(slug, locale)
   if (!yazi) return {}
-  return { title: `${yazi.baslik} · Sıtkı Çoban`, description: yazi.ozet }
+  return { title: yazi.baslik, description: yazi.ozet }
 }
 
 export default async function YaziPage({ params }: Props) {
