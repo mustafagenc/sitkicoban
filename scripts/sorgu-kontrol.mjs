@@ -10,7 +10,7 @@
 // Gerekli ortam değişkenleri:
 //   SORGU_LOG   sunucunun da kullandığı sorgu günlüğü dosyası (payload.config.ts yazar)
 //   SUNUCU_LOG  `pnpm start` çıktısının yönlendirildiği dosya ([yenile] satırı buradan okunur)
-// .env'den: NEXT_PUBLIC_SITE_URL, SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD
+// .env'den: SITE_URL (yoksa http://localhost:3000), SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD
 import 'dotenv/config'
 import { existsSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { createRequire } from 'module'
@@ -19,7 +19,7 @@ const require = createRequire(import.meta.url)
 // Sunucu eylemi gövdesi, tarayıcıdaki React istemcisinin ürettiği biçimde kodlanır.
 const { encodeReply } = require('next/dist/compiled/react-server-dom-webpack/client.edge.js')
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL
+const BASE = process.env.SITE_URL || 'http://localhost:3000'
 const SORGU_LOG = process.env.SORGU_LOG
 const SUNUCU_LOG = process.env.SUNUCU_LOG
 const EMAIL = process.env.SEED_ADMIN_EMAIL
@@ -48,7 +48,7 @@ function hata(mesaj) {
   throw new Error(mesaj)
 }
 
-for (const [ad, deger] of Object.entries({ NEXT_PUBLIC_SITE_URL: BASE, SORGU_LOG, SUNUCU_LOG, SEED_ADMIN_EMAIL: EMAIL, SEED_ADMIN_PASSWORD: PASSWORD })) {
+for (const [ad, deger] of Object.entries({ SITE_URL: BASE, SORGU_LOG, SUNUCU_LOG, SEED_ADMIN_EMAIL: EMAIL, SEED_ADMIN_PASSWORD: PASSWORD })) {
   if (!deger) {
     console.error(`HATA: ${ad} ayarlı değil`)
     process.exit(1)
@@ -62,7 +62,7 @@ if (!existsSync(SUNUCU_LOG)) {
 // Betik yönetici bilgisini gönderir ve içerik düzenler: yalnızca yerel sunucuya karşı çalışır.
 const SUNUCU_ADI = new URL(BASE).hostname.replace(/^\[|\]$/g, '')
 if (!['localhost', '127.0.0.1', '::1'].includes(SUNUCU_ADI)) {
-  console.error(`HATA: NEXT_PUBLIC_SITE_URL yerel değil (${SUNUCU_ADI}); betik yalnızca localhost, 127.0.0.1 veya ::1 ile çalışır`)
+  console.error(`HATA: SITE_URL yerel değil (${SUNUCU_ADI}); betik yalnızca localhost, 127.0.0.1 veya ::1 ile çalışır`)
   process.exit(1)
 }
 

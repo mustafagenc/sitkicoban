@@ -51,7 +51,7 @@ pnpm 11 `package.json`'daki `pnpm` alanını okumaz: derleme betiklerine izin `p
 | --- | --- |
 | `DATABASE_URL`, `PAYLOAD_SECRET` | Veritabanı ve Payload gizli anahtarı (zorunlu) |
 | `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Seed'in oluşturduğu yönetici (yalnızca seed ve kabul kontrolü) |
-| `NEXT_PUBLIC_SITE_URL` | Sitenin adresi; içerik kaydedilince sayfa ısıtması bunu kullanır |
+| `SITE_URL` | Sitenin adresi (yalnızca sunucuda: ısıtma, sitemap, robots). Vercel'de boş bırakılabilir; yayında üretim alan adı, önizlemede önizleme adresi kullanılır |
 | `BLOB_READ_WRITE_TOKEN` | Ayarlıysa görseller Vercel Blob'a yüklenir; değilse `public/media` (veya `MEDIA_DIR`) |
 | `RESEND_API_KEY`, `RESEND_FROM` | İletişim formu e-postası (Resend). `RESEND_FROM` Resend'de **doğrulanmış bir alan adından** olmalı (ör. `Sıtkı Çoban <form@sitkicoban.com>`). İkisinden biri ya da `Site ayarları > Form hedef e-postası` boşsa form "şu an gönderilemiyor" der; mesajlar kaydedilmez |
 
@@ -86,10 +86,10 @@ SORGU_LOG=/tmp/sorgu.log SUNUCU_LOG=/tmp/sunucu.log pnpm sorgu-kontrol
 
 `SORGU_LOG` ayarlıyken sunucu her SQL sorgusunu bu dosyaya yazar. Sunucu `RESEND_API_KEY=` (boş) ile
 başlatılır: betiğin gönderdiği form e-posta göndermez, "unavailable" döner (dönmezse betik hata verir).
-Port 3000 doluysa `pnpm start -p <port>` kullanın ve `NEXT_PUBLIC_SITE_URL`'yi aynı porta ayarlayın (derleme
+Port 3000 doluysa `pnpm start -p <port>` kullanın ve `SITE_URL`'yi aynı porta ayarlayın (derleme
 de bu değerle yapılmalı). Betik, ana sayfanın ilk eserinin başlığını ve bir dersin kurumunu panel API'si
 üzerinden (`SEED_ADMIN_*` ile giriş yaparak) geçici olarak değiştirir ve sonunda geri yükler.
-Yönetici bilgisi gönderdiği ve içerik düzenlediği için `NEXT_PUBLIC_SITE_URL` ana makinesi `localhost`,
+Yönetici bilgisi gönderdiği ve içerik düzenlediği için `SITE_URL` ana makinesi `localhost`,
 `127.0.0.1` veya `::1` değilse çalışmayı reddeder. REST/GraphQL okuması yalnızca giriş yapmış kullanıcıya
 açıktır (anonim istek 401/403 alır); site verisini Local API ile okur, `/media` dosyaları statik sunulur.
 
@@ -120,9 +120,9 @@ açıktır (anonim istek 401/403 alır); site verisini Local API ile okur, `/med
    **Vercel'e bağlı Blob deposu üretim deposudur.** Yerel geliştirmede ayrı bir geliştirme deposu/token
    kullanın; üretim token'ıyla yerelde medya silmek üretim dosyalarını siler.
 4. Vercel ortam değişkenleri: `DATABASE_URL` (pooled), `PAYLOAD_SECRET` (güçlü, sabit, yerelden farklı),
-   `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_SITE_URL`. `NEXT_PUBLIC_SITE_URL` **derleme sırasında da**
-   tanımlı olmalıdır: `pnpm build` veritabanını sorgular (beklenen davranış) ve `NEXT_PUBLIC_*` değerleri
-   pakete derleme anında gömülür. Yoksa içerik kaydedilince sayfa ısıtması yapılmaz. Sorgu günlüğü
+   `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_FROM`; isteğe bağlı `SITE_URL` (boşsa Vercel'in
+   yayın/önizleme adresi kullanılır). Bunlar **derleme sırasında da** tanımlı olmalıdır: `pnpm build`
+   veritabanını sorgular (beklenen davranış). Preview ortamı da aynı değişkenlere ihtiyaç duyar. Sorgu günlüğü
    (`SORGU_LOG`) yalnızca `pnpm start` sırasında anlamlıdır.
 5. İletişim formu, panelden `formHedefEposta` girilene ve Resend alan adı doğrulanana kadar "kullanılamıyor"
    durumunda kalır.

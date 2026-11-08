@@ -9,6 +9,8 @@ import type {
 
 import { LOCALES, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
 
+import { siteUrl } from '@/lib/site'
+
 import { TAGS_BY_SOURCE, type Tag } from './tags'
 
 const ALL_PAGES: PageKey[] = [
@@ -136,8 +138,7 @@ async function invalidate(
 function warmUp(paths: string[]): void {
   console.log(`[yenile] ${paths.join(',')}`)
 
-  const base = process.env.NEXT_PUBLIC_SITE_URL
-  if (!base) return
+  const base = siteUrl()
   for (const path of paths) {
     // Fire-and-forget; must never fail a save.
     try {

@@ -15,7 +15,7 @@ import config from '@/payload.config'
 import { revalidateHooks } from '@/lib/cache/revalidate'
 
 let payload: Payload
-const prevSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+const prevSiteUrl = process.env.SITE_URL
 const runAfter = () => {
   while (afterCallbacks.length) afterCallbacks.shift()!()
 }
@@ -86,7 +86,7 @@ const tagCalls = () => vi.mocked(revalidateTag).mock.calls.map((c) => c[0])
 
 describe('revalidation hooks', () => {
   beforeAll(async () => {
-    process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3999'
+    process.env.SITE_URL = 'http://localhost:3999'
     vi.stubGlobal('fetch', fetchMock)
     payload = await getPayload({ config })
   })
@@ -104,8 +104,8 @@ describe('revalidation hooks', () => {
     for (const id of eserIds) await payload.delete({ collection: 'eserler', id, context: { disableRevalidate: true } }).catch(() => {})
     for (const id of mediaIds) await payload.delete({ collection: 'media', id, context: { disableRevalidate: true } }).catch(() => {})
     vi.unstubAllGlobals()
-    if (prevSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL
-    else process.env.NEXT_PUBLIC_SITE_URL = prevSiteUrl
+    if (prevSiteUrl === undefined) delete process.env.SITE_URL
+    else process.env.SITE_URL = prevSiteUrl
   })
 
   it('revalidates and warms on update and delete, not when disabled', async () => {
