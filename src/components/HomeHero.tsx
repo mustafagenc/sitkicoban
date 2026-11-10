@@ -31,14 +31,15 @@ export function HomeHero({
         {collageRows(images).map((row, r) => (
           <div className="row" key={r}>
             {row.map(({ src, oran }, i) => (
-              // Genişlik/yükseklik oranı verilir ki görsel yüklenince satır kaymasın (CSS yüksekliği belirler).
+              // Genişlik/yükseklik oranı verilir ki görsel yüklenince satır kaymasın (CSS yüksekliği belirler);
+              // satırda 18 görsel yan yana olduğundan yuvarlama birikmesin diye yüksek çözünürlüklü sayılar.
               // Gösterilen genişlik: oran × satır yüksekliği (masaüstü 15vw, mobil 19svh).
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={i}
                 {...duyarli(src, `(max-width: 860px) ${(oran * 19).toFixed(1)}vh, ${(oran * 15).toFixed(1)}vw`)}
-                width={Math.round(oran * 300)}
-                height={300}
+                width={Math.round(oran * 10000)}
+                height={10000}
                 alt=""
                 decoding="async"
               />
