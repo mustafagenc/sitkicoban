@@ -102,6 +102,8 @@ export function WorksGallery({
   useEffect(() => {
     try {
       const l = localStorage.getItem('galeri')
+      // localStorage yalnızca tarayıcıda okunur (sayfa statik); mount sonrası uygulanır.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (l === 'a' || l === 'b' || l === 'c') setLayout(l)
     } catch {}
   }, [])

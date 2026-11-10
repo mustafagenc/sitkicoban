@@ -45,6 +45,8 @@ export function HomeDersler({ dersler, ui, locale }: { dersler: Ders[]; ui: UiMe
   const [afis, setAfis] = useState<Afis | null>(null)
 
   useEffect(() => {
+    // Bugünün tarihi yalnızca tarayıcıda bilinir (sayfa statik); sunucu çıktısıyla uyuşmazlık olmasın diye mount sonrası.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBugun(new Date().toISOString().slice(0, 10))
   }, [])
 

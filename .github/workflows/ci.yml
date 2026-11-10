@@ -1,0 +1,75 @@
+name: CI
+
+# Her PR'da ve main/develop'a her pushta: tip kontrolü, lint, entegrasyon testleri, migration'lar ve
+# üretim derlemesi. Testler ve derleme geçici bir Postgres kullanır; gerçek veritabanına ya da
+# Blob deposuna hiçbir zaman dokunulmaz (gizli değer gerekmez).
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kontrol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: sitkicoban_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL_TEST: postgres://ci:ci@localhost:5432/sitkicoban_test
+      PAYLOAD_SECRET: ci-yalnizca-test-icin
+      SEED_ADMIN_EMAIL: ci@example.com
+      SEED_ADMIN_PASSWORD: ci-yalnizca-test-icin
+      SITE_URL: http://localhost:3000
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      # Sürüm package.json'daki "packageManager" alanından okunur.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Bağımlılıklar
+        run: pnpm install --frozen-lockfile
+
+      - name: Ek veritabanları (geliştirme ve migration denemesi)
+        run: |
+          PGPASSWORD=ci psql -h localhost -U ci -d sitkicoban_test -c 'CREATE DATABASE sitkicoban'
+          PGPASSWORD=ci psql -h localhost -U ci -d sitkicoban_test -c 'CREATE DATABASE sitkicoban_mig'
+
+      - name: Tip kontrolü
+        run: pnpm exec tsc --noEmit
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Entegrasyon testleri
+        run: pnpm test:int
+
+      - name: Migration'lar boş veritabanına uygulanabiliyor
+        env:
+          DATABASE_URL: postgres://ci:ci@localhost:5432/sitkicoban_mig
+          NODE_ENV: production
+        run: pnpm payload migrate
+
+      - name: Seed ve üretim derlemesi
+        env:
+          DATABASE_URL: postgres://ci:ci@localhost:5432/sitkicoban
+        run: |
+          pnpm seed
+          pnpm build
