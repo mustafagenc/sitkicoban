@@ -21,7 +21,7 @@ const getRenderedAt = () => renderedAt || (renderedAt = Date.now())
 const fill = (tpl: string | null | undefined, vars: Record<string, string>) =>
   Object.entries(vars).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), tpl ?? '')
 
-const KONU_ADI: Record<BultenKonu, keyof M> = {
+export const KONU_ADI: Record<BultenKonu, keyof M> = {
   yazilar: 'konuYazilar',
   kitaplar: 'konuKitaplar',
   eserler: 'konuEserler',

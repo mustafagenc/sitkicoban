@@ -120,6 +120,7 @@ export const BULTEN_METINLER: Record<BultenMetinKey, S> = {
   },
   pushAc: { tr: 'Bildirimleri aç', en: 'Turn on notifications', ar: 'تفعيل الإشعارات' },
   pushKapat: { tr: 'Bildirimleri kapat', en: 'Turn off notifications', ar: 'إيقاف الإشعارات' },
+  pushBekle: { tr: 'Bir saniye…', en: 'One moment…', ar: 'لحظة من فضلكم…' },
   pushAcik: {
     tr: 'Bu cihazda bildirimler açık.',
     en: 'Notifications are on for this device.',

@@ -79,6 +79,7 @@ export interface Config {
     yazilar: Yazilar;
     'video-kategorileri': VideoKategorileri;
     videolar: Videolar;
+    'push-abonelikleri': PushAbonelikleri;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     yazilar: YazilarSelect<false> | YazilarSelect<true>;
     'video-kategorileri': VideoKategorileriSelect<false> | VideoKategorileriSelect<true>;
     videolar: VideolarSelect<false> | VideolarSelect<true>;
+    'push-abonelikleri': PushAbonelikleriSelect<false> | PushAbonelikleriSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -463,6 +465,22 @@ export interface Videolar {
   createdAt: string;
 }
 /**
+ * Tarayıcı bildirimlerini açan ziyaretçiler (kişisel veri yok; ziyaretçi bildirimleri kapatınca silinir).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-abonelikleri".
+ */
+export interface PushAbonelikleri {
+  id: number;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  dil: 'tr' | 'en' | 'ar';
+  konular: ('yazilar' | 'kitaplar' | 'eserler' | 'videolar')[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -533,6 +551,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'videolar';
         value: number | Videolar;
+      } | null)
+    | ({
+        relationTo: 'push-abonelikleri';
+        value: number | PushAbonelikleri;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -784,6 +806,19 @@ export interface VideolarSelect<T extends boolean = true> {
   kapak?: T;
   anasayfada?: T;
   sira?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "push-abonelikleri_select".
+ */
+export interface PushAbonelikleriSelect<T extends boolean = true> {
+  endpoint?: T;
+  p256dh?: T;
+  auth?: T;
+  dil?: T;
+  konular?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1197,6 +1232,7 @@ export interface Bulten {
     pushAciklama?: string | null;
     pushAc?: string | null;
     pushKapat?: string | null;
+    pushBekle?: string | null;
     pushAcik?: string | null;
     pushDesteklenmiyor?: string | null;
     pushIphone?: string | null;
@@ -1503,6 +1539,7 @@ export interface BultenSelect<T extends boolean = true> {
         pushAciklama?: T;
         pushAc?: T;
         pushKapat?: T;
+        pushBekle?: T;
         pushAcik?: T;
         pushDesteklenmiyor?: T;
         pushIphone?: T;

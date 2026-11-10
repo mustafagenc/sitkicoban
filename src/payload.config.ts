@@ -15,6 +15,7 @@ import { Eserler } from './collections/Eserler'
 import { Hocalar } from './collections/Hocalar'
 import { Kitaplar } from './collections/Kitaplar'
 import { Media } from './collections/Media'
+import { PushAbonelikleri } from './collections/PushAbonelikleri'
 import { Users } from './collections/Users'
 import { VideoKategorileri } from './collections/VideoKategorileri'
 import { Videolar } from './collections/Videolar'
@@ -63,7 +64,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, VideoKategorileri, Videolar],
+  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, VideoKategorileri, Videolar, PushAbonelikleri],
   globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati, Iletisim, Bulten],
   localization: {
     locales: [
