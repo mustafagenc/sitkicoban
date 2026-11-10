@@ -146,6 +146,12 @@ export const BULTEN_METINLER: Record<BultenMetinKey, S> = {
     en: 'Notifications could not be turned on right now. Please try again later.',
     ar: 'تعذّر تفعيل الإشعارات الآن. يرجى المحاولة لاحقًا.',
   },
+  davetMetin: {
+    tr: 'Yeni yazı, kitap, eser ve videolardan bildirimle haberdar olmak ister misiniz?',
+    en: 'Would you like a notification when new writings, books, works and videos are published?',
+    ar: 'هل تودّون تلقّي إشعار عند نشر مقالات وكتب وأعمال ومقاطع فيديو جديدة؟',
+  },
+  davetSonra: { tr: 'Daha sonra', en: 'Not now', ar: 'لاحقًا' },
 }
 
 const metinler = (l: keyof S) => Object.fromEntries(BULTEN_METIN_KEYS.map((k) => [k, BULTEN_METINLER[k][l]]))

@@ -1298,6 +1298,8 @@ export interface Bulten {
     pushIphone?: string | null;
     pushIzinYok?: string | null;
     pushHata?: string | null;
+    davetMetin?: string | null;
+    davetSonra?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1605,6 +1607,8 @@ export interface BultenSelect<T extends boolean = true> {
         pushIphone?: T;
         pushIzinYok?: T;
         pushHata?: T;
+        davetMetin?: T;
+        davetSonra?: T;
       };
   updatedAt?: T;
   createdAt?: T;

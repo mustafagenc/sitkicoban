@@ -63,6 +63,8 @@ const LABELS = {
   pushIphone: 'Bildirimler: iPhone/iPad notu (ana ekrana ekleyin)',
   pushIzinYok: 'Bildirimler: izin verilmedi',
   pushHata: 'Bildirimler: hata',
+  davetMetin: 'Bildirim daveti (siteye girişte çıkan kart): soru metni',
+  davetSonra: 'Bildirim daveti: Daha sonra düğmesi',
 } as const
 
 export type BultenMetinKey = keyof typeof LABELS

@@ -112,6 +112,13 @@ footer .credit a:hover { color:var(--gold); border-color:var(--gold); }
 .cerez p { margin:0 0 14px; line-height:1.55; }
 .cerez a { color:var(--head); border-bottom:1px solid var(--line-strong); }
 .cerez a:hover { color:var(--gold); border-color:var(--gold); }
+.bildirim-davet { position:fixed; z-index:79; inset-inline:20px; bottom:20px; max-width:420px; margin-inline-start:auto; padding:18px 20px; background:var(--bg); border:1px solid var(--line-strong); box-shadow:0 18px 50px rgba(40,25,10,.22); font-size:15px; color:var(--ink); text-align:start; white-space:normal; }
+.bildirim-davet p { margin:0 0 14px; line-height:1.55; }
+.bildirim-davet p:last-child { margin:0; }
+.bildirim-davet .btn { border:1px solid var(--line-strong); background:none; color:var(--head); padding:8px 18px; font:inherit; font-size:14px; letter-spacing:.04em; cursor:pointer; transition:.2s; }
+.bildirim-davet .btn:hover { border-color:var(--gold); color:var(--gold); }
+.bildirim-davet .btn.primary { background:var(--head); border-color:var(--head); color:var(--bg); }
+.bildirim-davet .btn:disabled { opacity:.6; cursor:default; }
 .cerez-btn { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
 .cerez .btn { border:1px solid var(--line-strong); background:none; color:var(--head); padding:8px 18px; font:inherit; font-size:14px; letter-spacing:.04em; cursor:pointer; transition:.2s; }
 .cerez .btn:hover { border-color:var(--gold); color:var(--gold); }

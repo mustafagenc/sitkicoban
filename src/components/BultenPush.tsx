@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
 
-import { pushKaydet, pushSil } from '@/app/(frontend)/[locale]/bulten/push'
+import { pushSil } from '@/app/(frontend)/[locale]/bulten/push'
 import { KONULAR, type BultenKonu } from '@/lib/bulten/form'
+import { mevcutAbonelik, pushAboneOl, pushDestekli as destekVar } from '@/lib/bulten/pushIstemci'
 import type { Bulten } from '@/payload-types'
 
 import { KONU_ADI } from './BultenForm'
@@ -13,16 +14,6 @@ type Durum = 'kontrol' | 'kapali' | 'acik' | 'bekle'
 type Hata = 'izin' | 'hata' | null
 
 const noop = () => () => {}
-
-/** Tarayıcı Web Push'u destekliyor mu? Sunucuda bilinmez (null). */
-const destekVar = () =>
-  'serviceWorker' in navigator && typeof window.PushManager !== 'undefined' && typeof window.Notification !== 'undefined'
-
-/** VAPID açık anahtarı (base64url) → `applicationServerKey`. */
-const anahtar = (b64: string) => {
-  const s = atob((b64 + '='.repeat((4 - (b64.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/'))
-  return Uint8Array.from(s, (c) => c.charCodeAt(0))
-}
 
 /**
  * Tarayıcı bildirimleri: konu seçimi (varsayılan hepsi), "Bildirimleri aç" → izin, service worker (/sw.js),
@@ -39,11 +30,7 @@ export function BultenPush({ m, locale, vapidKey }: { m: M; locale: string; vapi
   useEffect(() => {
     if (!destek) return
     let iptal = false
-    navigator.serviceWorker
-      .getRegistration('/')
-      .then((reg) => reg?.pushManager.getSubscription() ?? null)
-      .catch(() => null)
-      .then((sub) => {
+    mevcutAbonelik().then((sub) => {
         if (iptal) return
         setAbonelik(sub)
         setDurum(sub ? 'acik' : 'kapali')
@@ -58,33 +45,14 @@ export function BultenPush({ m, locale, vapidKey }: { m: M; locale: string; vapi
     if (konular.length === 0) return
     setHata(null)
     setDurum('bekle')
-    try {
-      // İzin, kullanıcı hareketinin içinde ilk iş olarak istenir (Safari başka türlü sormaz).
-      const izin = await Notification.requestPermission()
-      if (izin !== 'granted') {
-        setHata('izin')
-        setDurum('kapali')
-        return
-      }
-      const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
-      await navigator.serviceWorker.ready
-      const sub =
-        (await reg.pushManager.getSubscription()) ??
-        (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: anahtar(vapidKey) }))
-      const r = await pushKaydet(sub.toJSON(), locale, konular)
-      if (r.status !== 'ok') {
-        // Sunucuda kaydı olmayan bir abonelik tarayıcıda açık görünmesin.
-        await sub.unsubscribe().catch(() => false)
-        setHata('hata')
-        setDurum('kapali')
-        return
-      }
-      setAbonelik(sub)
-      setDurum('acik')
-    } catch {
-      setHata('hata')
+    const r = await pushAboneOl(vapidKey, locale, konular)
+    if (r.durum !== 'ok') {
+      setHata(r.durum)
       setDurum('kapali')
+      return
     }
+    setAbonelik(r.abonelik)
+    setDurum('acik')
   }
 
   const kapat = async () => {
