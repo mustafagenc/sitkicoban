@@ -113,6 +113,7 @@ export interface Config {
     anasayfa: Anasayfa;
     hayati: Hayati;
     iletisim: Iletisim;
+    bulten: Bulten;
   };
   globalsSelect: {
     'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
@@ -120,6 +121,7 @@ export interface Config {
     anasayfa: AnasayfaSelect<false> | AnasayfaSelect<true>;
     hayati: HayatiSelect<false> | HayatiSelect<true>;
     iletisim: IletisimSelect<false> | IletisimSelect<true>;
+    bulten: BultenSelect<false> | BultenSelect<true>;
   };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
@@ -1135,6 +1137,77 @@ export interface Iletisim {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bulten".
+ */
+export interface Bulten {
+  id: number;
+  /**
+   * Bülten sayfasında başlığın altındaki cümle.
+   */
+  aciklama: string;
+  /**
+   * Form, onay sayfası, ana sayfa şeridi, bildirimler ve e-postalardaki metinler.
+   */
+  metinler?: {
+    baslik?: string | null;
+    altBilgiBaglanti?: string | null;
+    anasayfaEyebrow?: string | null;
+    anasayfaBaslik?: string | null;
+    anasayfaMetin?: string | null;
+    anasayfaBaglanti?: string | null;
+    formBaslik?: string | null;
+    formAciklama?: string | null;
+    formEposta?: string | null;
+    formEpostaHata?: string | null;
+    formKonular?: string | null;
+    formKonuHata?: string | null;
+    konuYazilar?: string | null;
+    konuKitaplar?: string | null;
+    konuEserler?: string | null;
+    konuVideolar?: string | null;
+    formOnay?: string | null;
+    formAydinlatma?: string | null;
+    formOnayHata?: string | null;
+    formGonder?: string | null;
+    formGonderiliyor?: string | null;
+    formBasariBaslik?: string | null;
+    formBasariMetin?: string | null;
+    formYeniden?: string | null;
+    formHata?: string | null;
+    formKullanilamaz?: string | null;
+    onayBaslik?: string | null;
+    onayBekleniyor?: string | null;
+    onayBasariBaslik?: string | null;
+    onayBasariMetin?: string | null;
+    onayHata?: string | null;
+    onayKullanilamaz?: string | null;
+    onayBultenSayfasi?: string | null;
+    onayEpostaKonu?: string | null;
+    onayEpostaMetin?: string | null;
+    onayEpostaDugme?: string | null;
+    onayEpostaNot?: string | null;
+    duyuruKonuYazi?: string | null;
+    duyuruKonuKitap?: string | null;
+    duyuruKonuEser?: string | null;
+    duyuruKonuVideo?: string | null;
+    duyuruOku?: string | null;
+    duyuruGor?: string | null;
+    duyuruAyril?: string | null;
+    pushBaslik?: string | null;
+    pushAciklama?: string | null;
+    pushAc?: string | null;
+    pushKapat?: string | null;
+    pushAcik?: string | null;
+    pushDesteklenmiyor?: string | null;
+    pushIphone?: string | null;
+    pushIzinYok?: string | null;
+    pushHata?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-ayarlari_select".
  */
 export interface SiteAyarlariSelect<T extends boolean = true> {
@@ -1369,6 +1442,73 @@ export interface IletisimSelect<T extends boolean = true> {
         iletisimeDon?: T;
       };
   aydinlatmaMetni?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bulten_select".
+ */
+export interface BultenSelect<T extends boolean = true> {
+  aciklama?: T;
+  metinler?:
+    | T
+    | {
+        baslik?: T;
+        altBilgiBaglanti?: T;
+        anasayfaEyebrow?: T;
+        anasayfaBaslik?: T;
+        anasayfaMetin?: T;
+        anasayfaBaglanti?: T;
+        formBaslik?: T;
+        formAciklama?: T;
+        formEposta?: T;
+        formEpostaHata?: T;
+        formKonular?: T;
+        formKonuHata?: T;
+        konuYazilar?: T;
+        konuKitaplar?: T;
+        konuEserler?: T;
+        konuVideolar?: T;
+        formOnay?: T;
+        formAydinlatma?: T;
+        formOnayHata?: T;
+        formGonder?: T;
+        formGonderiliyor?: T;
+        formBasariBaslik?: T;
+        formBasariMetin?: T;
+        formYeniden?: T;
+        formHata?: T;
+        formKullanilamaz?: T;
+        onayBaslik?: T;
+        onayBekleniyor?: T;
+        onayBasariBaslik?: T;
+        onayBasariMetin?: T;
+        onayHata?: T;
+        onayKullanilamaz?: T;
+        onayBultenSayfasi?: T;
+        onayEpostaKonu?: T;
+        onayEpostaMetin?: T;
+        onayEpostaDugme?: T;
+        onayEpostaNot?: T;
+        duyuruKonuYazi?: T;
+        duyuruKonuKitap?: T;
+        duyuruKonuEser?: T;
+        duyuruKonuVideo?: T;
+        duyuruOku?: T;
+        duyuruGor?: T;
+        duyuruAyril?: T;
+        pushBaslik?: T;
+        pushAciklama?: T;
+        pushAc?: T;
+        pushKapat?: T;
+        pushAcik?: T;
+        pushDesteklenmiyor?: T;
+        pushIphone?: T;
+        pushIzinYok?: T;
+        pushHata?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

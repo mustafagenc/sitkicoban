@@ -23,7 +23,13 @@ describe('pathsForTags', () => {
   })
 
   it('maps ui to every page in every locale', () => {
-    expect(pathsForTags(['ui'])).toHaveLength(24)
+    expect(pathsForTags(['ui'])).toHaveLength(30)
+  })
+
+  it('maps bulten to every page (footer link, home strip), confirm page included', () => {
+    const p = pathsForTags(['bulten'])
+    expect(p).toHaveLength(30)
+    expect(p).toEqual(expect.arrayContaining(['/bulten', '/en/newsletter', '/ar/newsletter/confirm', '/', '/yazilar']))
   })
 
   it('maps anasayfa to home and the biography page', () => {

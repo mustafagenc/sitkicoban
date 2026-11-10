@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { dir, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
+import { dir, internalPath, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
 
 describe('i18n routing', () => {
   it('localizedPath', () => {
@@ -44,6 +44,21 @@ describe('i18n routing', () => {
     expect(resolvePath('/en/contact/privacy')).toEqual({ locale: 'en', key: 'aydinlatma' })
     expect(resolvePath('/tr/iletisim/aydinlatma')).toEqual({ redirect: '/iletisim/aydinlatma' })
     expect(resolvePath('/en/contact/x')).toBeNull()
+  })
+  it('newsletter pages (two-segment confirm path)', () => {
+    expect(localizedPath('bulten', 'tr')).toBe('/bulten')
+    expect(localizedPath('bulten', 'en')).toBe('/en/newsletter')
+    expect(localizedPath('bultenOnay', 'tr')).toBe('/bulten/onay')
+    expect(localizedPath('bultenOnay', 'ar')).toBe('/ar/newsletter/confirm')
+    expect(resolvePath('/bulten')).toEqual({ locale: 'tr', key: 'bulten' })
+    expect(resolvePath('/ar/newsletter')).toEqual({ locale: 'ar', key: 'bulten' })
+    expect(resolvePath('/bulten/onay')).toEqual({ locale: 'tr', key: 'bultenOnay' })
+    expect(resolvePath('/en/newsletter/confirm/')).toEqual({ locale: 'en', key: 'bultenOnay' })
+    expect(resolvePath('/tr/bulten/onay')).toEqual({ redirect: '/bulten/onay' })
+    expect(resolvePath('/en/bulten')).toBeNull()
+    expect(resolvePath('/bulten/x')).toBeNull()
+    expect(internalPath({ locale: 'en', key: 'bulten' })).toBe('/en/bulten')
+    expect(internalPath({ locale: 'en', key: 'bultenOnay' })).toBe('/en/bulten/onay')
   })
   it('dir', () => {
     expect(dir('ar')).toBe('rtl')

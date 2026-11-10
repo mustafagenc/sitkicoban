@@ -5,6 +5,7 @@ import type { Payload } from 'payload'
 import { slugify } from '@/lib/slug'
 import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
+import { SEED_BULTEN } from './bulten'
 import { SEED_DERSLER } from './dersler'
 import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
 import { SEED_ILETISIM } from './iletisim'
@@ -361,6 +362,11 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       locale,
       context: ctx(),
     })
+  }
+
+  // Bülten metinleri (sayfa, onay, ana sayfa şeridi, alt bilgi, e-postalar).
+  for (const locale of LOCALES) {
+    await payload.updateGlobal({ slug: 'bulten', data: SEED_BULTEN[locale], locale, context: ctx() })
   }
 
   for (const locale of LOCALES) {

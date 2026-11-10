@@ -22,6 +22,8 @@ const ALL_PAGES: PageKey[] = [
   'hayati',
   'iletisim',
   'aydinlatma',
+  'bulten',
+  'bultenOnay',
 ]
 
 export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
@@ -37,6 +39,7 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   hayati: ['hayati', 'home'],
   videolar: ['videolar', 'home'],
   iletisim: ['iletisim', 'aydinlatma'],
+  bulten: ALL_PAGES, // alt bilgideki "Bülten" bağlantısı her sayfada; ana sayfada bülten şeridi
 }
 
 /** Tags whose data `/llms.txt` renders (getAnasayfa, getYazilar). */
@@ -79,8 +82,8 @@ export function pathsForChange(
   return [...paths]
 }
 
-/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books). */
-export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar']
+/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books, footer newsletter link). */
+export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar', 'bulten']
 
 /** Whether a save to this source changes data shown on every published yazı detail page. */
 export function rendersYaziDetail(source: string): boolean {

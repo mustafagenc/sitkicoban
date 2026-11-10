@@ -23,6 +23,7 @@ import {
   getAnasayfa,
   getAnasayfaEserleri,
   getAnasayfaKitaplari,
+  getBulten,
   getDersler,
   getEserler,
   getHayati,
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, _hocalar, videoDocs] = await Promise.all([
+  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, _hocalar, videoDocs, bulten] = await Promise.all([
     getUi(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
@@ -60,7 +61,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getHayati(locale),
     getHocalar(locale),
     getVideolar(locale),
+    getBulten(locale),
   ])
+  const bm = bulten.metinler ?? {}
   const yazilar = toYazilar(yazilarDocs, ui, locale)
   const videolar = toVideolar(videoDocs, ui, locale)
   const anaVideo = anasayfaVideosu(videolar)
@@ -131,6 +134,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {anaVideo && <HomeVideo video={anaVideo} list={videolar} ui={ui} locale={locale} />}
       <HomeDersler dersler={toDersler(dersler)} ui={ui} locale={locale} />
+      {bm.anasayfaBaslik && (
+        <div className="bulten-serit" id="bulten">
+          <div className="wrap">
+            <div>
+              {bm.anasayfaEyebrow && <div className="eyebrow">{bm.anasayfaEyebrow}</div>}
+              <h2>{bm.anasayfaBaslik}</h2>
+              {bm.anasayfaMetin && <p>{bm.anasayfaMetin}</p>}
+            </div>
+            <a className="btn" href={localizedPath('bulten', locale)}>
+              {bm.anasayfaBaglanti}
+            </a>
+          </div>
+        </div>
+      )}
       <HomeHayati hayati={hayati} ui={ui} locale={locale} eyebrow={ui.navHayati ?? ''} />
 
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />

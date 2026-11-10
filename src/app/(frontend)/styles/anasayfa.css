@@ -161,3 +161,14 @@ html:has(.home) { scroll-behavior:smooth; }
   .home .hero .row { gap:16px; }
   .home .hero .row img { height:19svh; outline-width:5px; }
 }
+
+/* Bülten şeridi (Hayatı'dan önce): <section> değil, bölüm zemin sırasını (nth-of-type) bozmaz. */
+.home .bulten-serit { padding:56px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.home .bulten-serit .wrap { display:flex; align-items:center; justify-content:space-between; gap:30px; }
+.home .bulten-serit h2 { font-size:32px; margin-top:4px; }
+.home .bulten-serit p { margin:6px 0 0; color:var(--ink-soft); }
+.home .bulten-serit .btn { flex-shrink:0; }
+@media (max-width: 760px) {
+  .home .bulten-serit .wrap { flex-direction:column; align-items:flex-start; gap:18px; }
+  .home .bulten-serit h2 { font-size:28px; }
+}

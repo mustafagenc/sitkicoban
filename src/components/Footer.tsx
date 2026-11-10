@@ -1,4 +1,5 @@
 import { localizedPath } from '@/i18n/config'
+import { getBulten } from '@/lib/data'
 
 import { CerezIzni } from './CerezIzni'
 import { GoogleTag } from './GoogleTag'
@@ -24,8 +25,12 @@ function Credit({ text }: { text: string }) {
   )
 }
 
-/** Alt bilgi: imza, bağlantılar, sosyal medya, telif ve emeği geçen. */
-export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) {
+/**
+ * Alt bilgi: imza, bağlantılar (sonda Bülten), sosyal medya, telif ve emeği geçen. Bülten bağlantısının metni
+ * `bulten` global'inden okunur (önbellekli; `bulten` etiketi her sayfayı ısıtır).
+ */
+export async function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) {
+  const bultenEtiket = (await getBulten(locale)).metinler?.altBilgiBaglanti
   return (
     <footer>
       {ayarlar.gaOlcumKimligi && <GoogleTag id={ayarlar.gaOlcumKimligi} />}
@@ -38,6 +43,7 @@ export function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) 
               {l.label}
             </a>
           ))}
+          {bultenEtiket && <a href={localizedPath('bulten', locale)}>{bultenEtiket}</a>}
         </div>
         <div className="side">
           <div className="social-ic">

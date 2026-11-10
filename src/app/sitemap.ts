@@ -13,7 +13,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages: Object.fromEntries(LOCALES.map((x) => [x, base + pathFor(x)])) },
     }))
 
-  const pages = (Object.keys(ROUTES) as PageKey[]).flatMap((key) => entry((l) => localizedPath(key, l)))
+  // Onay sayfası kişiye özel bağlantıyla açılan bir işlem sayfasıdır: haritada yer almaz.
+  const pages = (Object.keys(ROUTES) as PageKey[])
+    .filter((key) => key !== 'bultenOnay')
+    .flatMap((key) => entry((l) => localizedPath(key, l)))
   const yazilar = (await getYaziSluglari()).flatMap((slug) => entry((l) => yaziPath(slug, l)))
   return [...pages, ...yazilar]
 }

@@ -13,6 +13,8 @@ export type PageKey =
   | 'hayati'
   | 'iletisim'
   | 'aydinlatma'
+  | 'bulten'
+  | 'bultenOnay'
 
 export const ROUTES: Record<PageKey, Record<Locale, string>> = {
   home: { tr: '', en: '', ar: '' },
@@ -23,6 +25,8 @@ export const ROUTES: Record<PageKey, Record<Locale, string>> = {
   hayati: { tr: 'hayati', en: 'biography', ar: 'biography' },
   iletisim: { tr: 'iletisim', en: 'contact', ar: 'contact' },
   aydinlatma: { tr: 'iletisim/aydinlatma', en: 'contact/privacy', ar: 'contact/privacy' },
+  bulten: { tr: 'bulten', en: 'newsletter', ar: 'newsletter' },
+  bultenOnay: { tr: 'bulten/onay', en: 'newsletter/confirm', ar: 'newsletter/confirm' },
 }
 
 const SLUG_RE = /^[a-z0-9-]+$/
@@ -83,5 +87,6 @@ export function internalPath(r: { locale: Locale; key: PageKey | 'yazi'; slug?: 
   if (r.key === 'yazi') return `/${r.locale}/yazilar/${r.slug}`
   if (r.key === 'home') return `/${r.locale}`
   if (r.key === 'aydinlatma') return `/${r.locale}/iletisim/aydinlatma`
+  if (r.key === 'bultenOnay') return `/${r.locale}/bulten/onay`
   return `/${r.locale}/${r.key}`
 }
