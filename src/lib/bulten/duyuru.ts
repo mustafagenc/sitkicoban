@@ -82,7 +82,7 @@ export async function duyurulariBekle(): Promise<void> {
  * `duyur: true` onu ezer. `after()` yanıt (ve commit) bittikten sonra çalışır; Next isteği dışında
  * (betikler) bir süre sonra olay döngüsünde çalıştırılır.
  */
-function zamanla(is: Is): void {
+export function zamanla(is: Is): void {
   if (elle) {
     kuyruk.push(is)
     return

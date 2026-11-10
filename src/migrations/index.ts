@@ -13,6 +13,8 @@ import * as migration_20261110_122402_anasayfa_meta from './20261110_122402_anas
 import * as migration_20261110_142549_bulten from './20261110_142549_bulten';
 import * as migration_20261110_172041_push from './20261110_172041_push';
 import * as migration_20261110_173948_duyuru from './20261110_173948_duyuru';
+import * as migration_20261110_194141_bildirim_daveti from './20261110_194141_bildirim_daveti';
+import * as migration_20261110_195418_duyurular from './20261110_195418_duyurular';
 
 export const migrations = [
   {
@@ -88,6 +90,16 @@ export const migrations = [
   {
     up: migration_20261110_173948_duyuru.up,
     down: migration_20261110_173948_duyuru.down,
-    name: '20261110_173948_duyuru'
+    name: '20261110_173948_duyuru',
+  },
+  {
+    up: migration_20261110_194141_bildirim_daveti.up,
+    down: migration_20261110_194141_bildirim_daveti.down,
+    name: '20261110_194141_bildirim_daveti',
+  },
+  {
+    up: migration_20261110_195418_duyurular.up,
+    down: migration_20261110_195418_duyurular.down,
+    name: '20261110_195418_duyurular'
   },
 ];

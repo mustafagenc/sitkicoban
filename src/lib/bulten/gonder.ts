@@ -37,18 +37,18 @@ const KONU_SABLONU = {
 const PUSH_TTL_SN = 24 * 60 * 60
 const PUSH_ESZAMANLI = 10
 
-const yazi = (v: unknown): string => (typeof v === 'string' ? v.trim() : '')
+export const yazi = (v: unknown): string => (typeof v === 'string' ? v.trim() : '')
 
 /** Boşlukları sadeleştirip en çok `n` karaktere kısaltır. */
-function kisalt(s: string, n: number): string {
+export function kisalt(s: string, n: number): string {
   const t = s.replace(/\s+/g, ' ').trim()
   return t.length <= n ? t : `${t.slice(0, n - 1).trimEnd()}…`
 }
 
-const mutlak = (yol: string): string => (/^https?:\/\//.test(yol) ? yol : `${siteUrl()}${yol}`)
+export const mutlak = (yol: string): string => (/^https?:\/\//.test(yol) ? yol : `${siteUrl()}${yol}`)
 
 /** Medya kaydının (depth ≥ 1) e-postaya uygun, küçültülmüş ve mutlak adresi. */
-function medyaAdresi(m: unknown): string | null {
+export function medyaAdresi(m: unknown): string | null {
   if (!m || typeof m !== 'object') return null
   const src = mediaUrl(m as { filename?: string | null; url?: string | null })
   return src ? mutlak(optimized(src, 640)) : null
@@ -90,10 +90,54 @@ export function duyuruIcerigi(kaynak: DuyuruKaynagi, doc: Record<string, unknown
 /** `{baslik}` yer tutucusunu doldurur (`$` gibi özel karakterler olduğu gibi kalır). */
 const doldur = (sablon: string, baslik: string) => sablon.split('{baslik}').join(baslik)
 
+/** E-posta içeriği: başlık, paragraflar, isteğe bağlı görsel ve düğme (sitedeki tek bağlantı). */
+export type EpostaIcerigi = {
+  subject: string
+  baslik: string
+  paragraflar: string[]
+  gorsel: string | null
+  /** Düğme bağlantısı ve metni; bağlantı yoksa düğme çizilmez. */
+  url: string | null
+  dugme: string
+  ayril: string
+}
+
 /**
- * Duyuru e-postası: sade HTML (site renkleri, izleme pikseli yok) ve düz metin. Tek içerik bağlantısı
- * sitedeki sayfadır; altta Resend'in abonelikten çıkma/tercihler bağlantısı. Dilin konu satırı
- * şablonu boşsa null (o dile gönderilmez).
+ * Sade HTML (site renkleri, izleme pikseli yok) ve düz metin. Altta Resend'in abonelikten çıkma/tercihler
+ * bağlantısı. Bağlantı olarak yalnızca sitedeki sayfa kullanılır; satın alma bağlantısı hiçbir zaman yok.
+ */
+export function epostaOlustur(e: EpostaIcerigi, locale: Locale): { subject: string; html: string; text: string } {
+  const d = dir(locale)
+  const gorsel = e.gorsel
+    ? `<p style="margin:0 0 22px;">${e.url ? `<a href="${esc(e.url)}">` : ''}<img src="${esc(e.gorsel)}" alt="" width="496" style="display:block;width:100%;max-width:496px;height:auto;border:0;">${e.url ? '</a>' : ''}</p>\n`
+    : ''
+  const paragraflar = e.paragraflar.map((p) => `<p style="margin:0 0 18px;">${esc(p)}</p>\n`).join('')
+  const dugme = e.url
+    ? `<p style="margin:8px 0 8px;"><a href="${esc(e.url)}" style="display:inline-block;background:#3a2a1a;color:#f3ead7;text-decoration:none;padding:12px 26px;">${esc(e.dugme || e.url)}</a></p>\n`
+    : ''
+  const html = `<!doctype html>
+<html lang="${locale}" dir="${d}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(e.subject)}</title></head>
+<body style="margin:0;padding:0;background:#f3ead7;color:#2b2118;font-family:Georgia,'Times New Roman',serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3ead7;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff8ea;border:1px solid #c9a96a;">
+<tr><td dir="${d}" style="padding:36px 32px;text-align:${d === 'rtl' ? 'right' : 'left'};font-size:17px;line-height:1.6;">
+<p style="margin:0 0 6px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#b08a3e;">Sıtkı Çoban</p>
+<h1 style="margin:0 0 18px;font-weight:400;font-size:26px;color:#3a2a1a;">${esc(e.baslik)}</h1>
+${gorsel}${paragraflar}${dugme}</td></tr></table>
+<p style="margin:18px 0 0;font-size:13px;color:#5f4f3d;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#5f4f3d;">${esc(e.ayril || 'Unsubscribe')}</a></p>
+</td></tr></table>
+</body>
+</html>`
+  const text = [e.baslik, '', ...e.paragraflar.flatMap((p) => [p, '']), e.url ? `${e.dugme || ''} ${e.url}`.trim() : '', '', '--', `${e.ayril || 'Unsubscribe'}: {{{RESEND_UNSUBSCRIBE_URL}}}`]
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+  return { subject: e.subject, html, text }
+}
+
+/**
+ * İçerik duyurusu e-postası: tek bağlantı sitedeki sayfadır. Dilin konu satırı şablonu boşsa null
+ * (o dile gönderilmez).
  */
 export function duyuruEpostasi(
   kaynak: DuyuruKaynagi,
@@ -103,54 +147,43 @@ export function duyuruEpostasi(
 ): { subject: string; html: string; text: string } | null {
   const sablon = yazi(m[KONU_SABLONU[kaynak]])
   if (!sablon || !ic.baslik) return null
-  const subject = doldur(sablon, ic.baslik)
-  const dugme = yazi(kaynak === 'yazilar' ? m.duyuruOku : m.duyuruGor) || ic.url
-  const ayril = yazi(m.duyuruAyril) || 'Unsubscribe'
-  const d = dir(locale)
-  const gorsel = ic.gorsel
-    ? `<p style="margin:0 0 22px;"><a href="${esc(ic.url)}"><img src="${esc(ic.gorsel)}" alt="" width="496" style="display:block;width:100%;max-width:496px;height:auto;border:0;"></a></p>\n`
-    : ''
-  const ozet = ic.ozet ? `<p style="margin:0 0 26px;">${esc(ic.ozet)}</p>\n` : ''
-  const html = `<!doctype html>
-<html lang="${locale}" dir="${d}">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(subject)}</title></head>
-<body style="margin:0;padding:0;background:#f3ead7;color:#2b2118;font-family:Georgia,'Times New Roman',serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3ead7;"><tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff8ea;border:1px solid #c9a96a;">
-<tr><td dir="${d}" style="padding:36px 32px;text-align:${d === 'rtl' ? 'right' : 'left'};font-size:17px;line-height:1.6;">
-<p style="margin:0 0 6px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#b08a3e;">Sıtkı Çoban</p>
-<h1 style="margin:0 0 18px;font-weight:400;font-size:26px;color:#3a2a1a;">${esc(ic.baslik)}</h1>
-${gorsel}${ozet}<p style="margin:0 0 8px;"><a href="${esc(ic.url)}" style="display:inline-block;background:#3a2a1a;color:#f3ead7;text-decoration:none;padding:12px 26px;">${esc(dugme)}</a></p>
-</td></tr></table>
-<p style="margin:18px 0 0;font-size:13px;color:#5f4f3d;"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#5f4f3d;">${esc(ayril)}</a></p>
-</td></tr></table>
-</body>
-</html>`
-  const text = [ic.baslik, '', ic.ozet, '', `${dugme} ${ic.url}`, '', '--', `${ayril}: {{{RESEND_UNSUBSCRIBE_URL}}}`]
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n')
-  return { subject, html, text }
+  return epostaOlustur(
+    {
+      subject: doldur(sablon, ic.baslik),
+      baslik: ic.baslik,
+      paragraflar: ic.ozet ? [ic.ozet] : [],
+      gorsel: ic.gorsel,
+      url: ic.url,
+      dugme: yazi(kaynak === 'yazilar' ? m.duyuruOku : m.duyuruGor) || ic.url,
+      ayril: yazi(m.duyuruAyril),
+    },
+    locale,
+  )
 }
 
-const hataMetni = (e: unknown) => (e instanceof Error ? e.message : String(e))
+export const hataMetni = (e: unknown) => (e instanceof Error ? e.message : String(e))
 
-async function epostalariGonder(
-  kaynak: DuyuruKaynagi,
-  id: number | string,
-  icerik: Record<Locale, DuyuruIcerigi>,
-  metinler: Record<Locale, Metinler>,
+/**
+ * Her dil için bir Resend Broadcast: dilin segmenti; `konu` verilmişse yalnızca o konuya abone olanlar
+ * (verilmemişse segmentin bütün onaylı aboneleri). E-postası null olan dil atlanır. Gönderilen dil sayısı.
+ */
+export async function epostalariGonder(
+  etiket: string,
+  epostalar: Record<Locale, { subject: string; html: string; text: string } | null>,
+  konu: DuyuruKaynagi | null,
+  ad: (l: Locale) => string,
 ): Promise<number> {
   if (!bultenHazir()) return 0
   let gonderilen = 0
   for (const l of LOCALES) {
     try {
-      const e = duyuruEpostasi(kaynak, icerik[l], metinler[l], l)
+      const e = epostalar[l]
       if (!e) continue
       const resend = resendIstemcisi()
       const res = await resend.broadcasts.create({
-        name: `${kaynak} #${id} (${l}) ${icerik[l].baslik}`.slice(0, 200),
+        name: ad(l).slice(0, 200),
         segmentId: await segmentId(l),
-        topicId: (await topicIds())[kaynak],
+        ...(konu ? { topicId: (await topicIds())[konu] } : {}),
         from: process.env.RESEND_FROM as string,
         subject: e.subject,
         html: e.html,
@@ -160,7 +193,7 @@ async function epostalariGonder(
       if (res.error) throw new Error(res.error.message)
       gonderilen++
     } catch (err) {
-      console.error(`[duyuru] ${kaynak}#${id} e-posta (${l}):`, hataMetni(err))
+      console.error(`[duyuru] ${etiket} e-posta (${l}):`, hataMetni(err))
     }
   }
   return gonderilen
@@ -168,12 +201,18 @@ async function epostalariGonder(
 
 type PushKaydi = { id: number | string; endpoint: string; p256dh: string; auth: string; dil: Locale }
 
-async function pushlariGonder(
+/** Push bildiriminin dile göre gövdesi. */
+export type PushGovdesi = { title: string; body: string; url: string }
+
+/**
+ * Tarayıcı bildirimleri: `konu` verilmişse yalnızca o konuya abone kayıtlar, verilmemişse hepsi; her kayda
+ * kendi dilinin gövdesi. 404/410 dönen (tarayıcıda sona ermiş) kayıt silinir.
+ */
+export async function pushlariGonder(
   payload: Payload,
-  kaynak: DuyuruKaynagi,
-  id: number | string,
-  icerik: Record<Locale, DuyuruIcerigi>,
-  metinler: Record<Locale, Metinler>,
+  etiket: string,
+  govdeler: Record<Locale, PushGovdesi>,
+  konu: DuyuruKaynagi | null,
 ): Promise<{ gonderilen: number; toplam: number }> {
   if (!pushHazir()) return { gonderilen: 0, toplam: 0 }
   const vapidDetails = {
@@ -183,18 +222,12 @@ async function pushlariGonder(
   }
   const { docs } = await payload.find({
     collection: 'push-abonelikleri',
-    where: { konular: { in: [kaynak] } },
+    ...(konu ? { where: { konular: { in: [konu] } } } : {}),
     pagination: false,
     depth: 0,
     overrideAccess: true,
   })
-  const govde = Object.fromEntries(
-    LOCALES.map((l) => {
-      const ic = icerik[l]
-      const sablon = yazi(metinler[l][KONU_SABLONU[kaynak]])
-      return [l, JSON.stringify({ title: sablon ? doldur(sablon, ic.baslik) : ic.baslik, body: kisalt(ic.ozet, 140), url: ic.url })]
-    }),
-  ) as Record<Locale, string>
+  const govde = Object.fromEntries(LOCALES.map((l) => [l, JSON.stringify(govdeler[l])])) as Record<Locale, string>
 
   let gonderilen = 0
   const kayitlar = docs as unknown as PushKaydi[]
@@ -216,7 +249,7 @@ async function pushlariGonder(
           .delete({ collection: 'push-abonelikleri', id: k.id, overrideAccess: true, context: { disableRevalidate: true } })
           .catch((e) => console.error(`[duyuru] push kaydı silinemedi #${k.id}:`, hataMetni(e)))
       } else {
-        console.error(`[duyuru] ${kaynak}#${id} push #${k.id} (${new URL(k.endpoint).hostname}):`, durum ?? hataMetni(err))
+        console.error(`[duyuru] ${etiket} push #${k.id} (${new URL(k.endpoint).hostname}):`, durum ?? hataMetni(err))
       }
     }
   }
@@ -281,9 +314,20 @@ export async function duyuruGonder(payload: Payload, kaynak: DuyuruKaynagi, id: 
     return
   }
 
+  const epostalar = Object.fromEntries(
+    LOCALES.map((l) => [l, duyuruEpostasi(kaynak, icerik[l], metinler[l], l)]),
+  ) as Record<Locale, ReturnType<typeof duyuruEpostasi>>
+  const govdeler = Object.fromEntries(
+    LOCALES.map((l) => {
+      const ic = icerik[l]
+      const sablon = yazi(metinler[l][KONU_SABLONU[kaynak]])
+      return [l, { title: sablon ? doldur(sablon, ic.baslik) : ic.baslik, body: kisalt(ic.ozet, 140), url: ic.url }]
+    }),
+  ) as Record<Locale, PushGovdesi>
+
   const [eposta, push] = await Promise.all([
-    epostalariGonder(kaynak, id, icerik, metinler),
-    pushlariGonder(payload, kaynak, id, icerik, metinler).catch((err) => {
+    epostalariGonder(etiket, epostalar, kaynak, (l) => `${kaynak} #${id} (${l}) ${icerik[l].baslik}`),
+    pushlariGonder(payload, etiket, govdeler, kaynak).catch((err) => {
       console.error(`[duyuru] ${etiket} push:`, hataMetni(err))
       return { gonderilen: 0, toplam: 0 }
     }),

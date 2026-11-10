@@ -1,5 +1,8 @@
 import { localizedPath } from '@/i18n/config'
+import { pushHazir } from '@/lib/bulten/push'
 import { getBulten } from '@/lib/data'
+
+import { BildirimDaveti } from './BildirimDaveti'
 
 import { CerezIzni } from './CerezIzni'
 import { GoogleTag } from './GoogleTag'
@@ -30,10 +33,26 @@ function Credit({ text }: { text: string }) {
  * `bulten` global'inden okunur (önbellekli; `bulten` etiketi her sayfayı ısıtır).
  */
 export async function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeKey'>) {
-  const bultenEtiket = (await getBulten(locale)).metinler?.altBilgiBaglanti
+  const m = (await getBulten(locale)).metinler ?? {}
+  const bultenEtiket = m.altBilgiBaglanti
+  // Bildirim daveti: VAPID anahtarları (derleme anında) ve davet metinleri girilmişse.
+  const davet = pushHazir() && !!m.davetMetin && !!m.pushAc && !!m.davetSonra
   return (
     <footer>
       {ayarlar.gaOlcumKimligi && <GoogleTag id={ayarlar.gaOlcumKimligi} />}
+      {davet && (
+        <BildirimDaveti
+          locale={locale}
+          vapidKey={process.env.VAPID_PUBLIC_KEY!}
+          bultenYolu={localizedPath('bulten', locale)}
+          metin={m.davetMetin!}
+          evet={m.pushAc!}
+          sonra={m.davetSonra!}
+          bekle={m.pushBekle ?? ''}
+          acik={m.pushAcik ?? ''}
+          hata={m.pushHata ?? ''}
+        />
+      )}
       <div className="wrap">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={LOGO_SRC} alt="" />
