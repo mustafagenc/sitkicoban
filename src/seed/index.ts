@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises'
 import path from 'node:path'
 import type { Payload } from 'payload'
 
@@ -105,18 +106,33 @@ async function upsertByAd(payload: Payload, collection: 'eser-turleri' | 'yazi-t
   return created.id
 }
 
-async function upsertMedia(payload: Payload, root: string, filename: string, alt: string) {
+/**
+ * `filename` medya kaydının (ve Blob nesnesinin) adıdır; `kaynak` verilirse dosya tasarim/img altında o
+ * adla okunur. Panelden macOS ile yüklenmiş adlar ayrışık Unicode (NFD) olabilir, git ise dosyayı birleşik
+ * biçimde (NFC) saklar: Linux'ta bulunabilsin diye kaynak dosya ASCII adla tutulur.
+ */
+async function upsertMedia(payload: Payload, root: string, filename: string, alt: string, kaynak?: string) {
   const mediaDir = path.resolve(process.cwd(), process.env.MEDIA_DIR || 'public/media')
   const found = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, depth: 0 })
   const doc = found.docs[0]
   // Kayıttaki url'ye güvenilmez (Blob açıkken her url Blob adresine çevrilir): dosyanın kendisine bakılır.
   if (doc && (await mediaDosyasiVar(doc, mediaDir))) return doc.id
   if (doc) await payload.delete({ collection: 'media', id: doc.id, context: ctx() }) // file went missing: recreate
+  const dosya = path.resolve(process.cwd(), root, 'img', kaynak ?? filename)
   const created = await payload.create({
     collection: 'media',
     data: { alt },
     locale: LOCALE,
-    filePath: path.resolve(process.cwd(), root, 'img', filename),
+    ...(kaynak
+      ? {
+          file: {
+            data: await fs.readFile(dosya),
+            name: filename,
+            mimetype: filename.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg',
+            size: (await fs.stat(dosya)).size,
+          },
+        }
+      : { filePath: dosya }),
     context: ctx(),
   })
   return created.id
@@ -307,7 +323,7 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       sure: v.sure,
       aciklama: v.aciklama,
       anasayfada: v.anasayfada,
-      kapak: v.kapak ? await upsertMedia(payload, root, v.kapak, v.baslik) : null,
+      kapak: v.kapak ? await upsertMedia(payload, root, v.kapak.ad, v.baslik, v.kapak.dosya) : null,
       sira: 0, // panelde girildiği gibi; sıralama tarih/güncelleme ile
     }
     const found = await payload.find({ collection: 'videolar', where: { youtube: { equals: v.youtube } }, locale: LOCALE, limit: 1, depth: 0 })

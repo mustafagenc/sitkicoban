@@ -72,7 +72,7 @@ describe('seed', () => {
       ...SEED_HOCALAR.map((h) => h.imza.file),
       SEED_PORTRE.file,
       ...SEED_YAZILAR.flatMap((y) => (y.kapak ? [y.kapak.file] : [])),
-      ...SEED_VIDEOLAR.flatMap((v) => (v.kapak ? [v.kapak] : [])),
+      ...SEED_VIDEOLAR.flatMap((v) => (v.kapak ? [v.kapak.ad] : [])),
     ])
     expect((await payload.count({ collection: 'media' })).totalDocs).toBe(files.size)
   }, 120_000)
