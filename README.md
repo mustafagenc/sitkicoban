@@ -87,6 +87,17 @@ duyuru göndermez. Kitap duyurusu sitedeki Kitaplar sayfasına bağlanır; e-pos
 bildirimlerde **satın alma bağlantısı hiçbir zaman yer almaz**. Metinler (konu satırı şablonları `{baslik}`,
 bağlantı metinleri, form ve onay metinleri) panelde `Bülten` global'indedir; boşsa form çizilmez.
 
+**Serbest duyuru:** Panelde **Duyurular** bölümünden başlık, metin, isteğe bağlı görsel ve sitedeki bir
+sayfaya bağlantıyla (dış bağlantı girilemez) duyuru yazılır; "Kime" (bütün aboneler ya da bir konunun
+aboneleri) ve "Nasıl" (e-posta, tarayıcı bildirimi) seçilip "Kaydedince gönder — bir kez" işaretlenerek
+kaydedilince gönderilir. Gönderim zamanı ve sonucu kayıtta görünür; aynı duyuru kaydı çoğaltılarak yeniden
+gönderilebilir.
+
+**Bildirim daveti:** Bildirimi destekleyen tarayıcıda ziyaretçi bir sayfada 15 sn kaldıktan sonra (çerez
+bildirimi kapandıysa) küçük bir kart bildirim almak isteyip istemediğini sorar; tarayıcının izin penceresi
+yalnızca "Bildirimleri aç"a basınca açılır. "Daha sonra" 30 gün boyunca yeniden sormaz. Metinleri `Bülten`
+global'inde (davet metni, "Daha sonra").
+
 ## Testler
 
 Entegrasyon testleri tabloları silip yeniden yazar; bu yüzden yalnızca adı `_test` ile biten ayrı bir

@@ -79,6 +79,7 @@ export interface Config {
     yazilar: Yazilar;
     'video-kategorileri': VideoKategorileri;
     videolar: Videolar;
+    duyurular: Duyurular;
     'push-abonelikleri': PushAbonelikleri;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -99,6 +100,7 @@ export interface Config {
     yazilar: YazilarSelect<false> | YazilarSelect<true>;
     'video-kategorileri': VideoKategorileriSelect<false> | VideoKategorileriSelect<true>;
     videolar: VideolarSelect<false> | VideolarSelect<true>;
+    duyurular: DuyurularSelect<false> | DuyurularSelect<true>;
     'push-abonelikleri': PushAbonelikleriSelect<false> | PushAbonelikleriSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -513,6 +515,41 @@ export interface Videolar {
   createdAt: string;
 }
 /**
+ * Abonelere serbest duyuru (e-posta ve/veya tarayıcı bildirimi). Metni üç dilde yazabilirsiniz; boş dillerde Türkçesi gider. Satın alma bağlantısı eklenemez.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "duyurular".
+ */
+export interface Duyurular {
+  id: number;
+  baslik: string;
+  /**
+   * Paragrafları boş satırla ayırın. Bildirimde ilk 140 karakteri görünür.
+   */
+  metin: string;
+  gorsel?: (number | null) | Media;
+  /**
+   * Okuru sitedeki hangi sayfaya götürsün?
+   */
+  baglanti:
+    'yok' | 'home' | 'eserler' | 'kitaplar' | 'yazilar' | 'videolar' | 'hayati' | 'iletisim' | 'bulten' | 'yazi';
+  yazi?: (number | null) | Yazilar;
+  /**
+   * Boşsa "Sitede gör →" yazar.
+   */
+  dugme?: string | null;
+  kitle: 'hepsi' | 'yazilar' | 'kitaplar' | 'eserler' | 'videolar';
+  kanallar: ('eposta' | 'bildirim')[];
+  /**
+   * İşaretleyip kaydedince gönderilir. Önce işaretlemeden kaydedip metni gözden geçirebilirsiniz. Aynı duyuruyu yeniden göndermek için kaydı çoğaltın.
+   */
+  gonder?: boolean | null;
+  gonderildi?: string | null;
+  sonuc?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Tarayıcı bildirimlerini açan ziyaretçiler (kişisel veri yok; ziyaretçi bildirimleri kapatınca silinir).
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -599,6 +636,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'videolar';
         value: number | Videolar;
+      } | null)
+    | ({
+        relationTo: 'duyurular';
+        value: number | Duyurular;
       } | null)
     | ({
         relationTo: 'push-abonelikleri';
@@ -866,6 +907,25 @@ export interface VideolarSelect<T extends boolean = true> {
   duyur?: T;
   yenidenDuyur?: T;
   duyuruldu?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "duyurular_select".
+ */
+export interface DuyurularSelect<T extends boolean = true> {
+  baslik?: T;
+  metin?: T;
+  gorsel?: T;
+  baglanti?: T;
+  yazi?: T;
+  dugme?: T;
+  kitle?: T;
+  kanallar?: T;
+  gonder?: T;
+  gonderildi?: T;
+  sonuc?: T;
   updatedAt?: T;
   createdAt?: T;
 }
