@@ -2,7 +2,7 @@
 //  1) ziyaretçi gezintisi (üç dilde tüm sayfalar ve yayındaki bir yazı) veritabanına hiç sorgu göndermiyor mu?
 //  2) bir eserin başlığı panelden (REST) değişince Eserler ve ana sayfa (üç dilde) yeniden
 //     üretiliyor, Kitaplar üretilmiyor mu; yeni başlık ilk ziyarette sorgusuz geliyor mu?
-//  3) bir ders kaydedilince yalnızca ana sayfa (üç dilde) yeniden üretiliyor mu?
+//  3) bir ders kaydedilince yalnızca ana sayfa (üç dilde), llms dosyaları ve /ajan.json yeniden üretiliyor mu?
 //  4) iletişim formu gönderimi (sunucu eylemi, RESEND_API_KEY ayarsız) hiç sorgu göndermiyor mu?
 //
 // Sunucu `RESEND_API_KEY=` (boş) ile başlatılmalı: form gönderimi "unavailable" dönmezse betik hata verir.
@@ -37,7 +37,7 @@ const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
 const ANASAYFA = ['/', '/en', '/ar']
 // Sayfa olmayan, sorgusuz sunulması gereken dosyalar (bülten: service worker ve web app manifest).
 const DURAGAN = ['/sw.js', '/manifest.webmanifest']
-const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/ajan.json']
+const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/llms-full.txt', '/ajan.json']
 const ILK_ZIYARET = ['/eserler', '/en/works', '/']
 // Eser başlığını göstermeyen ama aynı etiketle ısıtılan sayfalar: yalnızca sorgusuz açıldığı doğrulanır.
 const ILK_ZIYARET_SORGUSUZ = ['/en/biography']
@@ -223,7 +223,7 @@ async function main() {
 
   // 1) Ziyaretçi gezintisi: sıfır sorgu.
   writeFileSync(SORGU_LOG, '')
-  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt', '/ajan.json', ...DURAGAN]
+  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt', '/llms-full.txt', '/ajan.json', ...DURAGAN]
   for (const p of gezilen) for (let i = 0; i < 3; i++) await getHtml(p)
   const gezinti = sorgular(0)
   if (gezinti.length) hata(`gezinti sırasında ${gezinti.length} sorgu:\n${gezinti.join('\n')}`)
@@ -271,8 +271,8 @@ async function main() {
   if (!ders) hata('ders yok')
   try {
     const yollar = await kaydetVeBekle(token, ders.id, null, 'dersler', { kurum: `${ders.kurum} (test)` })
-    // Ders kaydı ana sayfayı (üç dil) ve WebMCP verisini (/ajan.json) yeniler.
-    const dersBeklenen = [...ANASAYFA, '/ajan.json']
+    // Ders kaydı ana sayfayı (üç dil), güncel dersleri listeleyen llms dosyalarını ve WebMCP verisini (/ajan.json) yeniler.
+    const dersBeklenen = [...ANASAYFA, '/llms.txt', '/llms-full.txt', '/ajan.json']
     const fazla = yollar.filter((y) => !dersBeklenen.includes(y))
     const eksik = dersBeklenen.filter((y) => !yollar.includes(y))
     if (fazla.length || eksik.length) hata(`ders kaydında yenilenen yollar beklenenden farklı: ${yollar.join(', ')}`)

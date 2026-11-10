@@ -47,8 +47,14 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   yorumMetinleri: [],
 }
 
-/** Tags whose data `/llms.txt` renders (getAnasayfa, getYazilar). */
-export const LLMS_TAGS: Tag[] = ['anasayfa', 'yazilar', 'media', 'kitaplar']
+/**
+ * Tags whose data `/llms.txt` renders: home description, biography summary and teachers, books, lessons,
+ * script types and writings (getAnasayfa, getHayati, getHocalar, getKitaplar, getDersler, getYaziTurleri, getYazilar).
+ */
+export const LLMS_TAGS: Tag[] = ['anasayfa', 'yazilar', 'media', 'kitaplar', 'hayati', 'dersler', 'turler']
+
+/** Tags whose data `/llms-full.txt` renders: everything in `/llms.txt` plus works, videos, writing bodies, site settings. */
+export const LLMS_FULL_TAGS: Tag[] = [...LLMS_TAGS, 'eserler', 'videolar', 'ayarlar']
 
 /** Tags whose data `/ajan.json` (WebMCP tools) renders: works, books, writings, lessons, settings. */
 export const AJAN_TAGS: Tag[] = ['eserler', 'turler', 'media', 'kitaplar', 'yazilar', 'dersler', 'ayarlar']
@@ -78,6 +84,7 @@ export function pathsForChange(
   // The sitemap lists published yazı slugs, so it is re-rendered whenever they can change.
   if ((TAGS_BY_SOURCE[source] ?? []).includes('yazilar')) paths.add('/sitemap.xml')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_TAGS.includes(t))) paths.add('/llms.txt')
+  if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_FULL_TAGS.includes(t))) paths.add('/llms-full.txt')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => AJAN_TAGS.includes(t))) paths.add('/ajan.json')
   const slugs = [...publishedSlugs]
   if (source === 'yazilar') {

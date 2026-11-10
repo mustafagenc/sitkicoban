@@ -73,11 +73,21 @@ describe('pathsForTags', () => {
     expect(pathsForChange('dersler')).not.toContain('/sitemap.xml')
   })
 
-  it('re-renders llms.txt when its home description or writings can change', () => {
-    for (const s of ['yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media'])
-      expect(pathsForChange(s)).toContain('/llms.txt')
-    for (const s of ['dersler', 'videolar', 'iletisim', 'site-ayarlari'])
-      expect(pathsForChange(s)).not.toContain('/llms.txt')
+  it('re-renders llms.txt when its description, biography, teachers, books, lessons, scripts or writings can change', () => {
+    for (const s of ['yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media', 'hayati', 'hocalar', 'dersler', 'yazi-turleri', 'eser-turleri', 'eserler'])
+      expect(pathsForChange(s), s).toContain('/llms.txt')
+    for (const s of ['videolar', 'video-kategorileri', 'iletisim', 'site-ayarlari', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
+      expect(pathsForChange(s), s).not.toContain('/llms.txt')
+  })
+
+  it('re-renders llms-full.txt when any content it includes can change, never for UI/contact/newsletter texts', () => {
+    for (const s of [
+      'yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media', 'hayati', 'hocalar', 'dersler',
+      'yazi-turleri', 'eser-turleri', 'eserler', 'videolar', 'video-kategorileri', 'site-ayarlari',
+    ])
+      expect(pathsForChange(s), s).toContain('/llms-full.txt')
+    for (const s of ['iletisim', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
+      expect(pathsForChange(s), s).not.toContain('/llms-full.txt')
   })
 
   it('re-renders /ajan.json (WebMCP data) when any public content it lists changes', () => {
