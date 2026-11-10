@@ -73,4 +73,11 @@ describe('pathsForTags', () => {
     for (const s of ['dersler', 'videolar', 'iletisim', 'site-ayarlari'])
       expect(pathsForChange(s)).not.toContain('/llms.txt')
   })
+
+  it('re-renders /ajan.json (WebMCP data) when any public content it lists changes', () => {
+    for (const s of ['eserler', 'kitaplar', 'yazilar', 'dersler', 'site-ayarlari', 'media', 'yazi-turleri'])
+      expect(pathsForChange(s)).toContain('/ajan.json')
+    for (const s of ['videolar', 'iletisim', 'hayati', 'ui-metinleri'])
+      expect(pathsForChange(s)).not.toContain('/ajan.json')
+  })
 })
