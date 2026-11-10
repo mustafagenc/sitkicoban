@@ -79,8 +79,8 @@ const warmCalls = () =>
   (fetchMock.mock.calls as unknown as [string][])
     .map((c) => String(c[0]))
     .filter((u) => u.startsWith('http://localhost:3999'))
-// llms.txt ana sayfa verisini, /ajan.json eserleri okuduğu için eser kaydında ikisi de ısıtılır.
-const EXPECTED_URLS = ['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/ajan.json']
+// llms.txt ana sayfa verisini; llms-full.txt ve /ajan.json eserleri okuduğu için eser kaydında üçü de ısıtılır.
+const EXPECTED_URLS = ['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/llms-full.txt', '/ajan.json']
   .map((p) => `http://localhost:3999${p === '/' ? '/' : p}`)
   .sort()
 const tagCalls = () => vi.mocked(revalidateTag).mock.calls.map((c) => c[0])

@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 vi.mock('@/payload.config', () => ({ default: {} }))
 
 import * as data from '@/lib/data'
-import { LLMS_TAGS, PAGES_BY_TAG, YAZI_DETAIL_TAGS } from '@/lib/cache/revalidate'
+import { LLMS_FULL_TAGS, LLMS_TAGS, PAGES_BY_TAG, YAZI_DETAIL_TAGS } from '@/lib/cache/revalidate'
 import type { PageKey } from '@/i18n/config'
 import type { Tag } from '@/lib/cache/tags'
 
@@ -61,5 +61,12 @@ describe('page cache tags are covered by the revalidation map', () => {
     expect(pairs.length).toBeGreaterThan(0)
     for (const { tag, getter } of pairs)
       expect(LLMS_TAGS.includes(tag), `llms.txt reads tag "${tag}" via ${getter}() but LLMS_TAGS lacks it`).toBe(true)
+  })
+
+  it('llms-full.txt is warmed by every tag its getters read', () => {
+    const pairs = tagsOfPage('../../llms-full.txt/route.ts')
+    expect(pairs.length).toBeGreaterThan(0)
+    for (const { tag, getter } of pairs)
+      expect(LLMS_FULL_TAGS.includes(tag), `llms-full.txt reads tag "${tag}" via ${getter}() but LLMS_FULL_TAGS lacks it`).toBe(true)
   })
 })
