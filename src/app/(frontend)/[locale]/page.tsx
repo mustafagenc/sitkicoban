@@ -80,7 +80,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       />
 
       <HomeHero
-        images={toWorks(eserler).map((w) => w.src)}
+        images={toWorks(eserler).map((w) => ({ src: w.src, oran: w.oran }))}
         roles={anasayfa.heroEyebrow}
         title={anasayfa.heroBaslik}
         tag={anasayfa.heroAciklama}

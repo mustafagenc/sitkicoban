@@ -79,7 +79,8 @@ const warmCalls = () =>
   (fetchMock.mock.calls as unknown as [string][])
     .map((c) => String(c[0]))
     .filter((u) => u.startsWith('http://localhost:3999'))
-const EXPECTED_URLS = ['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works', '/hayati', '/en/biography', '/ar/biography']
+// llms.txt ana sayfa verisini (anasayfa etiketi) okuduğu için eser kaydında o da ısıtılır.
+const EXPECTED_URLS = ['/', '/en', '/ar', '/eserler', '/en/works', '/ar/works', '/hayati', '/en/biography', '/ar/biography', '/llms.txt']
   .map((p) => `http://localhost:3999${p === '/' ? '/' : p}`)
   .sort()
 const tagCalls = () => vi.mocked(revalidateTag).mock.calls.map((c) => c[0])

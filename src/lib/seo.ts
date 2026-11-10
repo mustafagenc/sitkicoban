@@ -42,8 +42,9 @@ export function sayfaMeta({ locale, yol, baslik, aciklama, gorsel, makale }: Sec
   const g = gorsel ?? OG_DEFAULT
   const images = [{ ...g, url: mutlak(g.url), alt: g.alt ?? tamBaslik }]
   return {
-    title: baslik || undefined,
-    description: aciklama || undefined,
+    // Boş başlık/açıklama anahtarı hiç verilmez: verilirse yerleşimdeki varsayılanı siler.
+    ...(baslik ? { title: baslik } : {}),
+    ...(aciklama ? { description: aciklama } : {}),
     alternates: { canonical: url, languages },
     openGraph: {
       title: tamBaslik,
