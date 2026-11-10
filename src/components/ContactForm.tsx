@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState, useSyncExternalStore } from 'react'
+import { startTransition, useActionState, useState, useSyncExternalStore } from 'react'
 
 import { sendContact, type ContactState } from '@/app/(frontend)/[locale]/iletisim/actions'
 import { EPOSTA_RE, LIMITS, onKonu as hazirKonu, type Konu } from '@/lib/contact'
@@ -97,7 +97,13 @@ function Inner({
   const blur = (f: Fields) => (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     e.target.value && setErr(f, e.target.value)
 
+  // Eylem burada (geçiş içinde) çağrılır, `<form action>` üzerinden değil: React `action` ile gönderilen formu
+  // eylem bitince DOM'da sıfırlar. Metin alanlarını React yeniden yazar, ama konu seçimi ve onay kutusu durumda
+  // dolu kalırken DOM'da boşalırdı; hata sonrası yeniden gönderimde konu ve onay gitmez, sunucu yine hata verirdi.
+  // `onSubmit` olayı engelleyip geçişi kendisi başlatınca React formu sıfırlamaz (yalnızca bekleme durumunu tutar).
+  // `action` yine verilir: JS yüklenmeden gönderim tarayıcıda hata verir, veriler adres çubuğuna düşmez.
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     const values = { ad, eposta, konu: konuV, mesaj: mesajV, onay }
     const next: Partial<Record<Fields, boolean>> = {}
     let first: Fields | null = null
@@ -107,9 +113,11 @@ function Inner({
     }
     setErrs(next)
     if (first) {
-      e.preventDefault()
       ;(e.currentTarget.elements.namedItem(first) as HTMLElement | null)?.focus()
+      return
     }
+    const fd = new FormData(e.currentTarget)
+    startTransition(() => formAction(fd))
   }
 
   if (state.status === 'ok') {

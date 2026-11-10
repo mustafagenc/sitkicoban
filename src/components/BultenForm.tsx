@@ -65,8 +65,10 @@ function Inner({
     onay: (v = onay) => !v,
   }
 
-  // Eylem `action` özelliğiyle değil burada çağrılır: React `<form action>` sonrası formu sıfırlar ve
-  // denetimli onay kutusu durumda işaretli kalırken DOM'da boşalır (yeniden gönderimde onay gitmezdi).
+  // Eylem burada (geçiş içinde) çağrılır: React `<form action>` ile gönderilen formu eylem sonrası sıfırlar ve
+  // denetimli onay/konu kutuları durumda işaretli kalırken DOM'da boşalır (yeniden gönderimde gitmezdi).
+  // Olay engellenip geçiş burada başlayınca React formu sıfırlamaz. `action` yine verilir: JS yüklenmeden
+  // gönderim tarayıcıda hata verir; yoksa form GET ile gider ve e-posta adres çubuğuna düşerdi.
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const next = { eposta: bad.eposta(), konu: bad.konu(), onay: bad.onay() }
@@ -105,7 +107,7 @@ function Inner({
 
   return (
     <section className="card" id="card">
-      <form onSubmit={onSubmit} noValidate>
+      <form action={formAction} onSubmit={onSubmit} noValidate>
         <h2>{m.formBaslik}</h2>
         {m.formAciklama && <p>{m.formAciklama}</p>}
         <div className={`field${errs.eposta ? ' err' : ''}`}>
