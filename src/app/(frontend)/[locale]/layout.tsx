@@ -26,7 +26,13 @@ export const metadata: Metadata = {
   // Sayfalar yalnızca kendi adlarını verir; site adı burada eklenir (ör. "Eserler · Sıtkı Çoban").
   title: { default: 'Sıtkı Çoban', template: '%s · Sıtkı Çoban' },
   description: 'Hattat Sıtkı Çoban',
-  icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
+  icons: {
+    icon: { url: '/favicon.svg', type: 'image/svg+xml' },
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+  },
+  // src/app/manifest.ts; ana ekrana eklenen web uygulaması (iPhone/iPad'de Web Push bunu gerektirir).
+  manifest: '/manifest.webmanifest',
+  appleWebApp: { capable: true, title: 'Sıtkı Çoban', statusBarStyle: 'default' },
 }
 
 export default async function LocaleLayout({

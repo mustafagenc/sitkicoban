@@ -27,14 +27,16 @@ const PASSWORD = process.env.SEED_ADMIN_PASSWORD
 
 // src/i18n/config.ts ROUTES ile aynı: her sayfa üç dilde.
 const YOLLAR = {
-  tr: ['', 'eserler', 'kitaplar', 'yazilar', 'videolar', 'hayati', 'iletisim', 'iletisim/aydinlatma'],
-  en: ['', 'works', 'books', 'writings', 'videos', 'biography', 'contact', 'contact/privacy'],
-  ar: ['', 'works', 'books', 'writings', 'videos', 'biography', 'contact', 'contact/privacy'],
+  tr: ['', 'eserler', 'kitaplar', 'yazilar', 'videolar', 'hayati', 'iletisim', 'iletisim/aydinlatma', 'bulten', 'bulten/onay'],
+  en: ['', 'works', 'books', 'writings', 'videos', 'biography', 'contact', 'contact/privacy', 'newsletter', 'newsletter/confirm'],
+  ar: ['', 'works', 'books', 'writings', 'videos', 'biography', 'contact', 'contact/privacy', 'newsletter', 'newsletter/confirm'],
 }
 const onEk = (l) => (l === 'tr' ? '' : `/${l}`)
 const SAYFALAR = Object.entries(YOLLAR).flatMap(([l, yollar]) => yollar.map((y) => `${onEk(l)}/${y}`.replace(/\/$/, '') || '/'))
 const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
 const ANASAYFA = ['/', '/en', '/ar']
+// Sayfa olmayan, sorgusuz sunulması gereken dosyalar (bülten: service worker ve web app manifest).
+const DURAGAN = ['/sw.js', '/manifest.webmanifest']
 const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/ajan.json']
 const ILK_ZIYARET = ['/eserler', '/en/works', '/']
 // Eser başlığını göstermeyen ama aynı etiketle ısıtılan sayfalar: yalnızca sorgusuz açıldığı doğrulanır.
@@ -221,7 +223,7 @@ async function main() {
 
   // 1) Ziyaretçi gezintisi: sıfır sorgu.
   writeFileSync(SORGU_LOG, '')
-  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt', '/ajan.json']
+  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt', '/ajan.json', ...DURAGAN]
   for (const p of gezilen) for (let i = 0; i < 3; i++) await getHtml(p)
   const gezinti = sorgular(0)
   if (gezinti.length) hata(`gezinti sırasında ${gezinti.length} sorgu:\n${gezinti.join('\n')}`)

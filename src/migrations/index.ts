@@ -11,6 +11,8 @@ import * as migration_20261107_221414_konu_anahtari from './20261107_221414_konu
 import * as migration_20261108_020414_cerez from './20261108_020414_cerez';
 import * as migration_20261110_122402_anasayfa_meta from './20261110_122402_anasayfa_meta';
 import * as migration_20261110_142549_bulten from './20261110_142549_bulten';
+import * as migration_20261110_172041_push from './20261110_172041_push';
+import * as migration_20261110_173948_duyuru from './20261110_173948_duyuru';
 
 export const migrations = [
   {
@@ -76,6 +78,16 @@ export const migrations = [
   {
     up: migration_20261110_142549_bulten.up,
     down: migration_20261110_142549_bulten.down,
-    name: '20261110_142549_bulten'
+    name: '20261110_142549_bulten',
+  },
+  {
+    up: migration_20261110_172041_push.up,
+    down: migration_20261110_172041_push.down,
+    name: '20261110_172041_push',
+  },
+  {
+    up: migration_20261110_173948_duyuru.up,
+    down: migration_20261110_173948_duyuru.down,
+    name: '20261110_173948_duyuru'
   },
 ];

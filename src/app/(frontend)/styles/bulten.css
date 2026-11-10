@@ -16,6 +16,14 @@
 .bulten .konular.err .secenek { border-color:#b5452f; }
 .bulten .konular .msg { font-size:13px; color:#b5452f; margin-top:8px; }
 
+/* Tarayıcı bildirimleri: formun altında ikinci kart */
+.bulten .card.push { margin-top:44px; }
+.bulten .card.push > p { color:var(--ink-soft); margin:0 0 22px; }
+.bulten .card.push .durum { color:var(--ink); }
+.bulten .card.push .not { font-size:14px; }
+.bulten .card.push .send { margin-top:22px; }
+.bulten .card.push .send:disabled { cursor:not-allowed; }
+
 /* Onay sayfası */
 .bulten .done[aria-busy] p { margin-bottom:0; }
 .bulten .done .back { display:inline-block; color:var(--gold); border-bottom:1px solid var(--gold); }

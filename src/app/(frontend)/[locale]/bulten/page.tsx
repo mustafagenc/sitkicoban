@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { BultenForm } from '@/components/BultenForm'
+import { BultenPush } from '@/components/BultenPush'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { isLocale, localizedPath } from '@/i18n/config'
 import { bultenMetinleriVar } from '@/lib/bulten/form'
+import { pushHazir, pushMetinleriVar } from '@/lib/bulten/push'
 import { getBulten, getSiteAyarlari, getUi } from '@/lib/data'
 import { sayfaMeta } from '@/lib/seo'
 
@@ -21,7 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return sayfaMeta({ locale, yol: (l) => localizedPath('bulten', l), baslik: bulten.metinler?.baslik, aciklama: bulten.aciklama })
 }
 
-/** Bülten sayfası: e-posta aboneliği (çift onay). Statik; abonelik sunucu eylemiyle yapılır. */
+/**
+ * Bülten sayfası: e-posta aboneliği (çift onay) ve tarayıcı bildirimleri. Statik; abonelikler sunucu
+ * eylemiyle yapılır. VAPID açık anahtarı derleme anında ortamdan okunup bileşene verilir.
+ */
 export default async function BultenPage({ params }: Props) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
@@ -40,6 +45,10 @@ export default async function BultenPage({ params }: Props) {
         {/* Metinler girilmemişse (üretimde ilk kurulum) boş etiketli form çizilmez. */}
         {bultenMetinleriVar(m) && (
           <BultenForm m={m} locale={locale} aydinlatmaHref={localizedPath('aydinlatma', locale)} />
+        )}
+        {/* VAPID anahtarları ya da bildirim metinleri yoksa bölüm hiç çizilmez. */}
+        {pushHazir() && pushMetinleriVar(m) && (
+          <BultenPush m={m} locale={locale} vapidKey={process.env.VAPID_PUBLIC_KEY!} />
         )}
       </main>
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />

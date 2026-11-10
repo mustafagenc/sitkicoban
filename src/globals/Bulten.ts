@@ -57,6 +57,7 @@ const LABELS = {
   pushAciklama: 'Bildirimler: açıklama',
   pushAc: 'Bildirimler: Bildirimleri aç',
   pushKapat: 'Bildirimler: Bildirimleri kapat',
+  pushBekle: 'Bildirimler: işlem sürerken düğme metni (Bir saniye…)',
   pushAcik: 'Bildirimler: açık durumu',
   pushDesteklenmiyor: 'Bildirimler: tarayıcı desteklemiyor',
   pushIphone: 'Bildirimler: iPhone/iPad notu (ana ekrana ekleyin)',
