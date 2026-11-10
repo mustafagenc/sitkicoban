@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { ThemeScript } from '@/components/ThemeScript'
 import { WebMcp } from '@/components/WebMcp'
@@ -52,6 +53,8 @@ export default async function LocaleLayout({
       <body>
         {children}
         <WebMcp />
+        {/* Vercel Speed Insights: gerçek ziyaretçilerin Core Web Vitals ölçümü; çerezsiz, kişisel veri tutmaz. */}
+        <SpeedInsights />
       </body>
     </html>
   )
