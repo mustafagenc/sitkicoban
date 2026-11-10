@@ -1,5 +1,6 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
+import { duyuruAlanlari, duyuruHook } from '@/lib/bulten/duyuru'
 import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, adminRead } from '@/lib/access'
 import { uniqueSlug } from '@/lib/slug'
@@ -26,7 +27,7 @@ export const Eserler: CollectionConfig = {
   labels: { singular: 'Eser', plural: 'Eserler' },
   admin: { useAsTitle: 'baslik', defaultColumns: ['baslik', 'tur', 'yil', 'sira'] },
   access: { ...adminRead, ...adminWrite },
-  hooks: { beforeChange: [computeOran], afterChange: [revalidateHooks('eserler').afterChange], afterDelete: [revalidateHooks('eserler').afterDelete] },
+  hooks: { beforeChange: [computeOran], afterChange: [revalidateHooks('eserler').afterChange, duyuruHook('eserler')], afterDelete: [revalidateHooks('eserler').afterDelete] },
   fields: [
     { name: 'baslik', label: 'Başlık', type: 'text', required: true, localized: true },
     {
@@ -64,5 +65,6 @@ export const Eserler: CollectionConfig = {
       type: 'number',
       admin: { position: 'sidebar', condition: (d) => Boolean(d?.anasayfadaGoster) },
     },
+    ...duyuruAlanlari(),
   ],
 }

@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { duyuruAlanlari, duyuruHook } from '@/lib/bulten/duyuru'
 import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, adminRead } from '@/lib/access'
 import { uniqueSlug } from '@/lib/slug'
@@ -9,7 +10,7 @@ export const Kitaplar: CollectionConfig = {
   labels: { singular: 'Kitap', plural: 'Kitaplar' },
   admin: { useAsTitle: 'baslik', defaultColumns: ['baslik', 'rol', 'yayinevi', 'yil', 'sira'] },
   access: { ...adminRead, ...adminWrite },
-  hooks: { afterChange: [revalidateHooks('kitaplar').afterChange], afterDelete: [revalidateHooks('kitaplar').afterDelete] },
+  hooks: { afterChange: [revalidateHooks('kitaplar').afterChange, duyuruHook('kitaplar')], afterDelete: [revalidateHooks('kitaplar').afterDelete] },
   fields: [
     { name: 'baslik', label: 'Başlık', type: 'text', required: true, localized: true },
     { name: 'altBaslik', label: 'Alt başlık', type: 'text', localized: true },
@@ -50,5 +51,6 @@ export const Kitaplar: CollectionConfig = {
       type: 'number',
       admin: { position: 'sidebar', condition: (d) => Boolean(d?.anasayfadaGoster) },
     },
+    ...duyuruAlanlari(),
   ],
 }

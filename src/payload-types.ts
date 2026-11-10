@@ -251,6 +251,18 @@ export interface Eserler {
   sira?: number | null;
   anasayfadaGoster?: boolean | null;
   anasayfaSira?: number | null;
+  /**
+   * Kayıt yayındaysa bu konuya abone olanlara e-posta ve tarayıcı bildirimi gider. Gönderildikten sonra kutu kendiliğinden kalkar (sayfayı yenileyince görünür). Satın alma bağlantısı hiçbir zaman gönderilmez.
+   */
+  duyur?: boolean | null;
+  /**
+   * Bu kayıt daha önce duyuruldu. İşaretleyip kaydederseniz abonelere bir kez daha gider.
+   */
+  yenidenDuyur?: boolean | null;
+  /**
+   * Abonelere son duyurunun gönderildiği zaman.
+   */
+  duyuruldu?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -282,6 +294,18 @@ export interface Kitaplar {
   sira?: number | null;
   anasayfadaGoster?: boolean | null;
   anasayfaSira?: number | null;
+  /**
+   * Kayıt yayındaysa bu konuya abone olanlara e-posta ve tarayıcı bildirimi gider. Gönderildikten sonra kutu kendiliğinden kalkar (sayfayı yenileyince görünür). Satın alma bağlantısı hiçbir zaman gönderilmez.
+   */
+  duyur?: boolean | null;
+  /**
+   * Bu kayıt daha önce duyuruldu. İşaretleyip kaydederseniz abonelere bir kez daha gider.
+   */
+  yenidenDuyur?: boolean | null;
+  /**
+   * Abonelere son duyurunun gönderildiği zaman.
+   */
+  duyuruldu?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -404,6 +428,18 @@ export interface Yazilar {
    * Kapalıysa yazı sitede görünmez.
    */
   yayinda?: boolean | null;
+  /**
+   * Kayıt yayındaysa bu konuya abone olanlara e-posta ve tarayıcı bildirimi gider. Gönderildikten sonra kutu kendiliğinden kalkar (sayfayı yenileyince görünür). Satın alma bağlantısı hiçbir zaman gönderilmez.
+   */
+  duyur?: boolean | null;
+  /**
+   * Bu kayıt daha önce duyuruldu. İşaretleyip kaydederseniz abonelere bir kez daha gider.
+   */
+  yenidenDuyur?: boolean | null;
+  /**
+   * Abonelere son duyurunun gönderildiği zaman.
+   */
+  duyuruldu?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -461,6 +497,18 @@ export interface Videolar {
    */
   anasayfada?: boolean | null;
   sira?: number | null;
+  /**
+   * Kayıt yayındaysa bu konuya abone olanlara e-posta ve tarayıcı bildirimi gider. Gönderildikten sonra kutu kendiliğinden kalkar (sayfayı yenileyince görünür). Satın alma bağlantısı hiçbir zaman gönderilmez.
+   */
+  duyur?: boolean | null;
+  /**
+   * Bu kayıt daha önce duyuruldu. İşaretleyip kaydederseniz abonelere bir kez daha gider.
+   */
+  yenidenDuyur?: boolean | null;
+  /**
+   * Abonelere son duyurunun gönderildiği zaman.
+   */
+  duyuruldu?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -683,6 +731,9 @@ export interface EserlerSelect<T extends boolean = true> {
   sira?: T;
   anasayfadaGoster?: T;
   anasayfaSira?: T;
+  duyur?: T;
+  yenidenDuyur?: T;
+  duyuruldu?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -707,6 +758,9 @@ export interface KitaplarSelect<T extends boolean = true> {
   sira?: T;
   anasayfadaGoster?: T;
   anasayfaSira?: T;
+  duyur?: T;
+  yenidenDuyur?: T;
+  duyuruldu?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -775,6 +829,9 @@ export interface YazilarSelect<T extends boolean = true> {
       };
   ilgiliKitaplar?: T;
   yayinda?: T;
+  duyur?: T;
+  yenidenDuyur?: T;
+  duyuruldu?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -806,6 +863,9 @@ export interface VideolarSelect<T extends boolean = true> {
   kapak?: T;
   anasayfada?: T;
   sira?: T;
+  duyur?: T;
+  yenidenDuyur?: T;
+  duyuruldu?: T;
   updatedAt?: T;
   createdAt?: T;
 }

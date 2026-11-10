@@ -1,7 +1,8 @@
 import { dir, type Locale } from '@/i18n/config'
 import type { Bulten } from '@/payload-types'
 
-const esc = (s: string) =>
+/** HTML metin ve öznitelik kaçışı (kullanıcı içeriği e-posta şablonuna böyle girer). */
+export const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 
 /**

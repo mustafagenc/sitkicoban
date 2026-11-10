@@ -8,6 +8,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { Ayet } from '@/blocks/Ayet'
 import { OneCikanSoz } from '@/blocks/OneCikanSoz'
+import { duyuruAlanlari, duyuruHook } from '@/lib/bulten/duyuru'
 import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, adminRead } from '@/lib/access'
 import { readingTime, wordCount } from '@/lib/readingTime'
@@ -48,7 +49,7 @@ export const Yazilar: CollectionConfig = {
   defaultSort: '-tarih',
   hooks: {
     beforeChange: [okumaSuresiHook],
-    afterChange: [revalidateHooks('yazilar').afterChange],
+    afterChange: [revalidateHooks('yazilar').afterChange, duyuruHook('yazilar')],
     afterDelete: [revalidateHooks('yazilar').afterDelete],
   },
   fields: [
@@ -120,5 +121,6 @@ export const Yazilar: CollectionConfig = {
       index: true,
       admin: { position: 'sidebar', description: 'Kapalıysa yazı sitede görünmez.' },
     },
+    ...duyuruAlanlari(),
   ],
 }

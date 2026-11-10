@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { duyuruAlanlari, duyuruHook } from '@/lib/bulten/duyuru'
 import { revalidateHooks } from '@/lib/cache/revalidate'
 import { adminWrite, adminRead } from '@/lib/access'
 import { youtubeId } from '@/lib/youtube'
@@ -10,7 +11,7 @@ export const Videolar: CollectionConfig = {
   admin: { useAsTitle: 'baslik', defaultColumns: ['baslik', 'kategori', 'seri', 'tarih', 'sira'] },
   access: { ...adminRead, ...adminWrite },
   hooks: {
-    afterChange: [revalidateHooks('videolar').afterChange],
+    afterChange: [revalidateHooks('videolar').afterChange, duyuruHook('videolar')],
     afterDelete: [revalidateHooks('videolar').afterDelete],
   },
   fields: [
@@ -47,5 +48,6 @@ export const Videolar: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Yalnızca bir video kullanılır: işaretlenenlerden en son güncellenen.' },
     },
     { name: 'sira', label: 'Sıra', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
+    ...duyuruAlanlari(),
   ],
 }
