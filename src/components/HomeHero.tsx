@@ -1,7 +1,7 @@
 import { duyarli } from '@/lib/img'
 
 /** Kolaj: 5 satır, her satırda 9 eser (tasarımdaki dizin formülüyle), kesintisiz kayma için iki kez. */
-export function collageRows(images: string[]): string[][] {
+export function collageRows<T>(images: T[]): T[][] {
   const n = images.length
   if (!n) return []
   return Array.from({ length: 5 }, (_, r) => {
@@ -18,8 +18,8 @@ export function HomeHero({
   tag,
   downLabel,
 }: {
-  /** Tüm eser görselleri (kolaj) */
-  images: string[]
+  /** Tüm eser görselleri (kolaj); oran = en ÷ boy, yüklenmeden yer ayırmak için */
+  images: { src: string; oran: number }[]
   roles?: string | null
   title?: string | null
   tag?: string | null
@@ -30,9 +30,18 @@ export function HomeHero({
       <div className="collage" aria-hidden="true">
         {collageRows(images).map((row, r) => (
           <div className="row" key={r}>
-            {row.map((src, i) => (
+            {row.map(({ src, oran }, i) => (
+              // Genişlik/yükseklik oranı verilir ki görsel yüklenince satır kaymasın (CSS yüksekliği belirler).
+              // Gösterilen genişlik: oran × satır yüksekliği (masaüstü 15vw, mobil 19svh).
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} {...duyarli(src, '(max-width: 860px) 40vw, 22vw', 828)} alt="" decoding="async" />
+              <img
+                key={i}
+                {...duyarli(src, `(max-width: 860px) ${(oran * 19).toFixed(1)}vh, ${(oran * 15).toFixed(1)}vw`)}
+                width={Math.round(oran * 300)}
+                height={300}
+                alt=""
+                decoding="async"
+              />
             ))}
           </div>
         ))}

@@ -7,6 +7,7 @@ import type { UiMetinleri } from '@/payload-types'
 
 import { VideoModal } from './VideoModal'
 import type { VideoItem } from './videolar'
+import { duyarli } from '@/lib/img'
 
 /**
  * Ana sayfadaki Video bölümü: işaretli video büyük kapakta, diğer videolar altındaki listede.
@@ -33,7 +34,7 @@ export function HomeVideo({
       <div className="wrap video-wrap">
         <button type="button" className="player" aria-label={ui.videoOynat ?? undefined} onClick={() => setOpen(video.id)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={video.kapak} alt={video.baslik} loading="lazy" />
+          <img {...duyarli(video.kapak, '(max-width: 860px) 100vw, 680px')} alt={video.baslik} loading="lazy" />
           <span className="play" aria-hidden="true">
             ▶
           </span>

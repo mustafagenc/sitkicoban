@@ -7,6 +7,7 @@ import type { UiMetinleri } from '@/payload-types'
 import { PostMeta } from './PostMeta'
 import { VideoModal } from './VideoModal'
 import type { VideoItem } from './videolar'
+import { duyarli } from '@/lib/img'
 
 const PLAY = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -70,7 +71,7 @@ export function VideoGallery({
           <button key={`${kat}-${v.id}`} type="button" className="vid" onClick={() => setOpen(v.id)}>
             <div className="thumb">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={v.kapak} alt={v.baslik} loading="lazy" />
+              <img {...duyarli(v.kapak, '(max-width: 860px) 100vw, 380px')} alt={v.baslik} loading="lazy" />
               <span className="pl">{PLAY}</span>
               {v.sure && <span className="dur">{v.sure}</span>}
             </div>
