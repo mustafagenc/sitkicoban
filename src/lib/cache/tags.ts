@@ -1,4 +1,4 @@
-export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'iletisim' | 'bulten'
+export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'iletisim' | 'bulten' | 'yorumlar' | 'yorumMetinleri'
 
 /** Which cache tags a content source (collection/global slug) invalidates. */
 export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
@@ -19,4 +19,9 @@ export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
   'video-kategorileri': ['videolar'],
   iletisim: ['iletisim'],
   bulten: ['bulten'],
+  // `yorumlar` koleksiyonu burada yok: kendi kancası yalnızca yorumun yazısını yeniler (bkz. yorumRevalidateHooks).
+  'yorum-metinleri': ['yorumMetinleri'],
 }
+
+/** Per-yazı cache tag of its approved comments (see `getYorumlar`, `yorumRevalidateHooks`). */
+export const yorumTag = (yaziId: number | string): string => `yorumlar:${yaziId}`

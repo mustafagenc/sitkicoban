@@ -23,12 +23,14 @@ import { Videolar } from './collections/Videolar'
 import { YaziKategorileri } from './collections/YaziKategorileri'
 import { Yazilar } from './collections/Yazilar'
 import { YaziTurleri } from './collections/YaziTurleri'
+import { Yorumlar } from './collections/Yorumlar'
 import { Anasayfa } from './globals/Anasayfa'
 import { Bulten } from './globals/Bulten'
 import { Hayati } from './globals/Hayati'
 import { Iletisim } from './globals/Iletisim'
 import { SiteAyarlari } from './globals/SiteAyarlari'
 import { UiMetinleri } from './globals/UiMetinleri'
+import { YorumMetinleri } from './globals/YorumMetinleri'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -65,8 +67,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, VideoKategorileri, Videolar, Duyurular, PushAbonelikleri],
-  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati, Iletisim, Bulten],
+  collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, Yorumlar, VideoKategorileri, Videolar, Duyurular, PushAbonelikleri],
+  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati, Iletisim, Bulten, YorumMetinleri],
   localization: {
     locales: [
       { code: 'tr', label: 'Türkçe' },

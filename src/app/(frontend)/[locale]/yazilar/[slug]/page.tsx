@@ -7,11 +7,16 @@ import { PostMeta } from '@/components/PostMeta'
 import { PostProgress } from '@/components/PostProgress'
 import { formatTarih, okumaMetni, toYazilar, YAZAR } from '@/components/yazilar'
 import { isLocale, localizedPath, LOCALES, yaziPath } from '@/i18n/config'
-import { getSiteAyarlari, getUi, getYazi, getYaziSluglari, getYazilar } from '@/lib/data'
+import { YorumForm } from '@/components/YorumForm'
+import { YorumListesi } from '@/components/YorumListesi'
+import { getSiteAyarlari, getUi, getYazi, getYaziSluglari, getYazilar, getYorumMetinleri, getYorumlar } from '@/lib/data'
+import { yorumMetinleriVar } from '@/lib/yorum'
 import { RichText } from '@/lib/richtext'
 import type { YaziKategorileri } from '@/payload-types'
 
 import '../../../styles/yazi.css'
+import '../../../styles/iletisim.css'
+import '../../../styles/yorumlar.css'
 import { sayfaMeta } from '@/lib/seo'
 import { mediaUrl } from '@/lib/media'
 import { JsonLd, makale } from '@/lib/jsonld'
@@ -49,7 +54,15 @@ export default async function YaziPage({ params }: Props) {
   const yazi = await getYazi(slug, locale)
   if (!yazi) notFound()
 
-  const [ui, ayarlar, hepsi] = await Promise.all([getUi(locale), getSiteAyarlari(locale), getYazilar(locale)])
+  const [ui, ayarlar, hepsi, yorumMetinleri, yorumlar] = await Promise.all([
+    getUi(locale),
+    getSiteAyarlari(locale),
+    getYazilar(locale),
+    getYorumMetinleri(locale),
+    getYorumlar(yazi.id),
+  ])
+  // Yorum metinleri girilmemişse (ör. migration sonrası) bölüm hiç çizilmez.
+  const ym = yorumMetinleriVar(yorumMetinleri.metinler) ? yorumMetinleri.metinler! : null
   const sira = toYazilar(hepsi, ui, locale)
   const i = sira.findIndex((y) => y.slug === slug)
   // Liste yeniden eskiye sıralıdır: sonraki yazı bir öncekidir.
@@ -114,6 +127,17 @@ export default async function YaziPage({ params }: Props) {
               ))}
             </ol>
           </div>
+        )}
+
+        {ym && (
+          <section className="yorumlar iletisim" id="yorumlar" aria-labelledby="yorumlar-baslik">
+            <h2 id="yorumlar-baslik">
+              {ym.baslik}
+              {yorumlar.length > 0 && <span className="sayi">({yorumlar.length})</span>}
+            </h2>
+            <YorumListesi yorumlar={yorumlar} m={ym} locale={locale} />
+            <YorumForm m={ym} locale={locale} slug={slug} aydinlatmaHref={localizedPath('aydinlatma', locale)} />
+          </section>
         )}
 
         <nav className="pn" aria-label={ui.yazilarGezinti ?? undefined}>

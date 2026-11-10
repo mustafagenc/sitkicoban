@@ -11,7 +11,9 @@ import { LOCALES, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
 
 import { siteUrl } from '@/lib/site'
 
-import { TAGS_BY_SOURCE, type Tag } from './tags'
+import { TAGS_BY_SOURCE, yorumTag, type Tag } from './tags'
+
+export { yorumTag }
 
 const ALL_PAGES: PageKey[] = [
   'home',
@@ -40,6 +42,9 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   videolar: ['videolar', 'home'],
   iletisim: ['iletisim', 'aydinlatma'],
   bulten: ALL_PAGES, // alt bilgideki "Bülten" bağlantısı her sayfada; ana sayfada bülten şeridi
+  // Yorumlar ve metinleri yalnızca yazı detay sayfalarında (YAZI_DETAIL_TAGS); liste sayfası yok.
+  yorumlar: [],
+  yorumMetinleri: [],
 }
 
 /** Tags whose data `/llms.txt` renders (getAnasayfa, getYazilar). */
@@ -82,8 +87,12 @@ export function pathsForChange(
   return [...paths]
 }
 
-/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books, footer newsletter link). */
-export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar', 'bulten']
+/**
+ * Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books,
+ * footer newsletter link, comments and their texts). Comments are also tagged per yazı (`yorumTag`), and a
+ * comment save invalidates only that tag, so `yorumlar` itself is never revalidated as a whole.
+ */
+export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar', 'bulten', 'yorumlar', 'yorumMetinleri']
 
 /** Whether a save to this source changes data shown on every published yazı detail page. */
 export function rendersYaziDetail(source: string): boolean {
@@ -157,6 +166,61 @@ function warmUp(paths: string[]): void {
     } catch {
       // ignore
     }
+  }
+}
+
+type YorumDoc = { durum?: unknown; yazi?: unknown } | null | undefined
+
+const yaziIdOf = (v: unknown): number | string | null =>
+  typeof v === 'number' || typeof v === 'string' ? v : v && typeof v === 'object' && 'id' in v ? (v as { id: number }).id : null
+
+/** Whether a comment save changes public output: only approved comments are rendered. */
+export function yorumGorunurDegisti(doc: YorumDoc, previousDoc?: YorumDoc): boolean {
+  return doc?.durum === 'onaylandi' || previousDoc?.durum === 'onaylandi'
+}
+
+/**
+ * Comment hooks: when an approved comment changes (approved, withdrawn, edited, deleted), invalidate only its
+ * yazı's comment tag and warm that yazı's detail page in every locale (comments show in all languages).
+ * New pending submissions and edits of unapproved comments touch nothing.
+ */
+export function yorumRevalidateHooks(): {
+  afterChange: CollectionAfterChangeHook
+  afterDelete: CollectionAfterDeleteHook
+} {
+  const run = async (req: PayloadRequest, docs: YorumDoc[]) => {
+    const ids = [...new Set(docs.map((d) => yaziIdOf(d?.yazi)).filter((v): v is number | string => v !== null))]
+    const paths = new Set<string>()
+    for (const id of ids) {
+      try {
+        revalidateTag(yorumTag(id), { expire: 0 })
+      } catch {
+        // Outside a Next request context (scripts, tests): nothing to invalidate.
+      }
+      try {
+        const yazi = await req.payload.findByID({ collection: 'yazilar', id, select: { slug: true }, depth: 0, req })
+        if (typeof yazi?.slug === 'string' && yazi.slug) for (const l of LOCALES) paths.add(yaziPath(yazi.slug, l))
+      } catch {
+        // Yazı silinmiş: ısıtılacak sayfa yok.
+      }
+    }
+    if (paths.size === 0) return
+    const warm = () => warmUp([...paths])
+    try {
+      after(warm)
+    } catch {
+      setTimeout(warm, 250)
+    }
+  }
+  return {
+    afterChange: async ({ doc, previousDoc, context, req }) => {
+      if (!context?.disableRevalidate && yorumGorunurDegisti(doc, previousDoc)) await run(req, [doc, previousDoc])
+      return doc
+    },
+    afterDelete: async ({ doc, context, req }) => {
+      if (!context?.disableRevalidate && yorumGorunurDegisti(doc)) await run(req, [doc])
+      return doc
+    },
   }
 }
 

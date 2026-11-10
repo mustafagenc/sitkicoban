@@ -77,6 +77,7 @@ export interface Config {
     hocalar: Hocalar;
     'yazi-kategorileri': YaziKategorileri;
     yazilar: Yazilar;
+    yorumlar: Yorumlar;
     'video-kategorileri': VideoKategorileri;
     videolar: Videolar;
     duyurular: Duyurular;
@@ -98,6 +99,7 @@ export interface Config {
     hocalar: HocalarSelect<false> | HocalarSelect<true>;
     'yazi-kategorileri': YaziKategorileriSelect<false> | YaziKategorileriSelect<true>;
     yazilar: YazilarSelect<false> | YazilarSelect<true>;
+    yorumlar: YorumlarSelect<false> | YorumlarSelect<true>;
     'video-kategorileri': VideoKategorileriSelect<false> | VideoKategorileriSelect<true>;
     videolar: VideolarSelect<false> | VideolarSelect<true>;
     duyurular: DuyurularSelect<false> | DuyurularSelect<true>;
@@ -118,6 +120,7 @@ export interface Config {
     hayati: Hayati;
     iletisim: Iletisim;
     bulten: Bulten;
+    'yorum-metinleri': YorumMetinleri;
   };
   globalsSelect: {
     'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
@@ -126,6 +129,7 @@ export interface Config {
     hayati: HayatiSelect<false> | HayatiSelect<true>;
     iletisim: IletisimSelect<false> | IletisimSelect<true>;
     bulten: BultenSelect<false> | BultenSelect<true>;
+    'yorum-metinleri': YorumMetinleriSelect<false> | YorumMetinleriSelect<true>;
   };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
@@ -446,6 +450,38 @@ export interface Yazilar {
   createdAt: string;
 }
 /**
+ * Ziyaretçilerin yazılara bıraktığı yorumlar. Yeni yorumlar "Onay bekliyor" olarak gelir ve durum "Onaylandı" yapılana kadar sitede görünmez. Onaylı yorumlar yazının üç dildeki sayfasında da görünür; e-posta adresi hiçbir zaman yayınlanmaz.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yorumlar".
+ */
+export interface Yorumlar {
+  id: number;
+  yazi: number | Yazilar;
+  /**
+   * Yalnızca "Onaylandı" yorumlar sitede görünür.
+   */
+  durum: 'bekliyor' | 'onaylandi' | 'reddedildi';
+  dil: 'tr' | 'en' | 'ar';
+  ad: string;
+  /**
+   * Sitede hiçbir zaman gösterilmez.
+   */
+  eposta: string;
+  metin: string;
+  /**
+   * İsteğe bağlı. Onaylı yorumun altında ayrı bir kutuda gösterilir.
+   */
+  cevap?: string | null;
+  /**
+   * Cevap yazıldığında kendiliğinden atılır.
+   */
+  cevapTarihi?: string | null;
+  ipOzeti?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "video-kategorileri".
  */
@@ -628,6 +664,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'yazilar';
         value: number | Yazilar;
+      } | null)
+    | ({
+        relationTo: 'yorumlar';
+        value: number | Yorumlar;
       } | null)
     | ({
         relationTo: 'video-kategorileri';
@@ -873,6 +913,23 @@ export interface YazilarSelect<T extends boolean = true> {
   duyur?: T;
   yenidenDuyur?: T;
   duyuruldu?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yorumlar_select".
+ */
+export interface YorumlarSelect<T extends boolean = true> {
+  yazi?: T;
+  durum?: T;
+  dil?: T;
+  ad?: T;
+  eposta?: T;
+  metin?: T;
+  cevap?: T;
+  cevapTarihi?: T;
+  ipOzeti?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1366,6 +1423,44 @@ export interface Bulten {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yorum-metinleri".
+ */
+export interface YorumMetinleri {
+  id: number;
+  /**
+   * Yazı sayfalarının altındaki yorum listesi ve formundaki metinler.
+   */
+  metinler?: {
+    baslik?: string | null;
+    bos?: string | null;
+    cevapEtiket?: string | null;
+    formBaslik?: string | null;
+    formAciklama?: string | null;
+    formAd?: string | null;
+    formAdHata?: string | null;
+    formEposta?: string | null;
+    formEpostaNot?: string | null;
+    formEpostaHata?: string | null;
+    formMetin?: string | null;
+    formMetinHata?: string | null;
+    formSayac?: string | null;
+    formOnay?: string | null;
+    formAydinlatma?: string | null;
+    formOnayHata?: string | null;
+    formGonder?: string | null;
+    formGonderiliyor?: string | null;
+    formBasariBaslik?: string | null;
+    formBasariMetin?: string | null;
+    formYeniYorum?: string | null;
+    formHata?: string | null;
+    formSinir?: string | null;
+    formKullanilamaz?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-ayarlari_select".
  */
 export interface SiteAyarlariSelect<T extends boolean = true> {
@@ -1669,6 +1764,43 @@ export interface BultenSelect<T extends boolean = true> {
         pushHata?: T;
         davetMetin?: T;
         davetSonra?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yorum-metinleri_select".
+ */
+export interface YorumMetinleriSelect<T extends boolean = true> {
+  metinler?:
+    | T
+    | {
+        baslik?: T;
+        bos?: T;
+        cevapEtiket?: T;
+        formBaslik?: T;
+        formAciklama?: T;
+        formAd?: T;
+        formAdHata?: T;
+        formEposta?: T;
+        formEpostaNot?: T;
+        formEpostaHata?: T;
+        formMetin?: T;
+        formMetinHata?: T;
+        formSayac?: T;
+        formOnay?: T;
+        formAydinlatma?: T;
+        formOnayHata?: T;
+        formGonder?: T;
+        formGonderiliyor?: T;
+        formBasariBaslik?: T;
+        formBasariMetin?: T;
+        formYeniYorum?: T;
+        formHata?: T;
+        formSinir?: T;
+        formKullanilamaz?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -14,6 +14,8 @@ import { adminWrite, adminRead } from '@/lib/access'
 import { readingTime, wordCount } from '@/lib/readingTime'
 import { uniqueSlug } from '@/lib/slug'
 
+import { yaziYorumlariniSil } from './Yorumlar'
+
 /** Yazı gövdesi: varsayılan araçlar, h2/h3 başlıklar, yazılara iç bağlantı, Âyet ve Öne çıkan söz blokları. */
 export const govdeEditor = lexicalEditor({
   features: ({ defaultFeatures }) => [
@@ -49,6 +51,7 @@ export const Yazilar: CollectionConfig = {
   defaultSort: '-tarih',
   hooks: {
     beforeChange: [okumaSuresiHook],
+    beforeDelete: [yaziYorumlariniSil],
     afterChange: [revalidateHooks('yazilar').afterChange, duyuruHook('yazilar')],
     afterDelete: [revalidateHooks('yazilar').afterDelete],
   },
