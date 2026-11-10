@@ -4,7 +4,7 @@ import { getPayload, type Payload } from 'payload'
 import type { Locale } from '@/i18n/config'
 import config from '@/payload.config'
 
-import type { Tag } from './cache/tags'
+import { yorumTag, type Tag } from './cache/tags'
 
 const opts = (locale: Locale) => ({ locale, fallbackLocale: 'tr' as const, depth: 1 })
 
@@ -255,4 +255,44 @@ export const getIletisim = cached('iletisim', ['iletisim'], async (locale: Local
 export const getBulten = cached('bulten', ['bulten'], async (locale: Locale) => {
   const payload = await getPayload({ config })
   return payload.findGlobal({ slug: 'bulten', ...opts(locale) })
+})
+
+// Yazı yorumları: yalnızca onaylılar, dilden bağımsız (her dildeki sayfada hepsi), eskiden yeniye.
+// E-posta asla seçilmez. Önbellek yazı başına: bir yorumun onayı yalnızca kendi yazısının etiketini yeniler.
+export async function findYorumlar(payload: Payload, yaziId: number) {
+  const res = await payload.find({
+    collection: 'yorumlar',
+    where: { and: [{ yazi: { equals: yaziId } }, { durum: { equals: 'onaylandi' } }] },
+    sort: 'createdAt',
+    select: { ad: true, metin: true, cevap: true, dil: true, createdAt: true },
+    depth: 0,
+    limit: 1000,
+    pagination: false,
+  })
+  return res.docs.map((d) => ({
+    id: d.id,
+    ad: d.ad,
+    metin: d.metin,
+    cevap: d.cevap ?? null,
+    dil: d.dil,
+    createdAt: d.createdAt,
+  }))
+}
+
+export type OnayliYorum = Awaited<ReturnType<typeof findYorumlar>>[number]
+
+const YORUMLAR_TAGS: Tag[] = ['yorumlar']
+
+export const getYorumlar = Object.assign(
+  (yaziId: number): Promise<OnayliYorum[]> =>
+    unstable_cache(async () => plain(await findYorumlar(await getPayload({ config }), yaziId)), ['yorumlar', String(yaziId)], {
+      tags: [...YORUMLAR_TAGS, yorumTag(yaziId)],
+    })(),
+  { tags: YORUMLAR_TAGS },
+)
+
+// Yorum bölümünün metinleri (yalnızca yazı detay sayfaları).
+export const getYorumMetinleri = cached('yorum-metinleri', ['yorumMetinleri'], async (locale: Locale) => {
+  const payload = await getPayload({ config })
+  return payload.findGlobal({ slug: 'yorum-metinleri', ...opts(locale) })
 })

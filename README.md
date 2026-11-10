@@ -8,7 +8,7 @@ veritabanından statik üretilir; yönetim paneli `/admin` altındadır.
 | Ana sayfa | `/` | Ana Sayfa, Dersler, Eserler, Kitaplar, Yazılar, Hayatı, Videolar |
 | Eserler | `/eserler` · `/works` | Eserler, Eser türleri |
 | Kitaplar | `/kitaplar` · `/books` | Kitaplar |
-| Yazılar | `/yazilar` · `/writings`, yazı `/yazilar/<slug>` | Yazılar, Yazı kategorileri (yalnızca "Yayında" olanlar görünür) |
+| Yazılar | `/yazilar` · `/writings`, yazı `/yazilar/<slug>` | Yazılar, Yazı kategorileri (yalnızca "Yayında" olanlar görünür), Yorumlar, Yorum metinleri |
 | Videolar | `/videolar` · `/videos` | Videolar, Video kategorileri |
 | Hayatı (İcazet) | `/hayati` · `/biography` | Hayatı, Hocalar |
 | İletişim | `/iletisim` · `/contact`, aydınlatma `/iletisim/aydinlatma` · `/contact/privacy` | İletişim, Site ayarları |
@@ -65,6 +65,20 @@ Mesajlar yalnızca e-posta ile gider (`replyTo` gönderenin adresi). Bal küpü 
 3 saniyeden kısa sürede gönderilen formlar sessizce "gönderildi" der ama gönderilmez; JavaScript yüklenmeden
 gönderilen form görünür bir hata alır. `?konu=<anahtar>` (ör. `?konu=mesk`; anahtarlar panelde "Form
 konuları"nda, üç dilde aynı) konuyu, `?eser=<ad>` eser konusunu ve hazır mesajı seçer.
+
+### Yazı yorumları
+
+Yazı sayfasının altında onaylı yorumlar ve yorum formu (ad, e-posta, yorum, aydınlatma onayı) vardır. Gönderilen
+yorum panelde **Yorumlar**'a "Onay bekliyor" olarak düşer; **bildirim e-postası gönderilmez**, panel düzenli
+kontrol edilir. Durum "Onaylandı" yapılınca yorum, hangi dilde yazıldıysa yazılsın yazının **üç dildeki
+sayfasında** da görünür; isteğe bağlı "Sıtkı Çoban'ın cevabı" alanı yorumun altında ayrı bir kutuda çıkar.
+E-posta adresi sitede hiçbir zaman gösterilmez; yorum metni düz yazıdır (bağlantılar tıklanamaz). İletişim
+formundaki bal küpü ve süre denetimi burada da geçerlidir; aynı e-postadan ya da aynı IP'den 10 dakikada en
+fazla 3 yorum kabul edilir (IP saklanmaz, yalnızca `PAYLOAD_SECRET` ile tuzlanmış özetinin bir kısmı
+tutulur). Sayfa gösterimi veritabanına sorgu göndermez: onaylı yorumlar yazı başına önbelleklenir
+(`yorumlar:<yazı id>` etiketi); yalnızca onaylı bir yorum değiştiğinde (onay, geri çekme, düzenleme, silme) o
+yazının üç sayfası yeniden üretilir; onay bekleyen yeni yorumlar hiçbir sayfayı yenilemez. Metinler panelde
+`Yorum metinleri` global'indedir; boşsa yorum bölümü hiç çizilmez. Bir yazı silinince yorumları da silinir.
 
 ### Bülten
 
@@ -163,6 +177,17 @@ sırasında da gerekir; Preview ortamı da aynılarına ihtiyaç duyar.
   > sitemizin veritabanında saklanır. Her e-postanın altındaki bağlantıdan, bildirimleri ise bülten
   > sayfasından ya da tarayıcı ayarlarından dilediğiniz zaman kapatabilirsiniz; bu durumda verileriniz bülten
   > amacıyla kullanılmaz.
+- **Yorumlar:** Migration (`yorumlar`) sonrası `Yorum metinleri` global'i boştur ve yorum bölümü görünmez;
+  metinleri panelden (üç dilde) girin. Yorumlar ad, e-posta ve yorum metnini işlediği için aydınlatma
+  metnine (üç dilde) bir paragraf eklenmelidir. Öneri:
+
+  > **Yazı yorumları.** Bir yazıya yorum gönderdiğinizde adınız, e-posta adresiniz, yorumunuz, yorumu
+  > yazdığınız dil ve gönderim zamanı, yorumun değerlendirilmesi ve onaylanırsa yayınlanması amacıyla
+  > sitemizin veritabanında saklanır. Kötüye kullanımı önlemek için IP adresiniz saklanmaz; yalnızca geri
+  > çevrilemeyen kısaltılmış bir özeti, çok sık gönderimi sınırlamak için tutulur. Yorumunuz yalnızca
+  > onaylandıktan sonra adınızla birlikte yazının sayfasında (bütün dillerde) yayınlanır; e-posta adresiniz
+  > hiçbir zaman yayınlanmaz ve yalnızca gerektiğinde sizinle iletişim kurmak için kullanılır. Yorumunuzun
+  > silinmesini iletişim sayfasından dilediğiniz zaman isteyebilirsiniz.
 - **Google Analytics:** Ölçüm kimliği `Site ayarları > Google Analytics ölçüm kimliği`ndedir; boşsa etiket ve
   çerez bildirimi hiç çıkmaz. Etiket Google'ın izin moduyla (Consent Mode v2) yüklenir: ziyaretçi kabul
   edene kadar çerez yazılmaz, yalnızca çerezsiz sinyal gider; kabul edilince analiz çerezleri açılır, reklam

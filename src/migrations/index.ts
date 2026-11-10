@@ -15,6 +15,7 @@ import * as migration_20261110_172041_push from './20261110_172041_push';
 import * as migration_20261110_173948_duyuru from './20261110_173948_duyuru';
 import * as migration_20261110_194141_bildirim_daveti from './20261110_194141_bildirim_daveti';
 import * as migration_20261110_195418_duyurular from './20261110_195418_duyurular';
+import * as migration_20261110_202412_yorumlar from './20261110_202412_yorumlar';
 
 export const migrations = [
   {
@@ -100,6 +101,11 @@ export const migrations = [
   {
     up: migration_20261110_195418_duyurular.up,
     down: migration_20261110_195418_duyurular.down,
-    name: '20261110_195418_duyurular'
+    name: '20261110_195418_duyurular',
+  },
+  {
+    up: migration_20261110_202412_yorumlar.up,
+    down: migration_20261110_202412_yorumlar.down,
+    name: '20261110_202412_yorumlar'
   },
 ];

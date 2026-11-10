@@ -1,0 +1,33 @@
+/* Yazı sayfasının altındaki yorumlar. Form görünümü iletisim.css'teki .iletisim kurallarından gelir; burada yalnızca farklar. */
+
+.yazi .yorumlar { max-width:680px; margin:70px auto 0; padding-top:34px; border-top:1px solid var(--line); }
+.yazi .yorumlar > h2 { font-size:30px; margin:0 0 22px; display:flex; align-items:baseline; gap:12px; }
+.yazi .yorumlar > h2 .sayi { font-family:'Source Serif 4', serif; font-size:15px; letter-spacing:.12em; color:var(--gold); }
+.yazi .yorumlar .bos { color:var(--ink-soft); font-style:italic; margin:0 0 34px; }
+
+.yazi .yorumlar .liste { list-style:none; margin:0 0 44px; padding:0; }
+.yazi .yorumlar .yorum { padding:22px 0; border-bottom:1px solid var(--line); }
+.yazi .yorumlar .yorum:first-child { border-top:1px solid var(--line); }
+.yazi .yorumlar .ust { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; margin-bottom:8px; }
+.yazi .yorumlar .ust b { font-family:'Playfair Display', serif; font-weight:400; font-size:20px; color:var(--head); overflow-wrap:anywhere; }
+.yazi .yorumlar .ust time { font-size:13px; color:var(--ink-soft); }
+.yazi .yorumlar .metin { margin:0; font-size:17px; line-height:1.7; white-space:pre-line; overflow-wrap:anywhere; unicode-bidi:plaintext; text-align:start; }
+.yazi .yorumlar .yorum[lang="ar"] .metin, .yazi .yorumlar .yorum[lang="ar"] .ust b { font-family:'Amiri', serif; }
+.yazi .yorumlar .yorum[lang="ar"] > .metin { font-size:20px; }
+
+/* Sıtkı Çoban'ın cevabı: altın çizgili, kâğıt zeminli ayrı kutu */
+.yazi .yorumlar .cevap { margin-top:16px; margin-inline-start:22px; padding:14px 18px; background:var(--paper); border-inline-start:2px solid var(--gold); }
+.yazi .yorumlar .cevap small { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.yazi .yorumlar .cevap .metin { font-size:16px; color:var(--ink); }
+
+/* Form kartı: .iletisim .card üzerine */
+.yazi .yorumlar .card h3 { font-size:24px; margin:0 0 6px; }
+.yazi .yorumlar .card form > p { color:var(--ink-soft); margin:0 0 24px; font-size:15px; }
+.yazi .yorumlar .card textarea { min-height:140px; }
+.yazi .yorumlar .done h3 { margin:18px 0 10px; font-size:24px; }
+
+@media (max-width: 860px) {
+  .yazi .yorumlar { margin-top:50px; }
+  .yazi .yorumlar > h2 { font-size:26px; }
+  .yazi .yorumlar .cevap { margin-inline-start:10px; }
+}
