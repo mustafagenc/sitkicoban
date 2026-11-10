@@ -53,6 +53,8 @@ export function WorkLightbox({
   // Açılışta oturumu yenile; kapanınca son eser sönerek kalsın diye silme.
   useEffect(() => {
     if (!open) return
+    // Dışarıdan gelen açılış isteği oturuma kopyalanır; kapanınca son eser sönerek kalsın diye ayrı tutulur.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSession(open)
     setCur(Math.max(0, open.list.indexOf(open.index)))
   }, [open])

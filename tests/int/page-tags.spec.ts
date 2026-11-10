@@ -22,14 +22,23 @@ const PAGE_FILES: Record<PageKey | 'yazi', string> = {
   hayati: 'hayati/page.tsx',
   iletisim: 'iletisim/page.tsx',
   aydinlatma: 'iletisim/aydinlatma/page.tsx',
+  bulten: 'bulten/page.tsx',
+  bultenOnay: 'bulten/onay/page.tsx',
   yazi: 'yazilar/[slug]/page.tsx',
 }
 
 type Tagged = { tags: Tag[] }
 const getters = data as unknown as Record<string, Tagged | unknown>
 
+/** Components that fetch their own data (async server components); a page rendering one reads its tags too. */
+const FETCHING_COMPONENTS: Record<string, string> = {
+  Footer: path.join(process.cwd(), 'src/components/Footer.tsx'),
+}
+
 function tagsOfPage(file: string): { tag: Tag; getter: string }[] {
-  const src = readFileSync(path.join(ROOT, file), 'utf8')
+  const pageSrc = readFileSync(path.join(ROOT, file), 'utf8')
+  const used = Object.entries(FETCHING_COMPONENTS).filter(([name]) => new RegExp(`<${name}\\b`).test(pageSrc))
+  const src = [pageSrc, ...used.map(([, f]) => readFileSync(f, 'utf8'))].join('\n')
   const names = [...new Set(src.match(/\bget[A-Z]\w*(?=\()/g) ?? [])].filter((n) => n in getters)
   return names.flatMap((getter) => ((getters[getter] as Tagged).tags ?? []).map((tag) => ({ tag, getter })))
 }

@@ -22,6 +22,8 @@ const ALL_PAGES: PageKey[] = [
   'hayati',
   'iletisim',
   'aydinlatma',
+  'bulten',
+  'bultenOnay',
 ]
 
 export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
@@ -37,10 +39,14 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   hayati: ['hayati', 'home'],
   videolar: ['videolar', 'home'],
   iletisim: ['iletisim', 'aydinlatma'],
+  bulten: ALL_PAGES, // alt bilgideki "Bülten" bağlantısı her sayfada; ana sayfada bülten şeridi
 }
 
 /** Tags whose data `/llms.txt` renders (getAnasayfa, getYazilar). */
 export const LLMS_TAGS: Tag[] = ['anasayfa', 'yazilar', 'media', 'kitaplar']
+
+/** Tags whose data `/ajan.json` (WebMCP tools) renders: works, books, writings, lessons, settings. */
+export const AJAN_TAGS: Tag[] = ['eserler', 'turler', 'media', 'kitaplar', 'yazilar', 'dersler', 'ayarlar']
 
 /** Public paths that render data behind the given tags (deduplicated). */
 export function pathsForTags(tags: Tag[]): string[] {
@@ -67,6 +73,7 @@ export function pathsForChange(
   // The sitemap lists published yazı slugs, so it is re-rendered whenever they can change.
   if ((TAGS_BY_SOURCE[source] ?? []).includes('yazilar')) paths.add('/sitemap.xml')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_TAGS.includes(t))) paths.add('/llms.txt')
+  if ((TAGS_BY_SOURCE[source] ?? []).some((t) => AJAN_TAGS.includes(t))) paths.add('/ajan.json')
   const slugs = [...publishedSlugs]
   if (source === 'yazilar') {
     for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) slugs.push(d.slug)
@@ -75,8 +82,8 @@ export function pathsForChange(
   return [...paths]
 }
 
-/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books). */
-export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar']
+/** Tags whose data every yazı detail page renders (layout, UI strings, images, posts/categories, related books, footer newsletter link). */
+export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar', 'bulten']
 
 /** Whether a save to this source changes data shown on every published yazı detail page. */
 export function rendersYaziDetail(source: string): boolean {

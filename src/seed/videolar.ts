@@ -11,8 +11,8 @@ export type SeedVideo = {
   sure: string
   aciklama: string
   anasayfada: boolean
-  /** tasarim/img altındaki dosya; adı Blob'daki ve veritabanındaki adla aynı olmalı. */
-  kapak?: string
+  /** ad: medya kaydının ve Blob nesnesinin adı; dosya: tasarim/img altındaki kaynak dosya. */
+  kapak?: { ad: string; dosya: string }
 }
 
 export const SEED_VIDEOLAR: SeedVideo[] = [
@@ -26,8 +26,8 @@ export const SEED_VIDEOLAR: SeedVideo[] = [
     aciklama:
       "TRT 2'de yayınlanan Ramazan Sosyolojisi programının ikinci bölümü: affetmek ve affetmenin insana kazandırdığı hafiflik üzerine.",
     anasayfada: true,
-    // Panelden macOS ile yüklendi: ad ayrışık (NFD) Unicode biçiminde saklanıyor.
-    kapak: 'Affetmenin Hafifliği.png'.normalize('NFD'),
+    // Panelden macOS ile yüklendi: ad ayrışık (NFD) Unicode biçiminde saklanıyor; kaynak dosya ASCII adlı.
+    kapak: { ad: 'Affetmenin Hafifliği.png'.normalize('NFD'), dosya: 'affetmenin-hafifligi.png' },
   },
   {
     baslik: 'İhsan Fazlıoğlu',
@@ -50,6 +50,6 @@ export const SEED_VIDEOLAR: SeedVideo[] = [
     aciklama:
       'Ramazan Sosyolojisi\'nin 16. bölümünde, "Sabır, ilk sarsıntı anında gösterilendir" hadis-i şerifi ışığında modern çağın sabırsızlığı ele alınıyor; dijital dünyanın aceleciliğine karşı sabrın manevi zaferi, tezhip sanatının zarafeti ve tefekkürle anlatılıyor.',
     anasayfada: false,
-    kapak: 'Sabır.png',
+    kapak: { ad: 'Sabır.png', dosya: 'Sabır.png' },
   },
 ]

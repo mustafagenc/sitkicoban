@@ -23,7 +23,13 @@ describe('pathsForTags', () => {
   })
 
   it('maps ui to every page in every locale', () => {
-    expect(pathsForTags(['ui'])).toHaveLength(24)
+    expect(pathsForTags(['ui'])).toHaveLength(30)
+  })
+
+  it('maps bulten to every page (footer link, home strip), confirm page included', () => {
+    const p = pathsForTags(['bulten'])
+    expect(p).toHaveLength(30)
+    expect(p).toEqual(expect.arrayContaining(['/bulten', '/en/newsletter', '/ar/newsletter/confirm', '/', '/yazilar']))
   })
 
   it('maps anasayfa to home and the biography page', () => {
@@ -72,5 +78,12 @@ describe('pathsForTags', () => {
       expect(pathsForChange(s)).toContain('/llms.txt')
     for (const s of ['dersler', 'videolar', 'iletisim', 'site-ayarlari'])
       expect(pathsForChange(s)).not.toContain('/llms.txt')
+  })
+
+  it('re-renders /ajan.json (WebMCP data) when any public content it lists changes', () => {
+    for (const s of ['eserler', 'kitaplar', 'yazilar', 'dersler', 'site-ayarlari', 'media', 'yazi-turleri'])
+      expect(pathsForChange(s)).toContain('/ajan.json')
+    for (const s of ['videolar', 'iletisim', 'hayati', 'ui-metinleri'])
+      expect(pathsForChange(s)).not.toContain('/ajan.json')
   })
 })

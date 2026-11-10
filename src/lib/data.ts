@@ -250,3 +250,9 @@ export const getIletisim = cached('iletisim', ['iletisim'], async (locale: Local
   const payload = await getPayload({ config })
   return payload.findGlobal({ slug: 'iletisim', ...opts(locale) })
 })
+
+// Bülten metinleri: bülten ve onay sayfaları, ana sayfa şeridi ve her sayfanın alt bilgisi.
+export const getBulten = cached('bulten', ['bulten'], async (locale: Locale) => {
+  const payload = await getPayload({ config })
+  return payload.findGlobal({ slug: 'bulten', ...opts(locale) })
+})

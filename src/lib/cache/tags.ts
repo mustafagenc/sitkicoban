@@ -1,4 +1,4 @@
-export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'iletisim'
+export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'iletisim' | 'bulten'
 
 /** Which cache tags a content source (collection/global slug) invalidates. */
 export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
@@ -18,4 +18,5 @@ export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
   videolar: ['videolar'],
   'video-kategorileri': ['videolar'],
   iletisim: ['iletisim'],
+  bulten: ['bulten'],
 }

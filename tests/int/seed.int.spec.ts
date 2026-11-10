@@ -72,7 +72,7 @@ describe('seed', () => {
       ...SEED_HOCALAR.map((h) => h.imza.file),
       SEED_PORTRE.file,
       ...SEED_YAZILAR.flatMap((y) => (y.kapak ? [y.kapak.file] : [])),
-      ...SEED_VIDEOLAR.flatMap((v) => (v.kapak ? [v.kapak] : [])),
+      ...SEED_VIDEOLAR.flatMap((v) => (v.kapak ? [v.kapak.ad] : [])),
     ])
     expect((await payload.count({ collection: 'media' })).totalDocs).toBe(files.size)
   }, 120_000)
@@ -85,6 +85,17 @@ describe('seed', () => {
     expect(en.cerez?.kabul).toBe('Accept')
     const ar = await payload.findGlobal({ slug: 'site-ayarlari', locale: 'ar', fallbackLocale: false })
     expect(ar.cerez?.tercihler).toBeTruthy()
+  })
+
+  it('seeds the newsletter texts in every locale', async () => {
+    const tr = await payload.findGlobal({ slug: 'bulten', locale: 'tr' })
+    expect(tr.metinler?.formGonder).toBe('Abone ol')
+    expect(tr.aciklama).toBeTruthy()
+    const en = await payload.findGlobal({ slug: 'bulten', locale: 'en', fallbackLocale: false })
+    expect(en.metinler?.baslik).toBe('Newsletter')
+    const ar = await payload.findGlobal({ slug: 'bulten', locale: 'ar', fallbackLocale: false })
+    expect(ar.metinler?.onayEpostaKonu).toBeTruthy()
+    expect(ar.metinler?.onayEpostaKonu).not.toBe(tr.metinler?.onayEpostaKonu)
   })
 
   it('keeps counts when a work is edited and seed re-runs', async () => {

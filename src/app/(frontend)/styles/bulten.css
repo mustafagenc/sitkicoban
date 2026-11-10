@@ -1,0 +1,21 @@
+/* Bülten ve onay sayfaları. Form görünümü iletisim.css'teki .iletisim kurallarından gelir; burada yalnızca farklar. */
+
+.bulten { padding-top:10px; padding-bottom:110px; } /* yan boşluk .wrap'tan */
+.bulten .card { max-width:640px; margin:0 auto; }
+.bulten .card form > p { color:var(--ink-soft); margin:0 0 28px; }
+
+/* Konular: işaretlenebilir yuvarlak etiketler */
+.bulten .konular { border:0; margin:4px 0 0; padding:0; min-width:0; }
+.bulten .konular legend { padding:0; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.bulten .secenekler { display:flex; flex-wrap:wrap; gap:10px; }
+.bulten .secenek { display:inline-flex; align-items:center; gap:8px; margin:0; border:1px solid var(--line-strong); border-radius:22px; padding:6px 16px; padding-inline:12px 16px; font-size:15px; letter-spacing:0; text-transform:none; color:var(--ink); cursor:pointer; transition:border-color .2s, color .2s; }
+.bulten .secenek:hover { border-color:var(--gold); }
+.bulten .secenek:has(input:checked) { border-color:var(--gold); }
+.bulten .secenek:has(input:focus-visible) { outline:2px solid var(--gold); outline-offset:2px; }
+.bulten .secenek input { width:16px; height:16px; margin:0; padding:0; border:0; accent-color:var(--gold); flex-shrink:0; }
+.bulten .konular.err .secenek { border-color:#b5452f; }
+.bulten .konular .msg { font-size:13px; color:#b5452f; margin-top:8px; }
+
+/* Onay sayfası */
+.bulten .done[aria-busy] p { margin-bottom:0; }
+.bulten .done .back { display:inline-block; color:var(--gold); border-bottom:1px solid var(--gold); }

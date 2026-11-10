@@ -23,5 +23,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!(?:admin|api|_next|media)(?:/|$)|.*\\..*).*)'],
+  // _vercel: Vercel'in kendi uçları (Speed Insights ölçümleri /_vercel/speed-insights/vitals) proxy'den geçmez.
+  matcher: ['/((?!(?:admin|api|_next|_vercel|media)(?:/|$)|.*\\..*).*)'],
 }
