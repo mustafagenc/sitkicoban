@@ -7,6 +7,7 @@ import type { UiMetinleri } from '@/payload-types'
 
 import { type LightboxOpen, WorkLightbox } from './WorkLightbox'
 import type { Work } from './works'
+import { duyarli } from '@/lib/img'
 
 /** Seçme eserler: ilki büyük; tıklanan eser görüntüleyicide açılır, oklar bu eserler arasında gezer. */
 export function HomeWorks({ works, ui, locale }: { works: Work[]; ui: UiMetinleri; locale: Locale }) {
@@ -29,7 +30,7 @@ export function HomeWorks({ works, ui, locale }: { works: Work[]; ui: UiMetinler
           >
             <div className="frame">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={w.src} alt={w.baslik} loading="lazy" decoding="async" />
+              <img {...duyarli(w.src, i === 0 ? '(max-width: 860px) 100vw, 640px' : '(max-width: 860px) 50vw, 320px')} alt={w.baslik} loading="lazy" decoding="async" />
             </div>
             <div className="meta">
               <span className="no">{String(i + 1).padStart(2, '0')}</span>

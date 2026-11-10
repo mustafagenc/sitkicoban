@@ -6,12 +6,16 @@ import { Header } from '@/components/Header'
 import { PostMeta } from '@/components/PostMeta'
 import { PostProgress } from '@/components/PostProgress'
 import { formatTarih, okumaMetni, toYazilar, YAZAR } from '@/components/yazilar'
-import { isLocale, localizedPath, LOCALES } from '@/i18n/config'
+import { isLocale, localizedPath, LOCALES, yaziPath } from '@/i18n/config'
 import { getSiteAyarlari, getUi, getYazi, getYaziSluglari, getYazilar } from '@/lib/data'
 import { RichText } from '@/lib/richtext'
 import type { YaziKategorileri } from '@/payload-types'
 
 import '../../../styles/yazi.css'
+import { sayfaMeta } from '@/lib/seo'
+import { mediaUrl } from '@/lib/media'
+import { JsonLd, makale } from '@/lib/jsonld'
+import { siteUrl } from '@/lib/site'
 
 type Props = { params: Promise<{ locale: string; slug: string }> }
 
@@ -25,7 +29,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale) || !(await getYaziSluglari()).includes(slug)) return {}
   const yazi = await getYazi(slug, locale)
   if (!yazi) return {}
-  return { title: yazi.baslik, description: yazi.ozet }
+  const kapak = yazi.kapak && typeof yazi.kapak === 'object' ? yazi.kapak : null
+  const kapakUrl = mediaUrl(kapak)
+  return sayfaMeta({
+    locale,
+    yol: (l) => yaziPath(slug, l),
+    baslik: yazi.baslik,
+    aciklama: yazi.ozet,
+    gorsel: kapakUrl ? { url: kapakUrl, width: kapak?.width ?? undefined, height: kapak?.height ?? undefined, alt: yazi.baslik } : null,
+    makale: { yayin: yazi.tarih, guncelleme: yazi.updatedAt },
+  })
 }
 
 export default async function YaziPage({ params }: Props) {
@@ -65,6 +78,17 @@ export default async function YaziPage({ params }: Props) {
     <>
       <PostProgress />
       <Header locale={locale} ui={ui} activeKey="yazilar" yaziSlug={slug} />
+      <JsonLd
+        data={makale({
+          url: siteUrl() + yaziPath(slug, locale),
+          baslik: yazi.baslik,
+          ozet: yazi.ozet,
+          yayin: yazi.tarih,
+          guncelleme: yazi.updatedAt,
+          kapak: mediaUrl(yazi.kapak && typeof yazi.kapak === 'object' ? yazi.kapak : null),
+          locale,
+        })}
+      />
       <article className="wrap yazi">
         <div className="art-head">
           <div className="crumb">

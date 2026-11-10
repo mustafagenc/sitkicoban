@@ -9,6 +9,7 @@ import * as migration_20261107_215705_iletisim from './20261107_215705_iletisim'
 import * as migration_20261107_221311_blob_anahtari from './20261107_221311_blob_anahtari';
 import * as migration_20261107_221414_konu_anahtari from './20261107_221414_konu_anahtari';
 import * as migration_20261108_020414_cerez from './20261108_020414_cerez';
+import * as migration_20261110_122402_anasayfa_meta from './20261110_122402_anasayfa_meta';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20261108_020414_cerez.up,
     down: migration_20261108_020414_cerez.down,
-    name: '20261108_020414_cerez'
+    name: '20261108_020414_cerez',
+  },
+  {
+    up: migration_20261110_122402_anasayfa_meta.up,
+    down: migration_20261110_122402_anasayfa_meta.down,
+    name: '20261110_122402_anasayfa_meta'
   },
 ];

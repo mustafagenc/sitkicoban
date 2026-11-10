@@ -35,7 +35,7 @@ const onEk = (l) => (l === 'tr' ? '' : `/${l}`)
 const SAYFALAR = Object.entries(YOLLAR).flatMap(([l, yollar]) => yollar.map((y) => `${onEk(l)}/${y}`.replace(/\/$/, '') || '/'))
 const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
 const ANASAYFA = ['/', '/en', '/ar']
-const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography']
+const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/llms.txt']
 const ILK_ZIYARET = ['/eserler', '/en/works', '/']
 // Eser başlığını göstermeyen ama aynı etiketle ısıtılan sayfalar: yalnızca sorgusuz açıldığı doğrulanır.
 const ILK_ZIYARET_SORGUSUZ = ['/en/biography']
@@ -221,7 +221,7 @@ async function main() {
 
   // 1) Ziyaretçi gezintisi: sıfır sorgu.
   writeFileSync(SORGU_LOG, '')
-  const gezilen = [...SAYFALAR, ...yaziSayfalari]
+  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt']
   for (const p of gezilen) for (let i = 0; i < 3; i++) await getHtml(p)
   const gezinti = sorgular(0)
   if (gezinti.length) hata(`gezinti sırasında ${gezinti.length} sorgu:\n${gezinti.join('\n')}`)

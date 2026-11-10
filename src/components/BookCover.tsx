@@ -1,5 +1,6 @@
 import type { Book } from './books'
 import { AUTHOR_FALLBACK } from './books'
+import { duyarli } from '@/lib/img'
 
 /** Kitap kapağı: görsel varsa görsel, yoksa yazı kapak (.tcover). */
 export function BookCover({ kitap }: { kitap: Book }) {
@@ -7,7 +8,7 @@ export function BookCover({ kitap }: { kitap: Book }) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={kitap.src}
+        {...duyarli(kitap.src, '(max-width: 860px) 60vw, 340px', 828)}
         alt={kitap.baslik}
         className={kitap.contain ? 'contain' : undefined}
         loading="lazy"

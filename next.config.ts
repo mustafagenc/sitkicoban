@@ -8,11 +8,10 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   images: {
-    localPatterns: [
-      {
-        pathname: '/api/media/file/**',
-      },
-    ],
+    // /_next/image ile küçültülecek kaynaklar: yerel medya ve logo, Vercel Blob.
+    localPatterns: [{ pathname: '/media/**' }, { pathname: '/imza.png' }],
+    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
+    formats: ['image/avif', 'image/webp'],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

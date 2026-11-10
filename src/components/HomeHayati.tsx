@@ -3,6 +3,7 @@ import { RichText } from '@/lib/richtext'
 import type { Hayati, UiMetinleri } from '@/payload-types'
 
 import { portreUrl } from './hayati'
+import { optimized } from '@/lib/img'
 
 /* Ana sayfadaki Hayatı bölümü (panelden); "Devamını oku" Hayatı sayfasına gider. */
 export function HomeHayati({
@@ -25,7 +26,7 @@ export function HomeHayati({
             className="photo has-img"
             role="img"
             aria-label={ui.hayatiPortreAlt ?? undefined}
-            style={{ backgroundImage: `url("${portre}")` }}
+            style={{ backgroundImage: `url("${optimized(portre, 1200)}")` }}
           />
         ) : (
           <div className="photo" />

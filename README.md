@@ -109,7 +109,9 @@ sırasında da gerekir; Preview ortamı da aynılarına ihtiyaç duyar.
 - **Blob deposu:** Vercel'e bağlı depo canlı sitenin deposudur. Yerelde ayrı bir geliştirme deposu/token
   kullanın; canlı token'la yerelde görsel silmek canlıdaki dosyayı da siler.
 - **Sitemap ve robots:** `/sitemap.xml` sayfaları ve yayındaki yazıları üç dilde listeler, yazı kaydında
-  yenilenir; `/robots.txt` `/admin` ve `/api`'yi tarama dışı tutar.
+  yenilenir; `/robots.txt` `/admin` ve `/api`'yi tarama dışı tutar. `/llms.txt` yapay zekâ ajanları için
+  sitenin özetidir (ana sayfanın İngilizce arama açıklaması, üç dilde sayfalar, yayındaki yazılar); statik
+  üretilir, ana sayfa, yazı, kitap ve görsel kaydında yeniden ısıtılır.
 - **Google Analytics:** Ölçüm kimliği `Site ayarları > Google Analytics ölçüm kimliği`ndedir; boşsa etiket ve
   çerez bildirimi hiç çıkmaz. Etiket Google'ın izin moduyla (Consent Mode v2) yüklenir: ziyaretçi kabul
   edene kadar çerez yazılmaz, yalnızca çerezsiz sinyal gider; kabul edilince analiz çerezleri açılır, reklam

@@ -8,6 +8,7 @@ import type { UiMetinleri } from '@/payload-types'
 
 import { aktifDersler, type Ders } from './dersler'
 import { LOGO_SRC } from './logo'
+import { duyarli } from '@/lib/img'
 
 /*
  * Meşk ve Dersler (panelden). Statik üretimde tüm kartlar basılır; bugünün tarihi istemcide bilinince
@@ -81,7 +82,7 @@ export function HomeDersler({ dersler, ui, locale }: { dersler: Ders[]; ui: UiMe
                     onClick={() => setAfis(d.afis)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={d.afis.src} alt={d.afis.alt} />
+                    <img {...duyarli(d.afis.src, '150px', 384)} alt={d.afis.alt} />
                   </button>
                 ) : (
                   <div className="afis bos">

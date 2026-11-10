@@ -6,6 +6,7 @@ import type { UiMetinleri } from '@/payload-types'
 
 import { PostMeta } from './PostMeta'
 import type { YaziItem } from './yazilar'
+import { duyarli } from '@/lib/img'
 
 /*
  * Yazılar sayfası: öne çıkan (en son) yazı, numaralı liste ve kategori çipleri.
@@ -77,7 +78,7 @@ export function PostList({
           {ilk.kapak && (
             <div className="art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={ilk.kapak.src} alt={ilk.kapak.alt} />
+              <img {...duyarli(ilk.kapak.src, '(max-width: 860px) 100vw, 560px')} alt={ilk.kapak.alt} />
             </div>
           )}
           <div>

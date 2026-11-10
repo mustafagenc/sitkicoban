@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { toBooks } from '@/components/books'
@@ -33,6 +34,16 @@ import {
 } from '@/lib/data'
 
 import '../styles/anasayfa.css'
+import { sayfaMeta } from '@/lib/seo'
+import { JsonLd, kisi } from '@/lib/jsonld'
+import { portreUrl } from '@/components/hayati'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  if (!isLocale(locale)) return {}
+  const anasayfa = await getAnasayfa(locale)
+  return sayfaMeta({ locale, yol: (l) => localizedPath('home', l), aciklama: anasayfa.metaAciklama })
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -58,6 +69,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     // Ana sayfaya özgü ölçüler (.wrap 1180px, alt bilgi vb.) yalnızca .home altında geçerlidir.
     <div className="home">
       <Header locale={locale} ui={ui} activeKey="home" glintOnLoad={false} />
+      <JsonLd
+        data={kisi({
+          locale,
+          ayarlar,
+          unvanlar: anasayfa.heroEyebrow,
+          aciklama: anasayfa.metaAciklama ?? hayati.girisCumlesi,
+          portre: portreUrl(hayati),
+        })}
+      />
 
       <HomeHero
         images={toWorks(eserler).map((w) => w.src)}

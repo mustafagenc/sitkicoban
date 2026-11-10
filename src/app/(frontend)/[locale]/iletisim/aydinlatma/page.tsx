@@ -8,6 +8,7 @@ import { getIletisim, getSiteAyarlari, getUi } from '@/lib/data'
 import { RichText } from '@/lib/richtext'
 
 import '../../../styles/iletisim.css'
+import { sayfaMeta } from '@/lib/seo'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale)) return {}
   const [iletisim, ui] = await Promise.all([getIletisim(locale), getUi(locale)])
   const baslik = iletisim.metinler?.aydinlatmaBaslik || ui.navIletisim
-  return { title: baslik || undefined }
+  return sayfaMeta({ locale, yol: (l) => localizedPath('aydinlatma', l), baslik })
 }
 
 export default async function AydinlatmaPage({ params }: Props) {

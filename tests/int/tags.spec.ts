@@ -66,4 +66,11 @@ describe('pathsForTags', () => {
     expect(pathsForChange('eserler')).not.toContain('/sitemap.xml')
     expect(pathsForChange('dersler')).not.toContain('/sitemap.xml')
   })
+
+  it('re-renders llms.txt when its home description or writings can change', () => {
+    for (const s of ['yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media'])
+      expect(pathsForChange(s)).toContain('/llms.txt')
+    for (const s of ['dersler', 'videolar', 'iletisim', 'site-ayarlari'])
+      expect(pathsForChange(s)).not.toContain('/llms.txt')
+  })
 })

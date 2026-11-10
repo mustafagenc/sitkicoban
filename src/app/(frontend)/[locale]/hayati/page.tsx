@@ -7,11 +7,14 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { portreUrl, sayfaHref, toHocalar, type Hoca } from '@/components/hayati'
 import { LOGO_SRC } from '@/components/logo'
-import { isLocale } from '@/i18n/config'
+import { isLocale, localizedPath } from '@/i18n/config'
 import { getAnasayfa, getHayati, getHocalar, getSiteAyarlari, getUi } from '@/lib/data'
 import { RichText, sectionIds, type Blocks } from '@/lib/richtext'
 
 import '../../styles/hayati.css'
+import { sayfaMeta } from '@/lib/seo'
+import { JsonLd, kisi } from '@/lib/jsonld'
+import { optimized } from '@/lib/img'
 
 const ROMEN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
@@ -20,8 +23,15 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
-  const ui = await getUi(locale)
-  return { title: ui.navHayati ?? undefined }
+  const [ui, hayati] = await Promise.all([getUi(locale), getHayati(locale)])
+  const portre = portreUrl(hayati)
+  return sayfaMeta({
+    locale,
+    yol: (l) => localizedPath('hayati', l),
+    baslik: ui.navHayati,
+    aciklama: hayati.girisCumlesi,
+    gorsel: portre ? { url: portre, alt: ui.hayatiPortreAlt ?? undefined } : null,
+  })
 }
 
 function hocaKartlari(hocalar: Hoca[]): Blocks {
@@ -60,6 +70,7 @@ export default async function HayatiPage({ params }: Props) {
   return (
     <>
       <Header locale={locale} ui={ui} activeKey="hayati" />
+      <JsonLd data={kisi({ locale, ayarlar, unvanlar: anasayfa.heroEyebrow, aciklama: hayati.girisCumlesi, portre })} />
       <main className="wrap hayati">
         <section className={portre ? 'intro' : 'intro noportre'}>
           {portre && (
@@ -67,7 +78,7 @@ export default async function HayatiPage({ params }: Props) {
               className="portrait"
               role="img"
               aria-label={ui.hayatiPortreAlt ?? undefined}
-              style={{ backgroundImage: `url("${portre}")` }}
+              style={{ backgroundImage: `url("${optimized(portre, 1200)}")` }}
             />
           )}
           <div>
