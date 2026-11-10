@@ -5,6 +5,7 @@ import { BultenForm } from '@/components/BultenForm'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { isLocale, localizedPath } from '@/i18n/config'
+import { bultenMetinleriVar } from '@/lib/bulten/form'
 import { getBulten, getSiteAyarlari, getUi } from '@/lib/data'
 import { sayfaMeta } from '@/lib/seo'
 
@@ -36,7 +37,10 @@ export default async function BultenPage({ params }: Props) {
         {bulten.aciklama && <p>{bulten.aciklama}</p>}
       </div>
       <main className="wrap iletisim bulten">
-        <BultenForm m={m} locale={locale} aydinlatmaHref={localizedPath('aydinlatma', locale)} />
+        {/* Metinler girilmemişse (üretimde ilk kurulum) boş etiketli form çizilmez. */}
+        {bultenMetinleriVar(m) && (
+          <BultenForm m={m} locale={locale} aydinlatmaHref={localizedPath('aydinlatma', locale)} />
+        )}
       </main>
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
     </>

@@ -5,6 +5,7 @@ import { BultenOnay } from '@/components/BultenOnay'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { isLocale, localizedPath } from '@/i18n/config'
+import { bultenMetinleriVar } from '@/lib/bulten/form'
 import { getBulten, getSiteAyarlari, getUi } from '@/lib/data'
 import { sayfaMeta } from '@/lib/seo'
 
@@ -39,9 +40,11 @@ export default async function BultenOnayPage({ params }: Props) {
         <h1>{m.onayBaslik}</h1>
       </div>
       <main className="wrap iletisim bulten">
-        <section className="card" id="card">
-          <BultenOnay m={m} bultenHref={localizedPath('bulten', locale)} />
-        </section>
+        {bultenMetinleriVar(m) && (
+          <section className="card" id="card">
+            <BultenOnay m={m} bultenHref={localizedPath('bulten', locale)} />
+          </section>
+        )}
       </main>
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
     </>

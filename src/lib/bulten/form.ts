@@ -11,6 +11,13 @@ export const isKonu = (s: unknown): s is BultenKonu => (KONULAR as readonly unkn
 
 export const epostaGecerli = (s: string) => s.length <= LIMITS.eposta && EPOSTA_RE.test(s)
 
+/**
+ * Bülten metinleri girilmiş mi (üretimde migration sonrası global boştur). Girilmemişse form ve onay
+ * sayfası boş etiketlerle çizilmez, eylem "unavailable" döner.
+ */
+export const bultenMetinleriVar = (m: { formGonder?: string | null; onayEpostaKonu?: string | null } | null | undefined) =>
+  !!m?.formGonder && !!m?.onayEpostaKonu
+
 export type BultenData = { eposta: string; locale: Locale; konular: BultenKonu[] }
 
 export type BultenResult = { ok: true; data: BultenData } | { ok: false; reason: 'spam' | 'invalid' }

@@ -10,16 +10,26 @@ import { LOGO_SRC } from './logo'
 const noop = () => () => {}
 
 /**
- * Onay sayfasının içeriği. Belirteç (`?t=`) tarayıcıda okunur (sayfa statik kalır) ve sunucu eylemiyle
- * onaylanır. Sunucuda ve ilk çizimde "onaylanıyor" görünür.
+ * Bağlantının parça kısmındaki belirteç (`#t=`), sayfa açılışında bir kez okunur ve saklanır: adres çubuğundan
+ * hemen silindiği için sonraki okumalar boş döner. Parça sunucuya, Referer'a ve ölçüm araçlarına gitmez.
+ */
+let ilkBelirtec: string | null = null
+const belirtec = () =>
+  (ilkBelirtec ??= new URLSearchParams(location.hash.replace(/^#/, '')).get('t') ?? '')
+
+/**
+ * Onay sayfasının içeriği. Belirteç tarayıcıda okunur (sayfa statik kalır), adres çubuğundan silinir ve sunucu
+ * eylemiyle onaylanır. Sunucuda ve ilk çizimde "onaylanıyor" görünür.
  */
 export function BultenOnay({ m, bultenHref }: { m: NonNullable<Bulten['metinler']>; bultenHref: string }) {
   const hazir = useSyncExternalStore(noop, () => true, () => false)
-  const t = useSyncExternalStore(noop, () => new URLSearchParams(location.search).get('t') ?? '', () => '')
+  const t = useSyncExternalStore(noop, belirtec, () => '')
   const [sonuc, setSonuc] = useState<BultenState['status'] | null>(null)
 
   useEffect(() => {
     if (!t) return
+    // Belirteç (e-posta adresini taşır) geçmişte ve adres çubuğunda kalmasın.
+    if (location.hash) history.replaceState(history.state, '', location.pathname + location.search)
     let iptal = false
     bultenOnayla(t)
       .then((r) => !iptal && setSonuc(r.status))

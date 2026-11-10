@@ -39,6 +39,7 @@ vi.mock('resend', () => ({
 vi.mock('@/lib/data', () => ({
   getBulten: vi.fn(async () => ({
     metinler: {
+      formGonder: 'Abone ol',
       onayEpostaKonu: 'Bülten aboneliğinizi onaylayın',
       onayEpostaMetin: 'Aboneliği başlatmak için bağlantıya tıklayın.',
       onayEpostaDugme: 'Aboneliği onayla',
@@ -49,7 +50,8 @@ vi.mock('@/lib/data', () => ({
 
 import { bulteneKatil, bultenOnayla } from '@/app/(frontend)/[locale]/bulten/actions'
 import { _onbellegiSifirla, belirteciCoz, onayBelirteci } from '@/lib/bulten/resend'
-import { validateBulten } from '@/lib/bulten/form'
+import { bultenMetinleriVar, validateBulten } from '@/lib/bulten/form'
+import { getBulten } from '@/lib/data'
 
 const NOW = 1_800_000_000_000
 const DAY = 24 * 60 * 60 * 1000
@@ -109,24 +111,43 @@ afterEach(() => {
   process.env = { ...ENV }
 })
 
+const HATA = (name = 'internal_server_error') => ({ data: null, error: { name, message: 'x', statusCode: 500 }, headers: null })
+
+/** Resend'deki bir kişinin taklidi (`contacts.get` yanıtı). */
+const kisi = (o: { unsubscribed?: boolean; onay?: number | null } = {}) =>
+  r.ok({
+    id: 'c-1',
+    email: 'okur@example.com',
+    unsubscribed: o.unsubscribed ?? true,
+    created_at: '',
+    properties: o.onay == null ? {} : { bulten_onay: { type: 'number', value: o.onay } },
+  })
+
+/** Gönderilen son onay e-postasındaki bağlantı ve belirteç. */
+const sonBaglanti = () => {
+  const mail = r.send.mock.calls.at(-1)![0]
+  const m = /https:\/\/ornek\.test(\/[a-z/]*)#t=([A-Za-z0-9_.-]+)/.exec(mail.html)!
+  return { mail, yol: m[1], t: m[2], tam: m[0] }
+}
+
 describe('onay belirteci', () => {
-  it('round-trips e-mail, locale and topics', () => {
-    const t = onayBelirteci('okur@example.com', 'en', ['yazilar', 'eserler'], NOW)
+  it('round-trips e-mail, locale, topics and the request stamp', () => {
+    const t = onayBelirteci('okur@example.com', 'en', ['yazilar', 'eserler'], 123, NOW)
     expect(t).toMatch(/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/)
-    expect(belirteciCoz(t, NOW + DAY)).toEqual({ e: 'okur@example.com', l: 'en', k: ['yazilar', 'eserler'] })
+    expect(belirteciCoz(t, NOW + DAY)).toEqual({ e: 'okur@example.com', l: 'en', k: ['yazilar', 'eserler'], n: 123 })
   })
 
   it('expires after 7 days', () => {
-    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'], NOW)
+    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'], 1, NOW)
     expect(belirteciCoz(t, NOW + 7 * DAY - 1000)).not.toBeNull()
     expect(belirteciCoz(t, NOW + 7 * DAY + 1000)).toBeNull()
   })
 
   it('rejects a tampered payload or signature, garbage, and another secret', () => {
-    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'], NOW)
+    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'], 1, NOW)
     const [p, s] = t.split('.')
     const sahte = Buffer.from(
-      JSON.stringify({ e: 'baska@example.com', l: 'tr', k: ['yazilar'], exp: NOW + DAY }),
+      JSON.stringify({ e: 'baska@example.com', l: 'tr', k: ['yazilar'], n: 1, exp: NOW + DAY }),
     ).toString('base64url')
     expect(belirteciCoz(`${sahte}.${s}`, NOW)).toBeNull()
     expect(belirteciCoz(`${p}.${s.slice(0, -2)}AA`, NOW)).toBeNull()
@@ -163,6 +184,12 @@ describe('validateBulten', () => {
       expect(validateBulten(form(o), Date.now()), JSON.stringify(o)).toEqual({ ok: false, reason: 'invalid' })
     }
   })
+
+  it('bultenMetinleriVar: empty global (fresh production) hides the form', () => {
+    expect(bultenMetinleriVar({})).toBe(false)
+    expect(bultenMetinleriVar(null)).toBe(false)
+    expect(bultenMetinleriVar({ formGonder: 'Abone ol', onayEpostaKonu: 'Onaylayın' })).toBe(true)
+  })
 })
 
 describe('bulteneKatil', () => {
@@ -177,9 +204,13 @@ describe('bulteneKatil', () => {
     expect(r.send).not.toHaveBeenCalled()
   })
 
-  it('unavailable without a key', async () => {
+  it('unavailable without a key, or while the texts are not entered', async () => {
     delete process.env.RESEND_API_KEY
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'unavailable' })
+    process.env.RESEND_API_KEY = 're_test'
+    vi.mocked(getBulten).mockResolvedValueOnce({ metinler: {} } as never)
+    expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'unavailable' })
+    expect(r.contactsCreate).not.toHaveBeenCalled()
     expect(r.send).not.toHaveBeenCalled()
   })
 
@@ -196,17 +227,19 @@ describe('bulteneKatil', () => {
         { id: 'top-kitaplar', subscription: 'opt_in' },
       ],
     })
-    expect(typeof c.properties.bulten_onay).toBe('number')
+    const damga = c.properties.bulten_onay
+    expect(typeof damga).toBe('number')
 
     expect(r.send).toHaveBeenCalledTimes(1)
-    const mail = r.send.mock.calls[0][0]
+    const { mail, yol, t, tam } = sonBaglanti()
     expect(mail.to).toBe('okur@example.com')
     expect(mail.from).toBe(process.env.RESEND_FROM)
     expect(mail.subject).toBe('Bülten aboneliğinizi onaylayın')
-    const link = /https:\/\/ornek\.test\/en\/newsletter\/confirm\?t=([A-Za-z0-9_.-]+)/.exec(mail.html)
-    expect(link).not.toBeNull()
-    expect(mail.text).toContain(link![0])
-    expect(belirteciCoz(link![1])).toEqual({ e: 'okur@example.com', l: 'en', k: ['yazilar', 'kitaplar'] })
+    expect(mail.text).toContain(tam)
+    // Belirteç (e-postayı taşır) sorgu dizgesinde değil, parça kısmında: sunucu ve ölçüm araçları görmez.
+    expect(yol).toBe('/en/newsletter/confirm')
+    expect(mail.html).not.toContain('?t=')
+    expect(belirteciCoz(t)).toEqual({ e: 'okur@example.com', l: 'en', k: ['yazilar', 'kitaplar'], n: damga })
     expect(mail.html).not.toMatch(/satın|satin|buy/i)
   })
 
@@ -235,9 +268,7 @@ describe('bulteneKatil', () => {
   })
 
   it('existing (confirmed) contact: never unsubscribed again, only the confirmation e-mail goes', async () => {
-    r.contactsGet.mockResolvedValue(
-      r.ok({ id: 'c-1', email: 'okur@example.com', unsubscribed: false, created_at: '', properties: {} }),
-    )
+    r.contactsGet.mockResolvedValue(kisi({ unsubscribed: false }))
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'ok' })
     expect(r.contactsCreate).not.toHaveBeenCalled()
     for (const [o] of r.contactsUpdate.mock.calls) expect(o).not.toHaveProperty('unsubscribed')
@@ -246,27 +277,11 @@ describe('bulteneKatil', () => {
 
   it('does not send another confirmation to the same address within 10 minutes', async () => {
     const simdi = Math.floor(Date.now() / 1000)
-    r.contactsGet.mockResolvedValue(
-      r.ok({
-        id: 'c-1',
-        email: 'okur@example.com',
-        unsubscribed: true,
-        created_at: '',
-        properties: { bulten_onay: { type: 'number', value: simdi - 120 } },
-      }),
-    )
+    r.contactsGet.mockResolvedValue(kisi({ onay: simdi - 120 }))
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'ok' })
     expect(r.send).not.toHaveBeenCalled()
 
-    r.contactsGet.mockResolvedValue(
-      r.ok({
-        id: 'c-1',
-        email: 'okur@example.com',
-        unsubscribed: true,
-        created_at: '',
-        properties: { bulten_onay: { type: 'number', value: simdi - 11 * 60 } },
-      }),
-    )
+    r.contactsGet.mockResolvedValue(kisi({ onay: simdi - 11 * 60 }))
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'ok' })
     expect(r.contactsUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ email: 'okur@example.com', properties: { bulten_onay: expect.any(Number) } }),
@@ -274,20 +289,64 @@ describe('bulteneKatil', () => {
     expect(r.send).toHaveBeenCalledTimes(1)
   })
 
-  it('a Resend error is an error, never a throw', async () => {
-    r.contactsGet.mockResolvedValue({ data: null, error: { name: 'internal_server_error', message: 'x', statusCode: 500 }, headers: null })
+  it('a failed send resets the stamp, so an immediate retry does send', async () => {
+    // Kişinin durumu bir sözlükte tutulur: get/create/update aynı kaydı okur ve yazar.
+    let kayit: { unsubscribed: boolean; onay: number | null } | null = null
+    r.contactsGet.mockImplementation(async () => (kayit ? kisi(kayit) : notFound))
+    r.contactsCreate.mockImplementation(async (o: { unsubscribed: boolean; properties: { bulten_onay: number } }) => {
+      kayit = { unsubscribed: o.unsubscribed, onay: o.properties.bulten_onay }
+      return r.ok({ id: 'c-1', object: 'contact' })
+    })
+    r.contactsUpdate.mockImplementation(async (o: { properties?: { bulten_onay: number | null } }) => {
+      if (kayit && o.properties) kayit.onay = o.properties.bulten_onay
+      return r.ok({ id: 'c-1', object: 'contact' })
+    })
+
+    r.send.mockResolvedValueOnce(HATA())
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'error' })
-    r.contactsGet.mockRejectedValue(new Error('ağ'))
+    expect(kayit).toEqual({ unsubscribed: true, onay: null })
+
+    r.send.mockRejectedValueOnce(new Error('ağ'))
     expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'error' })
+    expect(kayit!.onay).toBeNull()
+
+    expect(await bulteneKatil({ status: 'idle' }, form())).toEqual({ status: 'ok' })
+    expect(r.send).toHaveBeenCalledTimes(3)
+    expect(kayit!.onay).toEqual(expect.any(Number))
+  })
+
+  it('every Resend failure is a status, never a throw', async () => {
+    const durum = () => bulteneKatil({ status: 'idle' }, form())
+
+    r.propsList.mockResolvedValueOnce(HATA()) // önbellek boşken: kişi özelliği tanımı okunamıyor
+    expect(await durum()).toEqual({ status: 'error' })
+    r.contactsGet.mockResolvedValueOnce(HATA())
+    expect(await durum()).toEqual({ status: 'error' })
+    r.contactsGet.mockRejectedValueOnce(new Error('ağ'))
+    expect(await durum()).toEqual({ status: 'error' })
+    r.contactsCreate.mockResolvedValueOnce(HATA('validation_error'))
+    expect(await durum()).toEqual({ status: 'error' })
+    r.contactsGet.mockResolvedValueOnce(kisi({ unsubscribed: false }))
+    r.contactsUpdate.mockResolvedValueOnce(HATA())
+    expect(await durum()).toEqual({ status: 'error' })
     expect(r.send).not.toHaveBeenCalled()
+
+    r.send.mockResolvedValueOnce(HATA('daily_quota_exceeded'))
+    expect(await durum()).toEqual({ status: 'error' })
   })
 })
 
 describe('bultenOnayla', () => {
-  it('confirms: subscribed, topics set (others opted out), moved to the locale segment', async () => {
-    const t = onayBelirteci('okur@example.com', 'ar', ['eserler'])
-    expect(await bultenOnayla(t)).toEqual({ status: 'ok' })
-    expect(r.contactsUpdate).toHaveBeenCalledWith({ email: 'okur@example.com', unsubscribed: false })
+  const damga = 1_700_000_000
+  const belirtec = (k: ('yazilar' | 'kitaplar' | 'eserler' | 'videolar')[] = ['eserler'], l: 'tr' | 'en' | 'ar' = 'ar') =>
+    onayBelirteci('okur@example.com', l, k, damga)
+
+  beforeEach(() => {
+    r.contactsGet.mockResolvedValue(kisi({ onay: damga }))
+  })
+
+  it('confirms: topics set (others opted out), moved to the locale segment, subscribed and the link consumed', async () => {
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'ok' })
     expect(r.contactTopicsUpdate).toHaveBeenCalledWith({
       email: 'okur@example.com',
       topics: [
@@ -300,27 +359,62 @@ describe('bultenOnayla', () => {
     expect(r.contactSegmentsAdd).toHaveBeenCalledWith({ email: 'okur@example.com', segmentId: 'seg-ar' })
     const kaldirilan = r.contactSegmentsRemove.mock.calls.map(([o]) => o.segmentId).sort()
     expect(kaldirilan).toEqual(['seg-en', 'seg-tr'])
+    expect(r.contactsUpdate).toHaveBeenCalledWith({
+      email: 'okur@example.com',
+      unsubscribed: false,
+      properties: { bulten_onay: null },
+    })
   })
 
-  it('recreates a contact deleted in the meantime', async () => {
-    r.contactsUpdate.mockResolvedValue(notFound)
-    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'])
-    expect(await bultenOnayla(t)).toEqual({ status: 'ok' })
-    expect(r.contactsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'okur@example.com', unsubscribed: false, segments: [{ id: 'seg-tr' }] }),
-    )
+  it('only the newest link works: an older link (stamp mismatch) is rejected unless already subscribed', async () => {
+    r.contactsGet.mockResolvedValue(kisi({ onay: damga + 900 }))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    // Onaydan sonra çıkmış (unsubscribed) biri kullanılmış bağlantıyla geri yazılamaz.
+    r.contactsGet.mockResolvedValue(kisi({ onay: null, unsubscribed: true }))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    // Zaten abone: aynı bağlantıya ikinci tıklama zararsız "ok", hiçbir şey değişmez.
+    r.contactsGet.mockResolvedValue(kisi({ onay: null, unsubscribed: false }))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'ok' })
+    expect(r.contactsUpdate).not.toHaveBeenCalled()
+    expect(r.contactTopicsUpdate).not.toHaveBeenCalled()
+  })
+
+  it('does not recreate a deleted contact', async () => {
+    r.contactsGet.mockResolvedValue(notFound)
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    expect(r.contactsCreate).not.toHaveBeenCalled()
   })
 
   it('invalid or expired token: error, Resend untouched', async () => {
     expect(await bultenOnayla('bozuk')).toEqual({ status: 'error' })
-    const eski = onayBelirteci('okur@example.com', 'tr', ['yazilar'], Date.now() - 8 * DAY)
+    const eski = onayBelirteci('okur@example.com', 'tr', ['yazilar'], damga, Date.now() - 8 * DAY)
     expect(await bultenOnayla(eski)).toEqual({ status: 'error' })
     expect(await bultenOnayla(42 as unknown as string)).toEqual({ status: 'error' })
+    expect(r.contactsGet).not.toHaveBeenCalled()
     expect(r.contactsUpdate).not.toHaveBeenCalled()
   })
 
+  it('every Resend failure is a status, never a throw; the link stays usable until the last step', async () => {
+    r.contactTopicsUpdate.mockResolvedValueOnce(HATA())
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    r.contactSegmentsAdd.mockResolvedValueOnce(HATA())
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    r.contactsGet.mockResolvedValueOnce(HATA())
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    r.contactsGet.mockRejectedValueOnce(new Error('ağ'))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+    expect(r.contactsUpdate).not.toHaveBeenCalled()
+
+    r.contactsUpdate.mockResolvedValueOnce(HATA('rate_limit_exceeded'))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'error' })
+
+    // Diğer dil segmentlerinden çıkarma en iyi çabadır: reddedilse de onay tamamlanır.
+    r.contactSegmentsRemove.mockRejectedValue(new Error('ağ'))
+    expect(await bultenOnayla(belirtec())).toEqual({ status: 'ok' })
+  })
+
   it('unavailable without a key', async () => {
-    const t = onayBelirteci('okur@example.com', 'tr', ['yazilar'])
+    const t = belirtec()
     delete process.env.RESEND_API_KEY
     expect(await bultenOnayla(t)).toEqual({ status: 'unavailable' })
   })

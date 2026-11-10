@@ -121,16 +121,25 @@ export function onayOzelligiHazir(): Promise<void> {
 
 // --- Onay belirteci -------------------------------------------------------------------------------
 
-export type Belirtec = { e: string; l: Locale; k: BultenKonu[] }
+export type Belirtec = { e: string; l: Locale; k: BultenKonu[]; n: number }
 
 const anahtar = () => createHash('sha256').update(`bulten:${process.env.PAYLOAD_SECRET ?? ''}`).digest()
 const imza = (govde: string) => createHmac('sha256', anahtar()).update(govde).digest()
 
-/** `base64url(JSON {e,l,k,exp}).base64url(HMAC-SHA256)`; 7 gün geçerli. */
-export function onayBelirteci(email: string, locale: Locale, konular: BultenKonu[], now = Date.now()): string {
-  const govde = Buffer.from(JSON.stringify({ e: email, l: locale, k: konular, exp: now + BELIRTEC_OMRU_MS })).toString(
-    'base64url',
-  )
+/**
+ * `base64url(JSON {e,l,k,n,exp}).base64url(HMAC-SHA256)`; 7 gün geçerli. `n`: isteğin kişiye yazılan
+ * `bulten_onay` değeri (Unix sn); onayda kişinin güncel değeriyle aynı olmalı (yalnızca son bağlantı geçerli).
+ */
+export function onayBelirteci(
+  email: string,
+  locale: Locale,
+  konular: BultenKonu[],
+  n: number,
+  now = Date.now(),
+): string {
+  const govde = Buffer.from(
+    JSON.stringify({ e: email, l: locale, k: konular, n, exp: now + BELIRTEC_OMRU_MS }),
+  ).toString('base64url')
   return `${govde}.${imza(govde).toString('base64url')}`
 }
 
@@ -147,12 +156,13 @@ export function belirteciCoz(t: unknown, now = Date.now()): Belirtec | null {
     if (gelen.length !== beklenen.length || !timingSafeEqual(gelen, beklenen)) return null
     const v: unknown = JSON.parse(Buffer.from(govde, 'base64url').toString('utf8'))
     if (!v || typeof v !== 'object') return null
-    const { e, l, k, exp } = v as Record<string, unknown>
+    const { e, l, k, n, exp } = v as Record<string, unknown>
     if (typeof exp !== 'number' || exp < now) return null
+    if (typeof n !== 'number' || !Number.isFinite(n)) return null
     if (typeof e !== 'string' || !epostaGecerli(e)) return null
     if (typeof l !== 'string' || !isLocale(l)) return null
     if (!Array.isArray(k) || k.length === 0 || !k.every(isKonu)) return null
-    return { e, l, k }
+    return { e, l, k, n }
   } catch {
     return null
   }
