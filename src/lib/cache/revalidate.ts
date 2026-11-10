@@ -39,6 +39,9 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   iletisim: ['iletisim', 'aydinlatma'],
 }
 
+/** Tags whose data `/llms.txt` renders (getAnasayfa, getYazilar). */
+export const LLMS_TAGS: Tag[] = ['anasayfa', 'yazilar', 'media', 'kitaplar']
+
 /** Public paths that render data behind the given tags (deduplicated). */
 export function pathsForTags(tags: Tag[]): string[] {
   const paths = new Set<string>()
@@ -63,6 +66,7 @@ export function pathsForChange(
   const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
   // The sitemap lists published yazı slugs, so it is re-rendered whenever they can change.
   if ((TAGS_BY_SOURCE[source] ?? []).includes('yazilar')) paths.add('/sitemap.xml')
+  if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_TAGS.includes(t))) paths.add('/llms.txt')
   const slugs = [...publishedSlugs]
   if (source === 'yazilar') {
     for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) slugs.push(d.slug)
