@@ -5,16 +5,17 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { WorksGallery } from '@/components/WorksGallery'
 import { toWorks } from '@/components/works'
-import { isLocale } from '@/i18n/config'
+import { isLocale, localizedPath } from '@/i18n/config'
 import { getEserler, getSiteAyarlari, getUi, getYaziTurleri } from '@/lib/data'
 
 import '../../styles/eserler.css'
+import { sayfaMeta } from '@/lib/seo'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: ui.navEserler ?? undefined, description: ui.eserlerAciklama ?? undefined }
+  return sayfaMeta({ locale, yol: (l) => localizedPath('eserler', l), baslik: ui.navEserler, aciklama: ui.eserlerAciklama })
 }
 
 export default async function EserlerPage({ params }: { params: Promise<{ locale: string }> }) {

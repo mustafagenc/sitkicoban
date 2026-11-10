@@ -971,6 +971,10 @@ export interface Anasayfa {
   eserlerAciklama?: string | null;
   kitaplarEyebrow?: string | null;
   kitaplarBaslik?: string | null;
+  /**
+   * Google sonuçlarında ve paylaşım kartlarında ana sayfanın altında görünen 1–2 cümle (150–160 karakter).
+   */
+  metaAciklama?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1270,6 +1274,7 @@ export interface AnasayfaSelect<T extends boolean = true> {
   eserlerAciklama?: T;
   kitaplarEyebrow?: T;
   kitaplarBaslik?: T;
+  metaAciklama?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

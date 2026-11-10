@@ -70,7 +70,7 @@ export function VideoGallery({
           <button key={`${kat}-${v.id}`} type="button" className="vid" onClick={() => setOpen(v.id)}>
             <div className="thumb">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={v.kapak} alt="" loading="lazy" />
+              <img src={v.kapak} alt={v.baslik} loading="lazy" />
               <span className="pl">{PLAY}</span>
               {v.sure && <span className="dur">{v.sure}</span>}
             </div>

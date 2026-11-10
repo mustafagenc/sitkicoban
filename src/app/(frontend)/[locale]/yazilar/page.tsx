@@ -9,12 +9,13 @@ import { dir, isLocale, localizedPath } from '@/i18n/config'
 import { getSiteAyarlari, getUi, getYaziKategorileri, getYazilar } from '@/lib/data'
 
 import '../../styles/yazilar.css'
+import { sayfaMeta } from '@/lib/seo'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: ui.navYazilar ?? undefined }
+  return sayfaMeta({ locale, yol: (l) => localizedPath('yazilar', l), baslik: ui.navYazilar, aciklama: ui.yazilarAciklama })
 }
 
 export default async function YazilarPage({ params }: { params: Promise<{ locale: string }> }) {

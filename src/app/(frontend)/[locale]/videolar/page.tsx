@@ -5,10 +5,11 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { VideoGallery } from '@/components/VideoGallery'
 import { toVideolar } from '@/components/videolar'
-import { isLocale } from '@/i18n/config'
+import { isLocale, localizedPath } from '@/i18n/config'
 import { getSiteAyarlari, getUi, getVideoKategorileri, getVideolar } from '@/lib/data'
 
 import '../../styles/videolar.css'
+import { sayfaMeta } from '@/lib/seo'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
   const ui = await getUi(locale)
-  return { title: ui.navVideolar ?? undefined }
+  return sayfaMeta({ locale, yol: (l) => localizedPath('videolar', l), baslik: ui.navVideolar, aciklama: ui.videolarAciklama })
 }
 
 export default async function VideolarPage({ params }: Props) {

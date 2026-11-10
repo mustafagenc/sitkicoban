@@ -7,6 +7,7 @@ import { dir, isLocale, LOCALES } from '@/i18n/config'
 
 import { fontVars } from '../fonts'
 import '../styles/ortak.css'
+import { siteUrl } from '@/lib/site'
 
 // dynamicParams bilerek açık (varsayılan): `revalidateTag(..., { expire: 0 })` sonrası ISR girdisi
 // "yok" sayılır; `dynamicParams = false` olsaydı Next yeniden üretmek yerine 404 dönerdi.
@@ -18,6 +19,8 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
+  // Göreli paylaşım görselleri (/og.jpg, /media/...) bu adrese göre tam adrese çevrilir.
+  metadataBase: new URL(siteUrl()),
   // Sayfalar yalnızca kendi adlarını verir; site adı burada eklenir (ör. "Eserler · Sıtkı Çoban").
   title: { default: 'Sıtkı Çoban', template: '%s · Sıtkı Çoban' },
   description: 'Hattat Sıtkı Çoban',

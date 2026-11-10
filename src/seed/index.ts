@@ -24,6 +24,8 @@ const ANASAYFA = {
     eserlerAciklama: "Sülüs, nesih, ta'lik ve rik'a hatlarından seçilmiş eserler.",
     kitaplarEyebrow: 'Kitaplar',
     kitaplarBaslik: 'Eserleri',
+    metaAciklama:
+      "Hattat, müellif ve muallim Sıtkı Çoban: sülüs, nesih, ta'lik ve rik'a eserleri, kitapları, tefsir yazıları ve meşk dersleri.",
   },
   en: {
     heroEyebrow: 'Calligrapher · Author · Teacher',
@@ -34,6 +36,8 @@ const ANASAYFA = {
     eserlerAciklama: "Works selected from the thuluth, naskh, ta'liq and riq'a scripts.",
     kitaplarEyebrow: 'Books',
     kitaplarBaslik: 'His books',
+    metaAciklama:
+      "Calligrapher, author and teacher Sıtkı Çoban: works in thuluth, naskh, ta'liq and riq'a, his books, essays and calligraphy lessons.",
   },
   ar: {
     heroEyebrow: 'خطّاط · مؤلّف · معلّم',
@@ -44,6 +48,8 @@ const ANASAYFA = {
     eserlerAciklama: 'أعمال مختارة من خطوط الثلث والنسخ والتعليق والرقعة.',
     kitaplarEyebrow: 'الكتب',
     kitaplarBaslik: 'مؤلّفاته',
+    metaAciklama:
+      'الخطّاط والمؤلّف والمعلّم Sıtkı Çoban: أعمال بخطوط الثلث والنسخ والتعليق والرقعة، وكتبه ومقالاته في التفسير ودروس المشق.',
   },
 } satisfies Record<(typeof LOCALES)[number], Record<string, string>>
 

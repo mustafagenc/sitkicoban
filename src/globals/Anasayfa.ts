@@ -22,5 +22,12 @@ export const Anasayfa: GlobalConfig = {
     t('eserlerAciklama', 'Eserler açıklama', 'textarea'),
     t('kitaplarEyebrow', 'Kitaplar üst yazı'),
     t('kitaplarBaslik', 'Kitaplar başlık'),
+    {
+      name: 'metaAciklama',
+      label: 'Arama motoru açıklaması',
+      type: 'textarea',
+      localized: true,
+      admin: { description: 'Google sonuçlarında ve paylaşım kartlarında ana sayfanın altında görünen 1–2 cümle (150–160 karakter).' },
+    },
   ],
 }

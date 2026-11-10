@@ -8,14 +8,15 @@ import { isLocale, localizedPath } from '@/i18n/config'
 import { getIletisim, getSiteAyarlari, getUi } from '@/lib/data'
 
 import '../../styles/iletisim.css'
+import { sayfaMeta } from '@/lib/seo'
 
 type Props = { params: Promise<{ locale: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
-  const ui = await getUi(locale)
-  return { title: ui.navIletisim ?? undefined }
+  const [ui, iletisim] = await Promise.all([getUi(locale), getIletisim(locale)])
+  return sayfaMeta({ locale, yol: (l) => localizedPath('iletisim', l), baslik: ui.navIletisim, aciklama: iletisim.aciklama })
 }
 
 export default async function IletisimPage({ params }: Props) {

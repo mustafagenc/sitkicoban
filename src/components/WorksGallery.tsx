@@ -8,6 +8,7 @@ import type { UiMetinleri } from '@/payload-types'
 import { type LightboxOpen, WorkLightbox } from './WorkLightbox'
 import { workMeta } from './workMeta'
 import type { Work } from './works'
+import { duyarli } from '@/lib/img'
 
 type Layout = 'a' | 'b' | 'c'
 
@@ -169,7 +170,7 @@ export function WorksGallery({
                   <div className="mat">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={w.src}
+                      {...duyarli(w.src, '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 400px')}
                       alt={w.baslik}
                       loading="lazy"
                       decoding="async"

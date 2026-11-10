@@ -8,6 +8,7 @@ import type { UiMetinleri } from '@/payload-types'
 import { BookCover } from './BookCover'
 import { BookModal } from './BookModal'
 import type { Book } from './books'
+import { duyarli } from '@/lib/img'
 
 /** Ana sayfadaki kitaplar: tıklanan kitap ayrıntı penceresinde açılır; oklar bu kitaplar arasında gezer. */
 export function HomeBooks({
@@ -43,7 +44,7 @@ export function HomeBooks({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 className={`cover-img${b.contain ? ' contain' : ''}`}
-                src={b.src}
+                {...duyarli(b.src, '(max-width: 860px) 30vw, 180px', 640)}
                 alt={b.baslik}
                 loading="lazy"
               />

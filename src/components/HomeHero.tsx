@@ -1,3 +1,5 @@
+import { duyarli } from '@/lib/img'
+
 /** Kolaj: 5 satır, her satırda 9 eser (tasarımdaki dizin formülüyle), kesintisiz kayma için iki kez. */
 export function collageRows(images: string[]): string[][] {
   const n = images.length
@@ -30,7 +32,7 @@ export function HomeHero({
           <div className="row" key={r}>
             {row.map((src, i) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={src} alt="" decoding="async" />
+              <img key={i} {...duyarli(src, '(max-width: 860px) 40vw, 22vw', 828)} alt="" decoding="async" />
             ))}
           </div>
         ))}
