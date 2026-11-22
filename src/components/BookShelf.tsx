@@ -55,10 +55,12 @@ export function BookShelf({
               <BookCover kitap={b} />
             </div>
             <h3>{b.baslik}</h3>
-            <div className="role">
-              <b>{roleLabel(ui, b.rol)}</b>
-              {b.asilYazar ? ` · ${b.asilYazar}` : ''}
-            </div>
+            {/* Rafta yalnızca rol; asıl yazar ayrıntı penceresinde. */}
+            {b.rol && (
+              <div className="role">
+                <b>{roleLabel(ui, b.rol)}</b>
+              </div>
+            )}
           </button>
         ))}
       </div>

@@ -11,6 +11,13 @@ const opts = (locale: Locale) => ({ locale, fallbackLocale: 'tr' as const, depth
 /** Plain, serializable copy (drops class instances/undefined). */
 const plain = <T>(v: T): T => JSON.parse(JSON.stringify(v))
 
+/**
+ * Önbellek anahtarına deploy'un commit'i eklenir: Vercel veri önbelleği deploy'lar arasında korunur ve
+ * migration'lar veriyi panel kancaları olmadan değiştirir (ör. yeni arayüz metni sütunu). Her deploy taze
+ * veriyle başlar; panelden kayıtlar ise etiketlerle (revalidateTag) anında yansır.
+ */
+const SURUM = process.env.VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_DEPLOYMENT_ID || 'yerel'
+
 /** Cached by tags only; no time-based revalidation. */
 const cached = <A extends unknown[], R>(
   name: string,
@@ -19,7 +26,7 @@ const cached = <A extends unknown[], R>(
 ) =>
   // `tags` is exposed so tests can check every page's getters are covered by the revalidation map.
   Object.assign(
-    unstable_cache(async (...args: A) => plain(await fn(...args)), [name], { tags }),
+    unstable_cache(async (...args: A) => plain(await fn(...args)), [name, SURUM], { tags }),
     { tags },
   )
 
@@ -285,7 +292,7 @@ const YORUMLAR_TAGS: Tag[] = ['yorumlar']
 
 export const getYorumlar = Object.assign(
   (yaziId: number): Promise<OnayliYorum[]> =>
-    unstable_cache(async () => plain(await findYorumlar(await getPayload({ config }), yaziId)), ['yorumlar', String(yaziId)], {
+    unstable_cache(async () => plain(await findYorumlar(await getPayload({ config }), yaziId)), ['yorumlar', String(yaziId), SURUM], {
       tags: [...YORUMLAR_TAGS, yorumTag(yaziId)],
     })(),
   { tags: YORUMLAR_TAGS },
