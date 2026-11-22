@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
@@ -370,12 +371,12 @@ export function WorkLightbox({
                 {row(ui.tezhip, work.tezhip)}
                 {row(ui.ebru, work.ebru)}
               </dl>
-              <a
+              <Link
                 className="ask"
                 href={`${localizedPath('iletisim', locale)}?eser=${encodeURIComponent(work.baslik)}`}
               >
                 {ui.eserSor}
-              </a>
+              </Link>
             </>
           )}
         </div>

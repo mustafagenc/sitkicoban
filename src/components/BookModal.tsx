@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
@@ -131,9 +132,9 @@ export function BookModal({
             </a>
           )}
           {b.slug && yazili.includes(b.slug) && (
-            <a className="btn" href={`${localizedPath('yazilar', locale)}?kitap=${encodeURIComponent(b.slug)}`}>
+            <Link className="btn" href={`${localizedPath('yazilar', locale)}?kitap=${encodeURIComponent(b.slug)}`}>
               {ui.ilgiliYazilar}
-            </a>
+            </Link>
           )}
           {!single && (
             <div className="sheet-nav">

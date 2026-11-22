@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -98,9 +99,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <h2>{anasayfa.eserlerBaslik}</h2>
               {anasayfa.eserlerAciklama && <p>{anasayfa.eserlerAciklama}</p>}
             </div>
-            <a className="btn" href={localizedPath('eserler', locale)}>
+            <Link className="btn" href={localizedPath('eserler', locale)}>
               {ui.tumEserlerOk}
-            </a>
+            </Link>
           </div>
           <HomeWorks works={toWorks(secme)} ui={ui} locale={locale} />
         </div>
@@ -117,9 +118,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="eyebrow">{anasayfa.kitaplarEyebrow}</div>
                 <h2>{anasayfa.kitaplarBaslik}</h2>
               </div>
-              <a className="btn" href={localizedPath('kitaplar', locale)}>
+              <Link className="btn" href={localizedPath('kitaplar', locale)}>
                 {ui.tumuOk}
-              </a>
+              </Link>
             </div>
             <HomeBooks
               books={toBooks(kitaplar)}
@@ -142,9 +143,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <h2>{bm.anasayfaBaslik}</h2>
               {bm.anasayfaMetin && <p>{bm.anasayfaMetin}</p>}
             </div>
-            <a className="btn" href={localizedPath('bulten', locale)}>
+            <Link className="btn" href={localizedPath('bulten', locale)}>
               {bm.anasayfaBaglanti}
-            </a>
+            </Link>
           </div>
         </div>
       )}

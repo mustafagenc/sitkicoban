@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -105,7 +106,7 @@ export default async function YaziPage({ params }: Props) {
       <article className="wrap yazi">
         <div className="art-head">
           <div className="crumb">
-            <a href={listHref}>{ui.yazilarBaslik}</a>
+            <Link href={listHref}>{ui.yazilarBaslik}</Link>
             {kategori && <> · {kategori}</>}
           </div>
           <h1>{yazi.baslik}</h1>
@@ -142,10 +143,10 @@ export default async function YaziPage({ params }: Props) {
 
         <nav className="pn" aria-label={ui.yazilarGezinti ?? undefined}>
           {gezinti.map((g) => (
-            <a key={g.href} className={g.sonraki ? 'next' : undefined} href={g.href}>
+            <Link key={g.href} className={g.sonraki ? 'next' : undefined} href={g.href}>
               <small>{g.etiket}</small>
               <b>{g.baslik}</b>
-            </a>
+            </Link>
           ))}
         </nav>
       </article>

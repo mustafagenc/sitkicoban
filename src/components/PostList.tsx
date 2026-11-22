@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useSyncExternalStore } from 'react'
 
 import type { UiMetinleri } from '@/payload-types'
@@ -69,12 +70,12 @@ export function PostList({
       {kitap && (
         <p className="suzgec">
           {kitapBaslik && ui.kitapSuzgeci && <span>{ui.kitapSuzgeci.replace('{baslik}', kitapBaslik)} </span>}
-          <a href={listHref}>{ui.tumYazilar}</a>
+          <Link href={listHref}>{ui.tumYazilar}</Link>
         </p>
       )}
 
       {ilkGorunur && (
-        <a className={`featured${ilk.kapak ? '' : ' noart'}`} href={ilk.href}>
+        <Link className={`featured${ilk.kapak ? '' : ' noart'}`} href={ilk.href}>
           {ilk.kapak && (
             <div className="art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -88,12 +89,12 @@ export function PostList({
             <PostMeta parts={[ilk.tarih, ilk.okuma]} />
             <span className="more">{ui.yaziyiOku}</span>
           </div>
-        </a>
+        </Link>
       )}
 
       <div className="list">
         {listeGorunur.map((p) => (
-          <a key={p.id} className="post" href={p.href}>
+          <Link key={p.id} className="post" href={p.href}>
             <div className="num">{String(posts.indexOf(p) + 1).padStart(2, '0')}</div>
             <div>
               {p.kategori && <div className="eyebrow">{p.kategori}</div>}
@@ -104,7 +105,7 @@ export function PostList({
             <div className="arrow" aria-hidden="true">
               {arrow}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 

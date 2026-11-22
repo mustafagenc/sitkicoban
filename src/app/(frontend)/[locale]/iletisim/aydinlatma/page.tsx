@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -36,9 +37,9 @@ export default async function AydinlatmaPage({ params }: Props) {
         <div className="prose">
           <RichText data={iletisim.aydinlatmaMetni} locale={locale} />
         </div>
-        <a className="back" href={localizedPath('iletisim', locale)}>
+        <Link className="back" href={localizedPath('iletisim', locale)}>
           {iletisim.metinler?.iletisimeDon}
-        </a>
+        </Link>
       </main>
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
     </>

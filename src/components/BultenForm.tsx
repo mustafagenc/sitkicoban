@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { startTransition, useActionState, useState, useSyncExternalStore } from 'react'
 
 import { bulteneKatil, type BultenState } from '@/app/(frontend)/[locale]/bulten/actions'
@@ -172,7 +173,7 @@ function Inner({
             aria-describedby={errs.onay ? 'msg-onay' : undefined}
           />
           <span>
-            {m.formOnay} <a href={aydinlatmaHref}>{m.formAydinlatma}</a>
+            {m.formOnay} <Link href={aydinlatmaHref}>{m.formAydinlatma}</Link>
             {errs.onay && (
               <>
                 {' '}

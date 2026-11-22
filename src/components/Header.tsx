@@ -1,9 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useRef, useState } from 'react'
 
 import { localizedPath } from '@/i18n/config'
 
+import { DuaPlayer } from './DuaPlayer'
 import { LangMenu } from './LangMenu'
 import { LogoMark } from './LogoMark'
 import { MobileNav } from './MobileNav'
@@ -38,25 +40,31 @@ export function Header({
     <>
       <header>
         <div className="wrap">
-          <a className="logo" href={homeHref}>
+          <Link className="logo" href={homeHref}>
             <LogoMark alt={ui.logoAlt ?? ''} glintOnLoad={glintOnLoad} />
             <span className="name" lang="tr">
               Sıtkı Çoban
             </span>
-          </a>
+          </Link>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <nav>
               {links.map((l) => (
-                <a
+                <Link
                   key={l.href}
                   href={l.href}
                   className={l.key && l.key === activeKey ? 'on' : undefined}
                 >
                   {l.label}
-                </a>
+                </Link>
               ))}
             </nav>
             <div className="tools">
+              <DuaPlayer
+                autoStart={activeKey === 'home'}
+                label={ui.duaDinle ?? ''}
+                labelPause={ui.duaDurdur ?? ''}
+                description={ui.duaAciklama ?? ''}
+              />
               <LangMenu locale={locale} activeKey={activeKey} label={ui.dilSec ?? ''} yaziSlug={yaziSlug} />
               <ThemeToggle label={ui.temaDegistir ?? ''} labelDark={ui.temaGunduz ?? ''} />
               <button

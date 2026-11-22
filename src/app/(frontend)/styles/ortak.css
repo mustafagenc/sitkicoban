@@ -59,6 +59,17 @@ header nav a:hover::after, header nav a.on::after { transform:scaleX(1); }
 .circle .sun { display:none; } [data-theme="dark"] .circle .sun { display:block; } [data-theme="dark"] .circle .moon { display:none; }
 .menu-btn { display:none !important; }
 
+/* Dua düğmesi: dil seçicinin solunda; çalarken kenarda altın ilerleme halkası döner */
+.dua-btn { position:relative; }
+.dua-btn svg:not(.dua-halka) { width:15px; height:15px; }
+.dua-btn svg:not(.dua-halka) path { transform:translateX(.5px); }
+.dua-btn.on { color:var(--gold); }
+.dua-btn .dua-halka { position:absolute; inset:-1px; width:calc(100% + 2px); height:calc(100% + 2px); transform:rotate(-90deg); pointer-events:none; overflow:visible; }
+.dua-btn .dua-halka circle { fill:none; stroke:var(--gold); stroke-width:1.4; stroke-linecap:round; transition:stroke-dasharray .25s linear; }
+.dua-btn.bekliyor { animation:dua-nabiz 2.4s ease-in-out infinite; }
+@keyframes dua-nabiz { 0%,100% { box-shadow:0 0 0 0 color-mix(in srgb, var(--gold) 45%, transparent); } 60% { box-shadow:0 0 0 7px transparent; } }
+@media (prefers-reduced-motion: reduce) { .dua-btn.bekliyor { animation:none; border-color:var(--gold); color:var(--gold); } }
+
 /* Dil seçici: tema düğmesinin yanında daire içinde kısa kod; tıklayınca liste açılır */
 .lang { position:relative; }
 .lang-btn { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:50%; cursor:pointer; background:none; color:var(--head); padding:0; font:600 12px/1 var(--font-source-serif), serif; letter-spacing:.06em; transition:.2s; }
@@ -136,4 +147,18 @@ footer .credit a:hover { color:var(--gold); border-color:var(--gold); }
   footer .telif { white-space:normal; }
   .cerez { inset-inline:12px; bottom:12px; }
   footer .social-ic { justify-content:center; }
+}
+/* Dar telefonlarda dört daire (dua, dil, tema, menü) ad ile birlikte sığsın */
+@media (max-width: 420px) {
+  .logo { gap:10px; } .logo img { height:34px; }
+  .logo .name { font-size:17px; padding-inline-start:10px; }
+  .tools { margin-inline-start:8px; gap:6px; }
+  header .circle, header .lang-btn { width:34px; height:34px; }
+  header .circle svg { width:16px; height:16px; }
+  header .dua-btn svg:not(.dua-halka) { width:13px; height:13px; }
+}
+@media (max-width: 360px) {
+  .logo { gap:8px; } .logo img { height:30px; }
+  .logo .name { font-size:15px; padding-inline-start:8px; }
+  .tools { margin-inline-start:6px; gap:5px; }
 }

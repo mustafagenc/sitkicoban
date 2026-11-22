@@ -29,7 +29,8 @@ export default async function EserlerPage({ params }: { params: Promise<{ locale
   ])
 
   return (
-    <>
+    // Sayfa stilleri bu sınıfa kapsanır: istemci tarafı geçişte başka sayfalara sızmasın.
+    <div className="eserler-sayfa">
       <Header locale={locale} ui={ui} activeKey="eserler" />
       <div className="page-head wrap">
         <div className="orn">❖</div>
@@ -43,6 +44,6 @@ export default async function EserlerPage({ params }: { params: Promise<{ locale
         locale={locale}
       />
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
-    </>
+    </div>
   )
 }

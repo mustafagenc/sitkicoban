@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import type { NavLink } from './navLinks'
@@ -15,7 +16,7 @@ type Props = {
   menuLabel: string
 }
 
-/** Tam ekran mobil menü (tasarımdaki .mnav); Esc ile de kapanır. */
+/** Tam ekran mobil menü (tasarımdaki .mnav); Esc ile de kapanır. Bağlantılar istemci tarafında gezdiği için tıklayınca menü kapanır. */
 export function MobileNav({
   open,
   onClose,
@@ -53,13 +54,13 @@ export function MobileNav({
       inert={!open}
     >
       <div className="top">
-        <a className="logo" href={homeHref}>
+        <Link className="logo" href={homeHref} onClick={onClose}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={LOGO_SRC} alt="" />
           <span className="name" lang="tr">
             Sıtkı Çoban
           </span>
-        </a>
+        </Link>
         <button
           ref={closeBtn}
           type="button"
@@ -81,14 +82,15 @@ export function MobileNav({
       </div>
       <nav className="links" id="mlinks">
         {links.map((l, i) => (
-          <a
+          <Link
             key={l.href}
             href={l.href}
+            onClick={onClose}
             className={l.key && l.key === activeKey ? 'on' : undefined}
             style={{ transitionDelay: `${0.05 + i * 0.05}s` }}
           >
             {l.label}
-          </a>
+          </Link>
         ))}
       </nav>
       <div className="foot">

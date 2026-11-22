@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState, useSyncExternalStore } from 'react'
 
 import { bultenOnayla, type BultenState } from '@/app/(frontend)/[locale]/bulten/actions'
@@ -55,9 +56,9 @@ export function BultenOnay({ m, bultenHref }: { m: NonNullable<Bulten['metinler'
     return (
       <div className="done" role="alert">
         <p>{durum === 'error' ? m.onayHata : m.onayKullanilamaz}</p>
-        <a className="back" href={bultenHref}>
+        <Link className="back" href={bultenHref}>
           {m.onayBultenSayfasi}
-        </a>
+        </Link>
       </div>
     )
   }
