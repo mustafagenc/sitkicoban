@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
@@ -225,13 +225,21 @@ export function WorkLightbox({
     zoomAt(z.current.s > 1.01 ? 1 : 2.5, e.clientX - b.left, e.clientY - b.top, true)
   }
 
-  const bilgi = ui.bilgiGirilecek ?? ''
-  const row = (k: string | null | undefined, v: string | null) => (
-    <>
-      <dt>{k}</dt>
-      <dd className={v ? undefined : 'none'}>{v || bilgi}</dd>
-    </>
-  )
+  // Bilgisi girilmemiş alan hiç gösterilmez; hiçbiri yoksa liste de çizilmez.
+  const satirlar = (alanlar: [string | null | undefined, string | null | undefined][]) => {
+    const dolu = alanlar.filter((a): a is [string | null | undefined, string] => Boolean(a[1]?.trim()))
+    if (!dolu.length) return null
+    return (
+      <dl>
+        {dolu.map(([k, v]) => (
+          <Fragment key={k ?? v}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </Fragment>
+        ))}
+      </dl>
+    )
+  }
   const tags = work ? [...work.yaziTurleri, work.tur].filter((s): s is string => Boolean(s)) : []
   const single = list.length < 2
 
@@ -364,13 +372,13 @@ export function WorkLightbox({
                 <div className="src" />
               ) : null}
               {work.aciklama && <p className="desc">{work.aciklama}</p>}
-              <dl>
-                {row(ui.eserTarih, work.yil ? tarih(work.yil) : null)}
-                {row(ui.olcu, work.olcu)}
-                {row(ui.malzeme, work.malzeme)}
-                {row(ui.tezhip, work.tezhip)}
-                {row(ui.ebru, work.ebru)}
-              </dl>
+              {satirlar([
+                [ui.eserTarih, work.yil ? tarih(work.yil) : null],
+                [ui.olcu, work.olcu],
+                [ui.malzeme, work.malzeme],
+                [ui.tezhip, work.tezhip],
+                [ui.ebru, work.ebru],
+              ])}
               <Link
                 className="ask"
                 href={`${localizedPath('iletisim', locale)}?eser=${encodeURIComponent(work.baslik)}`}

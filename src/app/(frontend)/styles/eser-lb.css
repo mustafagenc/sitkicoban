@@ -31,7 +31,6 @@
 .lb-body dd { margin:0; }
 .lb-body .ask { display:inline-block; margin-top:28px; border:1px solid var(--line-strong); padding:9px 20px; font-size:15px; transition:.2s; }
 .lb-body .ask:hover { border-color:var(--gold); color:var(--gold); }
-.lb-body dd.none { color:var(--ink-soft); font-style:italic; }
 
 @media (max-width: 860px) {
   .lb { grid-template-columns:1fr; grid-template-rows:58vh 1fr; }

@@ -157,6 +157,8 @@ sırasında da gerekir; Preview ortamı da aynılarına ihtiyaç duyar.
   çalıştırın. Uzak veritabanında şema `push` kapalıdır; Neon'a bağlıyken `pnpm dev` çalıştırmayın.
 - **Seed'i canlıda yeniden çalıştırmayın:** seed boş bir veritabanını kurmak içindir; panelde düzenlenmiş
   alanların üzerine yazar (içerik silmez).
+  `pnpm seed`, `DATABASE_URL` yerel değilse (localhost/127.0.0.1/::1) veritabanına bağlanmadan durur; bilerek
+  uzak ve boş bir veritabanı kuruyorsanız `SEED_UZAK_ONAY=evet pnpm seed` kullanın.
 - **Blob deposu:** Vercel'e bağlı depo canlı sitenin deposudur. Yerelde ayrı bir geliştirme deposu/token
   kullanın; canlı token'la yerelde görsel silmek canlıdaki dosyayı da siler.
 - **Sitemap ve robots:** `/sitemap.xml` sayfaları ve yayındaki yazıları üç dilde listeler, yazı kaydında

@@ -20,7 +20,7 @@
 .sheet .desc { margin:0 0 26px; }
 .sheet dl { display:grid; grid-template-columns:auto 1fr; gap:10px 20px; margin:0 0 30px; font-size:15px; padding-top:20px; border-top:1px solid var(--line); }
 .sheet dt { color:var(--gold); font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding-top:3px; }
-.sheet dd { margin:0; } .sheet dd.none { color:var(--ink-soft); font-style:italic; }
+.sheet dd { margin:0; }
 .sheet .btn { display:inline-block; border:1px solid var(--line-strong); padding:10px 22px; font-size:15px; letter-spacing:.04em; transition:.2s; margin-right:10px; }
 .sheet .btn.primary { background:var(--head); color:var(--bg); border-color:var(--head); }
 .sheet .btn:hover { border-color:var(--gold); color:var(--gold); } .sheet .btn.primary:hover { background:var(--gold); color:var(--bg); }
