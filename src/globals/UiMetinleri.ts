@@ -23,6 +23,7 @@ const LABELS = {
   rolHazirlayan: 'Rol: Hazırlayan',
   rolSadelestiren: 'Rol: Sadeleştiren',
   rolDerleyen: 'Rol: Derleyen',
+  rolEditor: 'Rol: Editör',
   olcu: 'Ölçü',
   malzeme: 'Malzeme',
   tezhip: 'Tezhip',

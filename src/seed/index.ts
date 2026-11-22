@@ -92,11 +92,12 @@ const LOCALE = 'tr' as const
 const HOME_WORKS = ['e-hilye.jpg', 'e-subhanallah.jpg', 'e-seyen-lillah.jpg', 'e-emrolundugun.jpg', 'e-sulus-2.jpg']
 const HOME_BOOKS = ['kitap-eskimeyen.jpg', 'kitap-adi-guzel.jpg', 'kitap-lemezat.jpg']
 
-const ROL: Record<string, 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen'> = {
+const ROL: Record<string, 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen' | 'editor'> = {
   Yazar: 'yazar',
   Hazırlayan: 'hazirlayan',
   Sadeleştiren: 'sadelestiren',
   Derleyen: 'derleyen',
+  Editör: 'editor',
 }
 
 export type SeedResult = { eserler: number; kitaplar: number }

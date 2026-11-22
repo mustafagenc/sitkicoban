@@ -66,9 +66,10 @@ const DIL: Record<Locale, string> = { tr: 'Türkçe', en: 'English', ar: 'الع
 
 const ROL: Record<BookRole, string> = {
   yazar: 'Author',
-  hazirlayan: 'Editor (prepared by Sıtkı Çoban)',
+  hazirlayan: 'Prepared by Sıtkı Çoban',
   sadelestiren: 'Simplified by Sıtkı Çoban',
   derleyen: 'Compiled by Sıtkı Çoban',
+  editor: 'Edited by Sıtkı Çoban',
 }
 
 /** Tek satıra indirir: Markdown liste öğesini bozmasın. */
