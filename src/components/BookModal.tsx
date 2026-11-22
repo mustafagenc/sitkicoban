@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
@@ -68,13 +68,21 @@ export function BookModal({
 
   if (!b) return null
   const role = roleLabel(ui, b.rol)
-  const bilgi = ui.bilgiGirilecek ?? ''
-  const row = (k: string | null | undefined, v: string | null) => (
-    <>
-      <dt>{k}</dt>
-      <dd className={v ? undefined : 'none'}>{v || bilgi}</dd>
-    </>
-  )
+  // Bilgisi girilmemiş alan hiç gösterilmez; hiçbiri yoksa liste de çizilmez.
+  const satirlar = (alanlar: [string | null | undefined, string | null | undefined][]) => {
+    const dolu = alanlar.filter((a): a is [string | null | undefined, string] => Boolean(a[1]?.trim()))
+    if (!dolu.length) return null
+    return (
+      <dl>
+        {dolu.map(([k, v]) => (
+          <Fragment key={k ?? v}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </Fragment>
+        ))}
+      </dl>
+    )
+  }
 
   return (
     <div
@@ -120,12 +128,12 @@ export function BookModal({
               : AUTHOR_FALLBACK}
           </div>
           {b.aciklama && <p className="desc">{b.aciklama}</p>}
-          <dl>
-            {row(ui.yayinevi, b.yayinevi)}
-            {row(ui.yil, b.yil)}
-            {row(ui.sayfa, b.sayfa)}
-            {row(ui.isbn, b.isbn)}
-          </dl>
+          {satirlar([
+            [ui.yayinevi, b.yayinevi],
+            [ui.yil, b.yil],
+            [ui.sayfa, b.sayfa],
+            [ui.isbn, b.isbn],
+          ])}
           {b.satinAlLinki && (
             <a className="btn primary" href={b.satinAlLinki} target="_blank" rel="noopener noreferrer">
               {ui.satinAl}
