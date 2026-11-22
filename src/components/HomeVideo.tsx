@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
@@ -53,9 +54,9 @@ export function HomeVideo({
               ))}
             </div>
           )}
-          <a className="btn" style={{ marginTop: 20 }} href={localizedPath('videolar', locale)}>
+          <Link className="btn" style={{ marginTop: 20 }} href={localizedPath('videolar', locale)}>
             {ui.tumVideolarOk}
-          </a>
+          </Link>
         </div>
       </div>
       {open !== null && <VideoModal list={list} id={open} ui={ui} onClose={close} />}

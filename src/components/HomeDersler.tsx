@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import type { Locale } from '@/i18n/config'
@@ -129,9 +130,9 @@ export function HomeDersler({ dersler, ui, locale }: { dersler: Ders[]; ui: UiMe
                     )}
                   </ul>
                   {ui.bilgiAlmakIcin && (
-                    <a className="git" href={`${localizedPath('iletisim', locale)}?konu=mesk`}>
+                    <Link className="git" href={`${localizedPath('iletisim', locale)}?konu=mesk`}>
                       {ui.bilgiAlmakIcin}
-                    </a>
+                    </Link>
                   )}
                 </div>
               </article>

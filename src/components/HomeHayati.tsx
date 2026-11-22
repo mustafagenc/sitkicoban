@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { localizedPath, type Locale } from '@/i18n/config'
 import { RichText } from '@/lib/richtext'
 import type { Hayati, UiMetinleri } from '@/payload-types'
@@ -37,9 +38,9 @@ export function HomeHayati({
           <RichText data={hayati.anasayfaOzet} locale={locale} />
           {hayati.anasayfaSoz && <div className="quote">{hayati.anasayfaSoz}</div>}
           {ui.devaminiOku && (
-            <a className="btn" href={localizedPath('hayati', locale)}>
+            <Link className="btn" href={localizedPath('hayati', locale)}>
               {ui.devaminiOku}
-            </a>
+            </Link>
           )}
         </div>
       </div>

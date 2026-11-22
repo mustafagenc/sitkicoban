@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
 /** Ziyaretçinin kararı; yalnızca bu tarayıcıda tutulur. */
@@ -85,7 +86,7 @@ export function CerezIzni({ metin, kabul, reddet, aydinlatma, aydinlatmaHref, te
         <div className="cerez" role="dialog" aria-live="polite" aria-label={tercihler}>
           <p>
             {metin}{' '}
-            {aydinlatma && <a href={aydinlatmaHref}>{aydinlatma}</a>}
+            {aydinlatma && <Link href={aydinlatmaHref}>{aydinlatma}</Link>}
           </p>
           <div className="cerez-btn">
             <button type="button" className="btn" onClick={() => sec('red')}>

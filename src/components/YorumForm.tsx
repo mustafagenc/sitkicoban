@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { startTransition, useActionState, useState, useSyncExternalStore } from 'react'
 
 import { yorumGonder, type YorumState } from '@/app/(frontend)/[locale]/yazilar/[slug]/actions'
@@ -197,7 +198,7 @@ function Inner({
             {...aria('onay')}
           />
           <span>
-            {m.formOnay} <a href={aydinlatmaHref}>{m.formAydinlatma}</a>
+            {m.formOnay} <Link href={aydinlatmaHref}>{m.formAydinlatma}</Link>
             {errs.onay && (
               <>
                 {' '}

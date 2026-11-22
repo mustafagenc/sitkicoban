@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { startTransition, useActionState, useState, useSyncExternalStore } from 'react'
 
 import { sendContact, type ContactState } from '@/app/(frontend)/[locale]/iletisim/actions'
@@ -261,7 +262,7 @@ function Inner({
             {...aria('onay')}
           />
           <span>
-            {m.formOnay} <a href={aydinlatmaHref}>{m.formAydinlatma}</a>
+            {m.formOnay} <Link href={aydinlatmaHref}>{m.formAydinlatma}</Link>
             {errs.onay && (
               <>
                 {' '}

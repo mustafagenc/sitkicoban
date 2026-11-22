@@ -31,7 +31,8 @@ export default async function KitaplarPage({ params }: { params: Promise<{ local
   ])
 
   return (
-    <>
+    // Sayfa stilleri bu sınıfa kapsanır: istemci tarafı geçişte başka sayfalara sızmasın.
+    <div className="kitaplar-sayfa">
       <Header locale={locale} ui={ui} activeKey="kitaplar" />
       <div className="page-head wrap">
         <div className="orn">❖</div>
@@ -57,6 +58,6 @@ export default async function KitaplarPage({ params }: { params: Promise<{ local
         yazili={yaziliKitaplar(toYazilar(yazilar, ui, locale))}
       />
       <Footer locale={locale} ui={ui} ayarlar={ayarlar} />
-    </>
+    </div>
   )
 }

@@ -1114,6 +1114,9 @@ export interface UiMetinleri {
   temaDegistir?: string | null;
   temaGunduz?: string | null;
   dilSec?: string | null;
+  duaDinle?: string | null;
+  duaDurdur?: string | null;
+  duaAciklama?: string | null;
   asagiKaydir?: string | null;
   kapat?: string | null;
   eserTarih?: string | null;
@@ -1529,6 +1532,9 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   temaDegistir?: T;
   temaGunduz?: T;
   dilSec?: T;
+  duaDinle?: T;
+  duaDurdur?: T;
+  duaAciklama?: T;
   asagiKaydir?: T;
   kapat?: T;
   eserTarih?: T;

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { localizedPath } from '@/i18n/config'
 import { pushHazir } from '@/lib/bulten/push'
 import { getBulten } from '@/lib/data'
@@ -58,11 +59,11 @@ export async function Footer({ locale, ui, ayarlar }: Omit<LayoutProps, 'activeK
         <img src={LOGO_SRC} alt="" />
         <div className="links">
           {navLinks(locale, ui).map((l) => (
-            <a key={l.href} href={l.href}>
+            <Link key={l.href} href={l.href}>
               {l.label}
-            </a>
+            </Link>
           ))}
-          {bultenEtiket && <a href={localizedPath('bulten', locale)}>{bultenEtiket}</a>}
+          {bultenEtiket && <Link href={localizedPath('bulten', locale)}>{bultenEtiket}</Link>}
         </div>
         <div className="side">
           <div className="social-ic">

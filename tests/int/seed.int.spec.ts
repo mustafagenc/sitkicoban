@@ -27,9 +27,9 @@ async function wipe() {
 }
 
 describe('readDesign', () => {
-  it('reads the 13 works', () => {
+  it('reads the 14 works', () => {
     const { eserler } = readDesign()
-    expect(eserler.length).toBe(13)
+    expect(eserler.length).toBe(14)
     expect(eserler[0].t).toBe('Hilye-i Şerif')
     expect(eserler[0].yazi).toEqual(['Sülüs', 'Nesih'])
   })
@@ -59,9 +59,9 @@ describe('seed', () => {
     const design = readDesign()
     const first = await seed(payload)
     const second = await seed(payload)
-    expect(first).toEqual({ eserler: 13, kitaplar: design.kitaplar.length })
+    expect(first).toEqual({ eserler: 14, kitaplar: design.kitaplar.length })
     expect(second).toEqual(first)
-    expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(13)
+    expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(14)
     expect((await payload.count({ collection: 'kitaplar' })).totalDocs).toBe(design.kitaplar.length)
     expect((await payload.count({ collection: 'users' })).totalDocs).toBe(1)
     // works, covers, lesson posters, teacher signatures, portrait and post covers share images: one media doc per distinct file.
@@ -109,7 +109,7 @@ describe('seed', () => {
       context: { disableRevalidate: true },
     })
     await seed(payload)
-    expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(13)
+    expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(14)
   }, 120_000)
 
   it('maps fields: yil and tur', async () => {

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Fragment } from 'react'
@@ -118,9 +119,9 @@ export default async function HayatiPage({ params }: Props) {
                   </h2>
                   <RichText data={b.govde} locale={locale} blocks={bloklar} />
                   {(b.baglantilar ?? []).map((l, i) => (
-                    <a className="more" key={l.id ?? i} href={sayfaHref(l.sayfa, locale)}>
+                    <Link className="more" key={l.id ?? i} href={sayfaHref(l.sayfa, locale)}>
                       {l.etiket}
-                    </a>
+                    </Link>
                   ))}
                 </section>
               ))}

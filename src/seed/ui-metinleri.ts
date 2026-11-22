@@ -47,6 +47,13 @@ export const UI_STRINGS: Record<UiKey, S> = {
   temaDegistir: { tr: 'Gece görünümüne geç', en: 'Switch theme', ar: 'تبديل المظهر' },
   temaGunduz: { tr: 'Gündüz görünümüne geç', en: 'Switch to day view', ar: 'التبديل إلى الوضع النهاري' },
   dilSec: { tr: 'Dil seçin', en: 'Choose language', ar: 'اختر اللغة' },
+  duaDinle: { tr: 'Duayı dinle', en: 'Listen to the prayer', ar: 'استمع إلى الدعاء' },
+  duaDurdur: { tr: 'Duayı durdur', en: 'Pause the prayer', ar: 'إيقاف الدعاء' },
+  duaAciklama: {
+    tr: "Elmalılı Hamdi Yazır tefsirinin başındaki dua · Okuyan: Sıtkı Çoban",
+    en: "The opening prayer of Elmalılı Hamdi Yazır's Qur'an commentary · Recited by Sıtkı Çoban",
+    ar: 'دعاء مقدّمة تفسير ألمالي حمدي يازر · بصوت سيتكي تشوبان',
+  },
   asagiKaydir: { tr: 'Aşağı kaydır', en: 'Scroll down', ar: 'مرّر للأسفل' },
   kapat: { tr: 'Kapat', en: 'Close', ar: 'إغلاق' },
   eserTarih: { tr: 'Tarih', en: 'Date', ar: 'التاريخ' },

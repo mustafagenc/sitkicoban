@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
+import { DuaProvider } from '@/components/DuaProvider'
 import { ThemeScript } from '@/components/ThemeScript'
 import { WebMcp } from '@/components/WebMcp'
 import { dir, isLocale, LOCALES } from '@/i18n/config'
@@ -57,7 +58,8 @@ export default async function LocaleLayout({
         <ThemeScript />
       </head>
       <body>
-        {children}
+        {/* Giriş duası düzende çalar: sayfalar arası (next/link) geçişte kesilmez. */}
+        <DuaProvider>{children}</DuaProvider>
         <WebMcp />
         {/* Vercel Speed Insights: gerçek ziyaretçilerin Core Web Vitals ölçümü; çerezsiz, kişisel veri tutmaz. */}
         <SpeedInsights />
