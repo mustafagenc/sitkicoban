@@ -284,7 +284,7 @@ export interface Kitaplar {
    * Boş bırakılırsa başlıktan üretilir.
    */
   slug?: string | null;
-  rol?: ('yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen') | null;
+  rol?: ('yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen' | 'editor') | null;
   asilYazar?: string | null;
   /**
    * Boşsa yazı kapak kullanılır.
@@ -1093,6 +1093,7 @@ export interface UiMetinleri {
   rolHazirlayan?: string | null;
   rolSadelestiren?: string | null;
   rolDerleyen?: string | null;
+  rolEditor?: string | null;
   olcu?: string | null;
   malzeme?: string | null;
   tezhip?: string | null;
@@ -1511,6 +1512,7 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   rolHazirlayan?: T;
   rolSadelestiren?: T;
   rolDerleyen?: T;
+  rolEditor?: T;
   olcu?: T;
   malzeme?: T;
   tezhip?: T;

@@ -32,6 +32,7 @@ export const Kitaplar: CollectionConfig = {
         { label: 'Hazırlayan', value: 'hazirlayan' },
         { label: 'Sadeleştiren', value: 'sadelestiren' },
         { label: 'Derleyen', value: 'derleyen' },
+        { label: 'Editör', value: 'editor' },
       ],
     },
     { name: 'asilYazar', label: 'Asıl yazar', type: 'text' },

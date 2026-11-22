@@ -1,7 +1,7 @@
 import { mediaUrl } from '@/lib/media'
 import type { Kitaplar, Media, UiMetinleri } from '@/payload-types'
 
-export type BookRole = 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen'
+export type BookRole = 'yazar' | 'hazirlayan' | 'sadelestiren' | 'derleyen' | 'editor'
 
 /** Raf, kapak ve ayrıntı penceresinin kullandığı düz (serileştirilebilir) kitap verisi. */
 export type Book = {
@@ -23,13 +23,14 @@ export type Book = {
   satinAlLinki: string | null
 }
 
-export const ROLE_ORDER: BookRole[] = ['yazar', 'hazirlayan', 'sadelestiren', 'derleyen']
+export const ROLE_ORDER: BookRole[] = ['yazar', 'hazirlayan', 'sadelestiren', 'derleyen', 'editor']
 
 const ROLE_KEY = {
   yazar: 'rolYazar',
   hazirlayan: 'rolHazirlayan',
   sadelestiren: 'rolSadelestiren',
   derleyen: 'rolDerleyen',
+  editor: 'rolEditor',
 } as const satisfies Record<BookRole, keyof UiMetinleri>
 
 /** Rol değerinin arayüz metni; rol yoksa boş. */

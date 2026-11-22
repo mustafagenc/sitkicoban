@@ -22,6 +22,7 @@ export const UI_STRINGS: Record<UiKey, S> = {
   rolHazirlayan: { tr: 'Hazırlayan', en: 'Prepared by', ar: 'إعداد' },
   rolSadelestiren: { tr: 'Sadeleştiren', en: 'Simplified by', ar: 'تبسيط' },
   rolDerleyen: { tr: 'Derleyen', en: 'Compiled by', ar: 'جمع وترتيب' },
+  rolEditor: { tr: 'Editör', en: 'Editor', ar: 'تحرير' },
   olcu: { tr: 'Ölçü', en: 'Dimensions', ar: 'المقاس' },
   malzeme: { tr: 'Malzeme', en: 'Materials', ar: 'الخامات' },
   tezhip: { tr: 'Tezhip', en: 'Illumination', ar: 'التذهيب' },
