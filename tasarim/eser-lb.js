@@ -24,6 +24,8 @@
     { f:'e-rika-1.jpg',         r:2.03, t:'Beyit',                         yazi:["Rik'a"],         tur:'Beyit' },
     { f:'e-sulus-1.jpg',        r:1.73, t:'Beyit',                         yazi:['Sülüs'],         tur:'Beyit' },
     { f:'e-besmele-levha.png',  r:1.78, t:'Besmele',                       yazi:['Sülüs'],         tur:'Levha' },
+    { f:'e-besmele-talik.png',  r:3.61, t:"Ta'lik Besmele",                yazi:["Ta'lik"],        tur:'Levha', y:'1444',
+      ar:'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ', mean:"Rahmân ve Rahîm olan Allah'ın adıyla." },
   ];
 
 (() => {
