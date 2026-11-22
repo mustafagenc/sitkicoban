@@ -12,7 +12,7 @@
       ar:'سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ وَفِي أَنْفُسِهِمْ', mean:'Onlara ufuklarda ve kendi nefislerinde âyetlerimizi göstereceğiz…', src:'Fussilet Sûresi, 53. âyet' },
     { f:'e-seyen-lillah.jpg',   r:1.18, t:"Şey'en Lillâh",                 yazi:['Celî Sülüs'],    tur:'Levha', y:'1445',
       ar:'شَيْئًا لِلّٰهِ', mean:'Allah rızası için…', desc:'Dervişlerin kapıda Allah rızası için bir şey isterken söylediği, tasavvuf geleneğinde sıkça yazılan söz.' },
-    { f:'e-tovbe.jpg',          r:1.71, t:'Tövbe Yâ Rabbi',                yazi:["Ta'lik"],        tur:'Beyit' },
+    { f:'e-tovbe.jpg',          r:1.71, t:'Tövbe Yâ Rabbi',                yazi:['Nesih'],         tur:'Beyit' },
     { f:'e-sulus-2.jpg',        r:.96, t:"Kün Mea'llâhi bi's-Sıdk",        yazi:['Sülüs'],         tur:"Kıt'a",
       ar:'كُنْ مَعَ اللّٰهِ بِالصِّدْقِ وَمَعَ النَّاسِ بِالْإِنْصَافِ', mean:"Allah ile sadakatle, insanlarla insafla ol… (kıt'anın devamında nefis, âlimler, şeyhler, fakirler, çocuklar, dostlar, düşmanlar ve cahillerle nasıl olunacağı sayılır)" },
     { f:'e-emrolundugun.jpg',   r:1.86, t:'Emrolunduğun Gibi Dosdoğru Ol', yazi:['Celî Sülüs'],    tur:'Âyet', y:'1444',
