@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { localizedPath } from '@/i18n/config'
-import { webSayfasi } from '@/lib/jsonld'
+import { eserListesi, webSayfasi } from '@/lib/jsonld'
 import { sayfaMeta } from '@/lib/seo'
 
 const savedSiteUrl = process.env.SITE_URL
@@ -56,6 +56,51 @@ describe('seo ve arama önizleme görseli', () => {
         width: 1200,
         height: 1200,
       },
+    })
+  })
+
+  it('eserListesi her eseri VisualArtwork ve ImageObject olarak yapılandırır', () => {
+    process.env.SITE_URL = 'https://sitkicoban.com'
+    const ld = eserListesi(
+      [
+        {
+          baslik: 'Hilye-i Şerif',
+          src: '/media/e-hilye.jpg',
+          width: 1600,
+          height: 2400,
+          yaziTurleri: ['Sülüs', 'Nesih'],
+          tur: 'Hilye',
+          yil: '1441',
+          malzeme: 'Aharlı kâğıt üzerine is mürekkebi',
+          anlam: 'Hz. Peygamberin şemâili',
+        },
+      ],
+      'tr',
+    )
+
+    expect(ld).toMatchObject({
+      '@type': 'ItemList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          item: {
+            '@type': 'VisualArtwork',
+            name: 'Hilye-i Şerif',
+            artform: ['Hilye', 'Sülüs', 'Nesih'],
+            artMedium: 'Aharlı kâğıt üzerine is mürekkebi',
+            dateCreated: '1441',
+            description: 'Hz. Peygamberin şemâili',
+            image: {
+              '@type': 'ImageObject',
+              url: 'https://sitkicoban.com/media/e-hilye.jpg',
+              contentUrl: 'https://sitkicoban.com/media/e-hilye.jpg',
+              width: 1600,
+              height: 2400,
+            },
+          },
+        },
+      ],
     })
   })
 })

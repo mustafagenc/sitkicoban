@@ -10,6 +10,7 @@ import { getEserler, getSiteAyarlari, getUi, getYaziTurleri } from '@/lib/data'
 
 import '../../styles/eserler.css'
 import { sayfaMeta } from '@/lib/seo'
+import { JsonLd, eserListesi } from '@/lib/jsonld'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -28,6 +29,8 @@ export default async function EserlerPage({ params }: { params: Promise<{ locale
     getYaziTurleri(locale),
   ])
 
+  const works = toWorks(eserler)
+
   return (
     // Sayfa stilleri bu sınıfa kapsanır: istemci tarafı geçişte başka sayfalara sızmasın.
     <div className="eserler-sayfa">
@@ -37,8 +40,9 @@ export default async function EserlerPage({ params }: { params: Promise<{ locale
         <h1>{ui.eserlerBaslik}</h1>
         <p>{ui.eserlerAciklama}</p>
       </div>
+      <JsonLd data={eserListesi(works, locale)} />
       <WorksGallery
-        works={toWorks(eserler)}
+        works={works}
         yaziTurleri={turler.map((t) => t.ad)}
         ui={ui}
         locale={locale}

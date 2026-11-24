@@ -60,6 +60,9 @@ export const LLMS_FULL_TAGS: Tag[] = [...LLMS_TAGS, 'eserler', 'videolar', 'ayar
 /** Tags whose data `/ajan.json` (WebMCP tools) renders: works, books, writings, lessons, settings. */
 export const AJAN_TAGS: Tag[] = ['eserler', 'turler', 'media', 'kitaplar', 'yazilar', 'dersler', 'ayarlar']
 
+/** Tags whose data `/sitemap.xml` renders: published writing slugs/covers, works, books, portrait. */
+export const SITEMAP_TAGS: Tag[] = ['yazilar', 'eserler', 'turler', 'kitaplar', 'hayati', 'media']
+
 /** Public paths that render data behind the given tags (deduplicated). */
 export function pathsForTags(tags: Tag[]): string[] {
   const paths = new Set<string>()
@@ -82,8 +85,8 @@ export function pathsForChange(
   publishedSlugs: string[] = [],
 ): string[] {
   const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
-  // The sitemap lists published yazı slugs, so it is re-rendered whenever they can change.
-  if ((TAGS_BY_SOURCE[source] ?? []).includes('yazilar')) paths.add('/sitemap.xml')
+  // Site haritası yazı adreslerini ve eser/kitap/portre/yazı kapak görsellerini listeler.
+  if ((TAGS_BY_SOURCE[source] ?? []).some((t) => SITEMAP_TAGS.includes(t))) paths.add('/sitemap.xml')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_TAGS.includes(t))) paths.add('/llms.txt')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_FULL_TAGS.includes(t))) paths.add('/llms-full.txt')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => AJAN_TAGS.includes(t))) paths.add('/ajan.json')
