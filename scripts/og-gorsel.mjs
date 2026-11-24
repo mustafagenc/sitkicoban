@@ -1,6 +1,8 @@
-// Varsayılan paylaşım görselini (public/og.jpg, 1200×630) ve Google arama önizleme
-// görselini (public/thumbnail.jpg, 1200×1200 kare imza) üretir.
+// Varsayılan paylaşım görselini (public/og.jpg, 1200×630), Google arama önizleme
+// görselini (public/thumbnail.jpg, 1200×1200 kare imza) ve tarayıcı/arama botlarının
+// doğrudan istediği public/favicon.ico (16/32/48 px) dosyasını üretir.
 // Kullanım: node scripts/og-gorsel.mjs
+import { writeFile } from 'node:fs/promises'
 import sharp from 'sharp'
 
 const W = 1200
@@ -47,3 +49,29 @@ await sharp({ create: { width: KARE, height: KARE, channels: 3, background: ZEMI
   .toFile('public/thumbnail.jpg')
 
 console.log('public/thumbnail.jpg yazıldı')
+
+// 16×16, 32×32 ve 48×48 (Google Favicon standardı) PNG katmanlı ICO dosyası.
+const icoBoyutlar = [16, 32, 48]
+const pngKatmanlar = await Promise.all(
+  icoBoyutlar.map((boy) => sharp('public/icon-512.png').resize(boy, boy).png({ compressionLevel: 9 }).toBuffer()),
+)
+const baslik = Buffer.alloc(6 + icoBoyutlar.length * 16)
+baslik.writeUInt16LE(0, 0) // ayrılmış
+baslik.writeUInt16LE(1, 2) // tür: 1 = ICO
+baslik.writeUInt16LE(icoBoyutlar.length, 4)
+let ofset = baslik.length
+pngKatmanlar.forEach((buf, i) => {
+  const baz = 6 + i * 16
+  baslik.writeUInt8(icoBoyutlar[i], baz)
+  baslik.writeUInt8(icoBoyutlar[i], baz + 1)
+  baslik.writeUInt8(0, baz + 2)
+  baslik.writeUInt8(0, baz + 3)
+  baslik.writeUInt16LE(1, baz + 4)
+  baslik.writeUInt16LE(32, baz + 6)
+  baslik.writeUInt32LE(buf.length, baz + 8)
+  baslik.writeUInt32LE(ofset, baz + 12)
+  ofset += buf.length
+})
+await writeFile('public/favicon.ico', Buffer.concat([baslik, ...pngKatmanlar]))
+
+console.log('public/favicon.ico yazıldı')
