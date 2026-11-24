@@ -19,12 +19,13 @@ html:has(.home) { scroll-behavior:smooth; }
 .home .hero .row:nth-child(3) { --dur:130s; margin-left:-5vw; }
 .home .hero .row:nth-child(4) { --dur:120s; margin-left:-16vw; }
 .home .hero .row:nth-child(5) { --dur:150s; margin-left:-8vw; }
-/* Eserler kendi oranlarıyla: hepsi aynı yükseklikte, genişlik esere göre (kırpma yok) */
-.home .hero .row img { height:15vw; width:auto; display:block; background:var(--paper); outline:8px solid var(--paper); box-shadow:var(--shadow); transition:filter .3s; }
+/* Eserler kendi oranlarıyla: hepsi aynı yükseklikte, genişlik esere göre (kırpma yok).
+   Dekoratif arka plan olduklarından <img> yerine CSS zemin kullanılır; Google arama önizlemesini ezmez. */
+.home .hero .row .tile { height:15vw; flex-shrink:0; display:block; background:var(--bg-1x) center/cover no-repeat var(--paper); background-image:image-set(var(--bg-1x) 1x, var(--bg-2x) 2x); outline:8px solid var(--paper); box-shadow:var(--shadow); transition:filter .3s; }
 @keyframes drift { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .home .hero .row { animation:none; } }
 /* Gece görünüşünde kolaj daha soluk; yazılar öne çıkar */
-[data-theme="dark"] .home .hero .row img { filter:brightness(.55) saturate(.6); }
+[data-theme="dark"] .home .hero .row .tile { filter:brightness(.55) saturate(.6); }
 .home .hero .veil { position:absolute; inset:0; background:radial-gradient(ellipse at center, var(--hero-veil) 30%, color-mix(in srgb, var(--hero-veil) 70%, transparent) 100%); }
 .home .hero .in { position:relative; padding:60px 20px; }
 /* İmza: PNG maske olarak kullanılır, içinden altın bir ışık süzülür (birkaç saniyede bir) */
@@ -159,7 +160,7 @@ html:has(.home) { scroll-behavior:smooth; }
   .home .hero { min-height:calc(100svh - 72px); }
   .home .hero .collage { gap:16px; }
   .home .hero .row { gap:16px; }
-  .home .hero .row img { height:19svh; outline-width:5px; }
+  .home .hero .row .tile { height:19svh; outline-width:5px; }
 }
 
 /* Bülten şeridi (Hayatı'dan önce): <section> değil, bölüm zemin sırasını (nth-of-type) bozmaz. */
