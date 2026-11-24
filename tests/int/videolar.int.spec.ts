@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { anasayfaVideosu, bolumAdi, seriVideolari, toVideolar, type VideoItem } from '@/components/videolar'
 import config from '@/payload.config'
 import { seed } from '@/seed'
-import type { UiMetinleri } from '@/payload-types'
+import type { VideoMetinleri } from '@/payload-types'
 
 const dbName = () => new URL(process.env.DATABASE_URL ?? 'postgres://x/none').pathname.replace(/^\//, '')
 
@@ -50,7 +50,7 @@ describe('video helpers', () => {
   })
 
   it('maps docs to plain items, skipping invalid ids and formatting the date and lesson number', () => {
-    const ui = { dersNo: '{n}. ders' } as UiMetinleri
+    const ui = { dersNo: '{n}. ders' } as VideoMetinleri
     const base = { updatedAt: '2026-01-01T00:00:00.000Z', createdAt: '2026-01-01T00:00:00.000Z' }
     const out = toVideolar(
       [

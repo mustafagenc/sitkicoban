@@ -37,7 +37,7 @@ const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
 const ANASAYFA = ['/', '/en', '/ar']
 // Sayfa olmayan, sorgusuz sunulması gereken dosyalar (bülten: service worker ve web app manifest).
 const DURAGAN = ['/sw.js', '/manifest.webmanifest']
-const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/llms.txt', '/llms-full.txt', '/ajan.json']
+const BEKLENEN_YENILEME = ['/eserler', '/', '/en/works', '/en', '/ar/works', '/ar', '/hayati', '/en/biography', '/ar/biography', '/sitemap.xml', '/llms.txt', '/llms-full.txt', '/ajan.json']
 const ILK_ZIYARET = ['/eserler', '/en/works', '/']
 // Eser başlığını göstermeyen ama aynı etiketle ısıtılan sayfalar: yalnızca sorgusuz açıldığı doğrulanır.
 const ILK_ZIYARET_SORGUSUZ = ['/en/biography']

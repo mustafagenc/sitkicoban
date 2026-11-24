@@ -24,5 +24,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // _vercel: Vercel'in kendi uçları (Speed Insights ölçümleri /_vercel/speed-insights/vitals) proxy'den geçmez.
-  matcher: ['/((?!(?:admin|api|_next|_vercel|media)(?:/|$)|.*\\..*).*)'],
+  // apple-app-site-association: uzantısız iOS Universal Links sorgusu doğrudan public/ altından döner.
+  matcher: ['/((?!(?:admin|api|_next|_vercel|media|apple-app-site-association)(?:/|$)|.*\\..*).*)'],
 }

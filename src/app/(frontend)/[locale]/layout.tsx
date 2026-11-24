@@ -28,7 +28,10 @@ export const metadata: Metadata = {
   title: { default: 'Sıtkı Çoban', template: '%s · Sıtkı Çoban' },
   description: 'Hattat Sıtkı Çoban',
   icons: {
-    icon: { url: '/favicon.svg', type: 'image/svg+xml' },
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
     apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
   },
   // src/app/manifest.ts; ana ekrana eklenen web uygulaması (iPhone/iPad'de Web Push bunu gerektirir).

@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 
-import type { UiMetinleri } from '@/payload-types'
+import type { UiMetinleri, VideoMetinleri } from '@/payload-types'
 
 import { PostMeta } from './PostMeta'
 import { VideoModal } from './VideoModal'
@@ -23,11 +23,13 @@ export function VideoGallery({
   videos,
   kategoriler,
   ui,
+  vm,
 }: {
   videos: VideoItem[]
   /** Tüm kategoriler, panel sırasıyla (boş olanlar da çip olur). */
   kategoriler: { id: number; ad: string }[]
   ui: UiMetinleri
+  vm: VideoMetinleri
 }) {
   const [kat, setKat] = useState<number | null>(null)
   const [open, setOpen] = useState<number | null>(null)
@@ -45,9 +47,9 @@ export function VideoGallery({
   return (
     <>
       <div className="list-head" ref={head}>
-        <h2>{ui.videolarListeBaslik}</h2>
+        <h2>{vm.videolarListeBaslik}</h2>
         {kategoriler.length > 0 && (
-          <div className="cats" role="group" aria-label={ui.videoKategoriGrubu ?? undefined}>
+          <div className="cats" role="group" aria-label={vm.videoKategoriGrubu ?? undefined}>
             {[null, ...kategoriler].map((c) => (
               <button
                 key={c?.id ?? '__all'}
@@ -62,7 +64,7 @@ export function VideoGallery({
           </div>
         )}
         <div className="vcount" aria-live="polite">
-          {(ui.videoSayisi ?? '').replace('{n}', String(gorunur.length))}
+          {(vm.videoSayisi ?? '').replace('{n}', String(gorunur.length))}
         </div>
       </div>
 
@@ -81,9 +83,9 @@ export function VideoGallery({
           </button>
         ))}
       </div>
-      {gorunur.length === 0 && <p className="bos">{ui.videolarBos}</p>}
+      {gorunur.length === 0 && <p className="bos">{vm.videolarBos}</p>}
 
-      {open !== null && <VideoModal list={videos} id={open} ui={ui} onClose={close} />}
+      {open !== null && <VideoModal list={videos} id={open} ui={ui} vm={vm} onClose={close} />}
     </>
   )
 }

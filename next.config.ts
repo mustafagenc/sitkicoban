@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
     formats: ['image/avif', 'image/webp'],
   },
-  // Eski statik adresler (.html) kalıcı olarak (308) kanonik yollarına yönlendirilir.
+  // Eski statik adresler (.html, eski img yolu) kalıcı olarak (308) kanonik yollarına yönlendirilir.
   async redirects() {
     return [
       { source: '/index.html', destination: '/', permanent: true },
@@ -23,10 +23,16 @@ const nextConfig: NextConfig = {
         destination: '/:sayfa',
         permanent: true,
       },
+      { source: '/img/favicon.svg', destination: '/favicon.svg', permanent: true },
     ]
   },
   // Service worker (tarayıcı bildirimleri) her kayıtta sunucudan doğrulansın: eski sürüm takılı kalmasın.
+  // AASA dosyaları uzantısız olduğu için Apple'ın beklediği application/json başlığıyla sunulur.
   async headers() {
+    const aasaHeaders = [
+      { key: 'Content-Type', value: 'application/json' },
+      { key: 'Cache-Control', value: 'public, max-age=86400' },
+    ]
     return [
       {
         source: '/sw.js',
@@ -35,6 +41,8 @@ const nextConfig: NextConfig = {
           { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'" },
         ],
       },
+      { source: '/apple-app-site-association', headers: aasaHeaders },
+      { source: '/.well-known/apple-app-site-association', headers: aasaHeaders },
     ]
   },
   webpack: (webpackConfig) => {

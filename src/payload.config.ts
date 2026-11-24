@@ -30,6 +30,7 @@ import { Hayati } from './globals/Hayati'
 import { Iletisim } from './globals/Iletisim'
 import { SiteAyarlari } from './globals/SiteAyarlari'
 import { UiMetinleri } from './globals/UiMetinleri'
+import { VideoMetinleri } from './globals/VideoMetinleri'
 import { YorumMetinleri } from './globals/YorumMetinleri'
 
 const filename = fileURLToPath(import.meta.url)
@@ -68,7 +69,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, YaziTurleri, EserTurleri, Eserler, Kitaplar, Dersler, Hocalar, YaziKategorileri, Yazilar, Yorumlar, VideoKategorileri, Videolar, Duyurular, PushAbonelikleri],
-  globals: [SiteAyarlari, UiMetinleri, Anasayfa, Hayati, Iletisim, Bulten, YorumMetinleri],
+  globals: [SiteAyarlari, UiMetinleri, VideoMetinleri, Anasayfa, Hayati, Iletisim, Bulten, YorumMetinleri],
   localization: {
     locales: [
       { code: 'tr', label: 'Türkçe' },

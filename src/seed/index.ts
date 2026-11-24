@@ -6,6 +6,7 @@ import { slugify } from '@/lib/slug'
 import { UI_KEYS } from '@/globals/UiMetinleri'
 import { LOCALES } from '@/i18n/config'
 import { SEED_BULTEN } from './bulten'
+import { SEED_VIDEO_METINLERI } from './video-metinleri'
 import { SEED_YORUM_METINLERI } from './yorum-metinleri'
 import { SEED_DERSLER } from './dersler'
 import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
@@ -374,6 +375,11 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
   // Yazı sayfalarındaki yorum bölümünün metinleri.
   for (const locale of LOCALES) {
     await payload.updateGlobal({ slug: 'yorum-metinleri', data: SEED_YORUM_METINLERI[locale], locale, context: ctx() })
+  }
+
+  // Videolar sayfası ve oynatıcının arayüz metinleri.
+  for (const locale of LOCALES) {
+    await payload.updateGlobal({ slug: 'video-metinleri', data: SEED_VIDEO_METINLERI[locale], locale, context: ctx() })
   }
 
   for (const locale of LOCALES) {

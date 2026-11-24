@@ -66,17 +66,17 @@ describe('pathsForTags', () => {
     expect(pathsForChange('eserler', { slug: 'b' })).not.toContain('/yazilar/b')
   })
 
-  it('re-renders the sitemap only when published yazı slugs can change', () => {
-    expect(pathsForChange('yazilar', { slug: 'b' })).toContain('/sitemap.xml')
-    expect(pathsForChange('yazi-kategorileri')).toContain('/sitemap.xml')
-    expect(pathsForChange('eserler')).not.toContain('/sitemap.xml')
-    expect(pathsForChange('dersler')).not.toContain('/sitemap.xml')
+  it('re-renders the sitemap when published yazı slugs or indexed images can change', () => {
+    for (const s of ['yazilar', 'yazi-kategorileri', 'eserler', 'kitaplar', 'hayati', 'media', 'yazi-turleri', 'eser-turleri'])
+      expect(pathsForChange(s), s).toContain('/sitemap.xml')
+    for (const s of ['dersler', 'videolar', 'video-metinleri', 'iletisim', 'ui-metinleri', 'bulten', 'yorum-metinleri', 'site-ayarlari'])
+      expect(pathsForChange(s), s).not.toContain('/sitemap.xml')
   })
 
   it('re-renders llms.txt when its description, biography, teachers, books, lessons, scripts or writings can change', () => {
     for (const s of ['yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media', 'hayati', 'hocalar', 'dersler', 'yazi-turleri', 'eser-turleri', 'eserler'])
       expect(pathsForChange(s), s).toContain('/llms.txt')
-    for (const s of ['videolar', 'video-kategorileri', 'iletisim', 'site-ayarlari', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
+    for (const s of ['videolar', 'video-kategorileri', 'video-metinleri', 'iletisim', 'site-ayarlari', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
       expect(pathsForChange(s), s).not.toContain('/llms.txt')
   })
 
@@ -86,7 +86,7 @@ describe('pathsForTags', () => {
       'yazi-turleri', 'eser-turleri', 'eserler', 'videolar', 'video-kategorileri', 'site-ayarlari',
     ])
       expect(pathsForChange(s), s).toContain('/llms-full.txt')
-    for (const s of ['iletisim', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
+    for (const s of ['iletisim', 'ui-metinleri', 'video-metinleri', 'bulten', 'yorum-metinleri'])
       expect(pathsForChange(s), s).not.toContain('/llms-full.txt')
   })
 

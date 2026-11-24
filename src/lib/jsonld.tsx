@@ -90,6 +90,56 @@ export function makale(opts: {
   }
 }
 
+/** Eserler sayfası için VisualArtwork listesi; Google Görseller'de eser, hattat ve hat türünü ilişkilendirir. */
+export function eserListesi(
+  eserler: {
+    baslik: string
+    src: string
+    width?: number | null
+    height?: number | null
+    yaziTurleri?: string[]
+    tur?: string | null
+    yil?: string | null
+    malzeme?: string | null
+    aciklama?: string | null
+    anlam?: string | null
+  }[],
+  locale: Locale,
+): Record<string, unknown> {
+  const sanatci = { '@type': 'Person', '@id': `${siteUrl()}/#kisi`, name: SITE_NAME, url: siteUrl() }
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: eserler.map((e, i) => {
+      const url = mutlak(e.src)
+      const bicimler = [e.tur, ...(e.yaziTurleri ?? [])].filter((x): x is string => Boolean(x))
+      const tanim = e.aciklama || e.anlam
+      return {
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'VisualArtwork',
+          name: e.baslik,
+          creator: sanatci,
+          inLanguage: locale,
+          image: {
+            '@type': 'ImageObject',
+            url,
+            contentUrl: url,
+            creator: sanatci,
+            ...(e.width ? { width: e.width } : {}),
+            ...(e.height ? { height: e.height } : {}),
+          },
+          ...(bicimler.length > 0 ? { artform: bicimler } : {}),
+          ...(e.malzeme ? { artMedium: e.malzeme } : {}),
+          ...(e.yil ? { dateCreated: e.yil } : {}),
+          ...(tanim ? { description: tanim } : {}),
+        },
+      }
+    }),
+  }
+}
+
 /** Kitaplar sayfası için Book listesi. */
 export function kitapListesi(
   kitaplar: { baslik: string; yazar?: string | null; yayinevi?: string | null; yil?: string | null; isbn?: string | null; kapak?: string | null }[],

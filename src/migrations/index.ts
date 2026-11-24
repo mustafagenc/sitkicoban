@@ -18,6 +18,7 @@ import * as migration_20261110_195418_duyurular from './20261110_195418_duyurula
 import * as migration_20261110_202412_yorumlar from './20261110_202412_yorumlar';
 import * as migration_20261122_191635_dua from './20261122_191635_dua';
 import * as migration_20261122_211602_kitap_editor from './20261122_211602_kitap_editor';
+import * as migration_20261124_160225_video_metinleri from './20261124_160225_video_metinleri';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20261122_211602_kitap_editor.up,
     down: migration_20261122_211602_kitap_editor.down,
-    name: '20261122_211602_kitap_editor'
+    name: '20261122_211602_kitap_editor',
+  },
+  {
+    up: migration_20261124_160225_video_metinleri.up,
+    down: migration_20261124_160225_video_metinleri.down,
+    name: '20261124_160225_video_metinleri'
   },
 ];
