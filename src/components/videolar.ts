@@ -1,7 +1,7 @@
 import type { Locale } from '@/i18n/config'
 import { mediaUrl } from '@/lib/media'
 import { youtubeId, youtubeThumb } from '@/lib/youtube'
-import type { Media, UiMetinleri, VideoKategorileri, Videolar } from '@/payload-types'
+import type { Media, VideoKategorileri, VideoMetinleri, Videolar } from '@/payload-types'
 
 import { formatTarih } from './yazilar'
 
@@ -33,7 +33,7 @@ export type VideoItem = {
 const obj = <T extends object>(v: unknown): T | null => (v && typeof v === 'object' ? (v as T) : null)
 const text = (s: string | null | undefined) => (s && s.trim() ? s.trim() : null)
 
-export function toVideolar(docs: Videolar[], ui: UiMetinleri, locale: Locale): VideoItem[] {
+export function toVideolar(docs: Videolar[], vm: Pick<VideoMetinleri, 'dersNo'>, locale: Locale): VideoItem[] {
   return docs.flatMap((d) => {
     const yt = youtubeId(d.youtube)
     if (!yt) return []
@@ -50,7 +50,7 @@ export function toVideolar(docs: Videolar[], ui: UiMetinleri, locale: Locale): V
         kategori: text(kat?.ad),
         seri,
         bolum,
-        dersNo: seri && bolum !== null && ui.dersNo ? ui.dersNo.replace('{n}', String(bolum)) : null,
+        dersNo: seri && bolum !== null && vm.dersNo ? vm.dersNo.replace('{n}', String(bolum)) : null,
         sure: text(d.sure),
         tarih: formatTarih(d.tarih, locale),
         kanal: text(d.kanal),

@@ -40,6 +40,7 @@ export const PAGES_BY_TAG: Record<Tag, PageKey[]> = {
   yazilar: ['yazilar', 'home', 'kitaplar'],
   hayati: ['hayati', 'home'],
   videolar: ['videolar', 'home'],
+  videoMetinleri: ['videolar', 'home'],
   iletisim: ['iletisim', 'aydinlatma'],
   bulten: ALL_PAGES, // alt bilgideki "Bülten" bağlantısı her sayfada; ana sayfada bülten şeridi
   // Yorumlar ve metinleri yalnızca yazı detay sayfalarında (YAZI_DETAIL_TAGS); liste sayfası yok.

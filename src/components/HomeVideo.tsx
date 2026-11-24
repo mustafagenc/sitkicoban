@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useCallback, useState } from 'react'
 
 import { localizedPath, type Locale } from '@/i18n/config'
-import type { UiMetinleri } from '@/payload-types'
+import type { UiMetinleri, VideoMetinleri } from '@/payload-types'
 
 import { VideoModal } from './VideoModal'
 import type { VideoItem } from './videolar'
@@ -18,12 +18,14 @@ export function HomeVideo({
   video,
   list,
   ui,
+  vm,
   locale,
 }: {
   video: VideoItem
   /** Tüm videolar (seri listesi ve alttaki liste için). */
   list: VideoItem[]
   ui: UiMetinleri
+  vm: VideoMetinleri
   locale: Locale
 }) {
   const [open, setOpen] = useState<number | null>(null)
@@ -33,7 +35,7 @@ export function HomeVideo({
   return (
     <section id="video">
       <div className="wrap video-wrap">
-        <button type="button" className="player" aria-label={ui.videoOynat ?? undefined} onClick={() => setOpen(video.id)}>
+        <button type="button" className="player" aria-label={vm.videoOynat ?? undefined} onClick={() => setOpen(video.id)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img {...duyarli(video.kapak, '(max-width: 860px) 100vw, 680px')} alt={video.baslik} loading="lazy" />
           <span className="play" aria-hidden="true">
@@ -55,11 +57,11 @@ export function HomeVideo({
             </div>
           )}
           <Link className="btn" style={{ marginTop: 20 }} href={localizedPath('videolar', locale)}>
-            {ui.tumVideolarOk}
+            {vm.tumVideolarOk}
           </Link>
         </div>
       </div>
-      {open !== null && <VideoModal list={list} id={open} ui={ui} onClose={close} />}
+      {open !== null && <VideoModal list={list} id={open} ui={ui} vm={vm} onClose={close} />}
     </section>
   )
 }

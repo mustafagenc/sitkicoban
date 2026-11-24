@@ -76,7 +76,7 @@ describe('pathsForTags', () => {
   it('re-renders llms.txt when its description, biography, teachers, books, lessons, scripts or writings can change', () => {
     for (const s of ['yazilar', 'yazi-kategorileri', 'anasayfa', 'kitaplar', 'media', 'hayati', 'hocalar', 'dersler', 'yazi-turleri', 'eser-turleri', 'eserler'])
       expect(pathsForChange(s), s).toContain('/llms.txt')
-    for (const s of ['videolar', 'video-kategorileri', 'iletisim', 'site-ayarlari', 'ui-metinleri', 'bulten', 'yorum-metinleri'])
+    for (const s of ['videolar', 'video-kategorileri', 'video-metinleri', 'iletisim', 'site-ayarlari', 'ui-metinleri', 'video-metinleri', 'bulten', 'yorum-metinleri'])
       expect(pathsForChange(s), s).not.toContain('/llms.txt')
   })
 

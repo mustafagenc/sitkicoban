@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 
 import { BULTEN_METIN_KEYS } from '@/globals/Bulten'
 import { UI_KEYS } from '@/globals/UiMetinleri'
+import { VIDEO_METIN_KEYS } from '@/globals/VideoMetinleri'
 import { BULTEN_METINLER } from '@/seed/bulten'
+import { VIDEO_METINLERI } from '@/seed/video-metinleri'
 
 describe('UI_KEYS', () => {
   it('stays under the Postgres json_build_array argument limit', () => {
@@ -10,6 +12,13 @@ describe('UI_KEYS', () => {
     // 100'den fazla argüman vermez. Sınıra yaklaşınca anahtarları sayfa grubu başına ayrı
     // bir gruba/globale bölün (sayfa grubu kuralı) ve bu sınırı öyle yükseltin.
     expect(UI_KEYS.length, 'UI_KEYS 96 sınırını aştı: ui_metinleri_locales sayfa grubuna göre bölünmeli').toBeLessThanOrEqual(96)
+  })
+
+  it('keeps the video-metinleri global under the same limit and seeds every key in three languages', () => {
+    expect(VIDEO_METIN_KEYS.length).toBeLessThanOrEqual(96)
+    for (const k of VIDEO_METIN_KEYS) {
+      for (const l of ['tr', 'en', 'ar'] as const) expect(VIDEO_METINLERI[k][l], `${k}.${l}`).toBeTruthy()
+    }
   })
 
   it('keeps the bulten global under the same limit and seeds every key in three languages', () => {

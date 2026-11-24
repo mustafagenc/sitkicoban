@@ -116,6 +116,7 @@ export interface Config {
   globals: {
     'site-ayarlari': SiteAyarlari;
     'ui-metinleri': UiMetinleri;
+    'video-metinleri': VideoMetinleri;
     anasayfa: Anasayfa;
     hayati: Hayati;
     iletisim: Iletisim;
@@ -125,6 +126,7 @@ export interface Config {
   globalsSelect: {
     'site-ayarlari': SiteAyarlariSelect<false> | SiteAyarlariSelect<true>;
     'ui-metinleri': UiMetinleriSelect<false> | UiMetinleriSelect<true>;
+    'video-metinleri': VideoMetinleriSelect<false> | VideoMetinleriSelect<true>;
     anasayfa: AnasayfaSelect<false> | AnasayfaSelect<true>;
     hayati: HayatiSelect<false> | HayatiSelect<true>;
     iletisim: IletisimSelect<false> | IletisimSelect<true>;
@@ -1158,6 +1160,18 @@ export interface UiMetinleri {
   icazetEyebrow?: string | null;
   icazetBaslik?: string | null;
   anasayfaHayatiBaslik?: string | null;
+  devaminiOku?: string | null;
+  footerTelif?: string | null;
+  footerNot?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-metinleri".
+ */
+export interface VideoMetinleri {
+  id: number;
   videolarBaslik?: string | null;
   videolarAciklama?: string | null;
   videolarListeBaslik?: string | null;
@@ -1169,9 +1183,6 @@ export interface UiMetinleri {
   videoSeriBaslik?: string | null;
   youtubedaAc?: string | null;
   tumVideolarOk?: string | null;
-  devaminiOku?: string | null;
-  footerTelif?: string | null;
-  footerNot?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1577,6 +1588,18 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   icazetEyebrow?: T;
   icazetBaslik?: T;
   anasayfaHayatiBaslik?: T;
+  devaminiOku?: T;
+  footerTelif?: T;
+  footerNot?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-metinleri_select".
+ */
+export interface VideoMetinleriSelect<T extends boolean = true> {
   videolarBaslik?: T;
   videolarAciklama?: T;
   videolarListeBaslik?: T;
@@ -1588,9 +1611,6 @@ export interface UiMetinleriSelect<T extends boolean = true> {
   videoSeriBaslik?: T;
   youtubedaAc?: T;
   tumVideolarOk?: T;
-  devaminiOku?: T;
-  footerTelif?: T;
-  footerNot?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

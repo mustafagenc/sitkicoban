@@ -1,4 +1,4 @@
-export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'iletisim' | 'bulten' | 'yorumlar' | 'yorumMetinleri'
+export type Tag = 'eserler' | 'kitaplar' | 'turler' | 'ayarlar' | 'ui' | 'anasayfa' | 'media' | 'dersler' | 'yazilar' | 'hayati' | 'videolar' | 'videoMetinleri' | 'iletisim' | 'bulten' | 'yorumlar' | 'yorumMetinleri'
 
 /** Which cache tags a content source (collection/global slug) invalidates. */
 export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
@@ -17,6 +17,7 @@ export const TAGS_BY_SOURCE: Record<string, Tag[]> = {
   hocalar: ['hayati'],
   videolar: ['videolar'],
   'video-kategorileri': ['videolar'],
+  'video-metinleri': ['videoMetinleri'],
   iletisim: ['iletisim'],
   bulten: ['bulten'],
   // `yorumlar` koleksiyonu burada yok: kendi kancası yalnızca yorumun yazısını yeniler (bkz. yorumRevalidateHooks).

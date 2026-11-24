@@ -252,6 +252,11 @@ export const getVideoKategorileri = cached('video-kategorileri', ['videolar'], a
   findVideoKategorileri(await getPayload({ config }), locale),
 )
 
+export const getVideoMetinleri = cached('video-metinleri', ['videoMetinleri'], async (locale: Locale) => {
+  const payload = await getPayload({ config })
+  return payload.findGlobal({ slug: 'video-metinleri', ...opts(locale) })
+})
+
 // İletişim sayfası ve aydınlatma metni.
 export const getIletisim = cached('iletisim', ['iletisim'], async (locale: Locale) => {
   const payload = await getPayload({ config })

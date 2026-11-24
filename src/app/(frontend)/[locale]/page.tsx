@@ -31,6 +31,7 @@ import {
   getHocalar,
   getSiteAyarlari,
   getUi,
+  getVideoMetinleri,
   getVideolar,
   getYazilar,
 } from '@/lib/data'
@@ -50,8 +51,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
-  const [ui, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, _hocalar, videoDocs, bulten] = await Promise.all([
+  const [ui, vm, ayarlar, anasayfa, eserler, secme, kitaplar, dersler, yazilarDocs, hayati, _hocalar, videoDocs, bulten] = await Promise.all([
     getUi(locale),
+    getVideoMetinleri(locale),
     getSiteAyarlari(locale),
     getAnasayfa(locale),
     getEserler(locale),
@@ -66,7 +68,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   ])
   const bm = bulten.metinler ?? {}
   const yazilar = toYazilar(yazilarDocs, ui, locale)
-  const videolar = toVideolar(videoDocs, ui, locale)
+  const videolar = toVideolar(videoDocs, vm, locale)
   const anaVideo = anasayfaVideosu(videolar)
 
   return (
@@ -139,7 +141,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {anaVideo && <HomeVideo video={anaVideo} list={videolar} ui={ui} locale={locale} />}
+      {anaVideo && <HomeVideo video={anaVideo} list={videolar} ui={ui} vm={vm} locale={locale} />}
       <HomeDersler dersler={toDersler(dersler)} ui={ui} locale={locale} />
       {bm.anasayfaBaslik && (
         <div className="bulten-serit" id="bulten">

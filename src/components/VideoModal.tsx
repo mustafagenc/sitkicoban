@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { youtubeEmbed, youtubeWatch } from '@/lib/youtube'
-import type { UiMetinleri } from '@/payload-types'
+import type { UiMetinleri, VideoMetinleri } from '@/payload-types'
 
 import { PostMeta } from './PostMeta'
 import { bolumAdi, seriVideolari, type VideoItem } from './videolar'
@@ -17,6 +17,7 @@ export function VideoModal({
   list,
   id,
   ui,
+  vm,
   onClose,
 }: {
   /** Seri listesi için tüm videolar. */
@@ -24,6 +25,7 @@ export function VideoModal({
   /** Açılışta oynatılacak videonun kimliği. */
   id: number
   ui: UiMetinleri
+  vm: VideoMetinleri
   onClose: () => void
 }) {
   const [cur, setCur] = useState(id)
@@ -110,12 +112,12 @@ export function VideoModal({
           {v.aciklama && <p>{v.aciklama}</p>}
           <PostMeta parts={[v.kanal, v.tarih, v.sure]} />
           <a className="meta yt" href={youtubeWatch(v.youtubeId)} target="_blank" rel="noopener noreferrer">
-            {ui.youtubedaAc}
+            {vm.youtubedaAc}
           </a>
           {seri.length > 1 && (
             <div className="series">
               <div className="lbl">
-                {(ui.videoSeriBaslik ?? '').replace('{seri}', v.seri ?? '').replace('{n}', String(seri.length))}
+                {(vm.videoSeriBaslik ?? '').replace('{seri}', v.seri ?? '').replace('{n}', String(seri.length))}
               </div>
               {seri.map((x) => (
                 <button key={x.id} type="button" className={x.id === v.id ? 'on' : undefined} onClick={() => setCur(x.id)}>
