@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
     formats: ['image/avif', 'image/webp'],
   },
+  // Eski statik adresler (.html) kalıcı olarak (308) kanonik yollarına yönlendirilir.
+  async redirects() {
+    return [
+      { source: '/index.html', destination: '/', permanent: true },
+      { source: '/:locale(en|ar)/index.html', destination: '/:locale', permanent: true },
+      {
+        source: '/:sayfa(eserler|kitaplar|yazilar|videolar|hayati|iletisim).html',
+        destination: '/:sayfa',
+        permanent: true,
+      },
+    ]
+  },
   // Service worker (tarayıcı bildirimleri) her kayıtta sunucudan doğrulansın: eski sürüm takılı kalmasın.
   async headers() {
     return [
