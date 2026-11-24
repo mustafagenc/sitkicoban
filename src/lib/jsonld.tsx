@@ -1,5 +1,5 @@
 import { localizedPath, type Locale } from '@/i18n/config'
-import { mutlak, SITE_NAME } from '@/lib/seo'
+import { mutlak, SITE_NAME, THUMBNAIL_DEFAULT } from '@/lib/seo'
 import { siteUrl } from '@/lib/site'
 import type { SiteAyarlari } from '@/payload-types'
 
@@ -37,6 +37,32 @@ export function kisi(opts: {
     ...(opts.aciklama ? { description: opts.aciklama } : {}),
     ...(opts.portre ? { image: mutlak(opts.portre) } : {}),
     sameAs: sosyal(opts.ayarlar),
+  }
+}
+
+/** Ana sayfa için WebPage: Google arama sonucu önizleme görselini (primaryImageOfPage) açıkça bildirir. */
+export function webSayfasi(opts: {
+  locale: Locale
+  aciklama?: string | null
+}): Record<string, unknown> {
+  const url = siteUrl() + localizedPath('home', opts.locale)
+  const gorselUrl = mutlak(THUMBNAIL_DEFAULT.url)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#sayfa`,
+    url,
+    name: SITE_NAME,
+    inLanguage: opts.locale,
+    ...(opts.aciklama ? { description: opts.aciklama } : {}),
+    thumbnailUrl: gorselUrl,
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: gorselUrl,
+      width: THUMBNAIL_DEFAULT.width,
+      height: THUMBNAIL_DEFAULT.height,
+    },
+    about: { '@id': `${siteUrl()}/#kisi` },
   }
 }
 

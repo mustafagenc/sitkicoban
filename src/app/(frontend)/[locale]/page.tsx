@@ -37,7 +37,7 @@ import {
 
 import '../styles/anasayfa.css'
 import { sayfaMeta } from '@/lib/seo'
-import { JsonLd, kisi } from '@/lib/jsonld'
+import { JsonLd, kisi, webSayfasi } from '@/lib/jsonld'
 import { portreUrl } from '@/components/hayati'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -80,6 +80,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           unvanlar: anasayfa.heroEyebrow,
           aciklama: anasayfa.metaAciklama ?? hayati.girisCumlesi,
           portre: portreUrl(hayati),
+        })}
+      />
+      <JsonLd
+        data={webSayfasi({
+          locale,
+          aciklama: anasayfa.metaAciklama ?? hayati.girisCumlesi,
         })}
       />
 

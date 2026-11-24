@@ -1,4 +1,9 @@
-import { duyarli } from '@/lib/img'
+import type { CSSProperties } from 'react'
+
+import { optimized } from '@/lib/img'
+
+const KOLAJ_BOYLARI = [384, 640, 828, 1200] as const
+const boySec = (hedef: number) => KOLAJ_BOYLARI.find((w) => w >= hedef) ?? 1200
 
 /** Kolaj: 5 satır, her satırda 9 eser (tasarımdaki dizin formülüyle), kesintisiz kayma için iki kez. */
 export function collageRows<T>(images: T[]): T[][] {
@@ -31,17 +36,18 @@ export function HomeHero({
         {collageRows(images).map((row, r) => (
           <div className="row" key={r}>
             {row.map(({ src, oran }, i) => (
-              // Genişlik/yükseklik oranı verilir ki görsel yüklenince satır kaymasın (CSS yüksekliği belirler);
-              // satırda 18 görsel yan yana olduğundan yuvarlama birikmesin diye yüksek çözünürlüklü sayılar.
-              // Gösterilen genişlik: oran × satır yüksekliği (masaüstü 15vw, mobil 19svh).
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              // aspect-ratio ile yüklenmeden tam yer ayrılır; dekoratif arka plan olduğu için <img>
+              // yerine CSS zemin kullanılır ki Google arama önizlemesi kolajdan rastgele eser seçmesin.
+              <span
                 key={i}
-                {...duyarli(src, `(max-width: 860px) ${(oran * 19).toFixed(1)}vh, ${(oran * 15).toFixed(1)}vw`)}
-                width={Math.round(oran * 10000)}
-                height={10000}
-                alt=""
-                decoding="async"
+                className="tile"
+                style={
+                  {
+                    aspectRatio: String(oran),
+                    '--bg-1x': `url("${optimized(src, boySec(Math.round(240 * oran)))}")`,
+                    '--bg-2x': `url("${optimized(src, boySec(Math.round(480 * oran)))}")`,
+                  } as CSSProperties
+                }
               />
             ))}
           </div>
