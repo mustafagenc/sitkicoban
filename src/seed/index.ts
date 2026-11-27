@@ -189,18 +189,12 @@ export async function seedYazilar(payload: Payload, opts: { root?: string } = {}
   return SEED_YAZILAR.length
 }
 
-export async function seed(payload: Payload, opts: { root?: string } = {}): Promise<SeedResult> {
+export async function seedEserler(
+  payload: Payload,
+  opts: { root?: string; sadeceYeni?: boolean } = {},
+): Promise<number> {
   const root = opts.root ?? 'tasarim'
   const design = readDesign(root)
-
-  // Admin user (password of an existing user is never touched).
-  const email = process.env.SEED_ADMIN_EMAIL
-  const password = process.env.SEED_ADMIN_PASSWORD
-  if (!email || !password) throw new Error('SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set')
-  const existing = await payload.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0 })
-  if (!existing.docs[0]) {
-    await payload.create({ collection: 'users', data: { email, password }, context: ctx() })
-  }
 
   // Taxonomies, in first-seen order.
   const yaziIds = new Map<string, number | string>()
@@ -215,6 +209,16 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
   // Works
   const eserSlugs = slugsFor(design.eserler.map((e) => e.t))
   for (const [i, e] of design.eserler.entries()) {
+    if (opts.sadeceYeni) {
+      const mevcut = await payload.find({
+        collection: 'eserler',
+        where: { slug: { equals: eserSlugs[i] } },
+        locale: LOCALE,
+        limit: 1,
+        depth: 0,
+      })
+      if (mevcut.docs[0]) continue
+    }
     const gorsel = await upsertMedia(payload, root, e.f, e.t)
     const homeIdx = HOME_WORKS.indexOf(e.f)
     await upsertBySlug(payload, 'eserler', eserSlugs[i], {
@@ -237,6 +241,23 @@ export async function seed(payload: Payload, opts: { root?: string } = {}): Prom
       anasayfaSira: homeIdx !== -1 ? homeIdx : null,
     })
   }
+  return design.eserler.length
+}
+
+export async function seed(payload: Payload, opts: { root?: string } = {}): Promise<SeedResult> {
+  const root = opts.root ?? 'tasarim'
+  const design = readDesign(root)
+
+  // Admin user (password of an existing user is never touched).
+  const email = process.env.SEED_ADMIN_EMAIL
+  const password = process.env.SEED_ADMIN_PASSWORD
+  if (!email || !password) throw new Error('SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set')
+  const existing = await payload.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0 })
+  if (!existing.docs[0]) {
+    await payload.create({ collection: 'users', data: { email, password }, context: ctx() })
+  }
+
+  await seedEserler(payload, { root })
 
   // Books
   const kitapSlugs = slugsFor(design.kitaplar.map((k) => k.t))
