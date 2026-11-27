@@ -26,6 +26,10 @@
     { f:'e-besmele-levha.png',  r:1.78, t:'Besmele',                       yazi:['Sülüs'],         tur:'Levha' },
     { f:'e-besmele-talik.png',  r:3.61, t:"Ta'lik Besmele",                yazi:["Ta'lik"],        tur:'Levha', y:'1444',
       ar:'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ', mean:"Rahmân ve Rahîm olan Allah'ın adıyla." },
+    { f:'e-kisi-sevdigiyle-beraberdir.jpg', r:2.06, t:'Kişi Sevdiğiyle Beraberdir', yazi:['Nesih'], tur:'Levha', y:'1446',
+      ar:'الْمَرْءُ مَعَ مَنْ أَحَبَّ', mean:'Kişi sevdiği ile beraberdir.', src:'Hadîs-i Şerif (Buhârî, Edeb, 96; Müslim, Birr, 165)' },
+    { f:'e-ikra.jpg',           r:.7,   t:'İkra',                          yazi:['Celî Sülüs'],    tur:'Levha', y:'1447',
+      ar:'اقْرَأْ', mean:'Oku!', src:'Alak Sûresi, 1. âyet', desc:'Lâle formunda müsenna (aynalı) istif.' },
   ];
 
 (() => {
