@@ -112,7 +112,7 @@ describe('seed', () => {
     expect((await payload.count({ collection: 'eserler' })).totalDocs).toBe(22)
   }, 120_000)
 
-  it('maps fields: yil and tur', async () => {
+  it('maps fields: yil, tur, and EN/AR translations', async () => {
     const { docs } = await payload.find({
       collection: 'eserler',
       where: { slug: { equals: 'subhanellah' } },
@@ -122,6 +122,14 @@ describe('seed', () => {
     expect(docs[0].yil).toBe('1442')
     const tur = docs[0].tur as { ad: string }
     expect(tur.ad).toBe('Levha')
+
+    const en = await payload.findByID({ collection: 'eserler', id: docs[0].id, depth: 1, locale: 'en', fallbackLocale: false })
+    expect(en.baslik).toBe('Subhanallah')
+    expect((en.tur as { ad: string }).ad).toBe('Panel')
+
+    const ar = await payload.findByID({ collection: 'eserler', id: docs[0].id, depth: 1, locale: 'ar', fallbackLocale: false })
+    expect(ar.baslik).toBe('سبحان الله')
+    expect((ar.tur as { ad: string }).ad).toBe('لوحة')
   })
 
   it('gives every write its own context object (plugins store per-request state in it)', async () => {

@@ -7,7 +7,7 @@ import type {
   PayloadRequest,
 } from 'payload'
 
-import { LOCALES, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
+import { LOCALES, eserPath, localizedPath, yaziPath, type PageKey } from '@/i18n/config'
 
 import { siteUrl } from '@/lib/site'
 
@@ -75,26 +75,33 @@ export function pathsForTags(tags: Tag[]): string[] {
 }
 
 /**
- * Tag paths plus yazı detail pages: for `yazilar`, the changed doc's current and previous slug,
- * and every slug in `publishedSlugs` (see `rendersYaziDetail`).
+ * Tag paths plus yazı and eser detail pages: for `yazilar` / `eserler`, the changed doc's current and
+ * previous slug, plus every slug in `publishedSlugs` / `eserSlugs`.
  */
 export function pathsForChange(
   source: string,
   doc?: { slug?: unknown } | null,
   previousDoc?: { slug?: unknown } | null,
   publishedSlugs: string[] = [],
+  eserSlugs: string[] = [],
 ): string[] {
   const paths = new Set(pathsForTags(TAGS_BY_SOURCE[source] ?? []))
-  // Site haritası yazı adreslerini ve eser/kitap/portre/yazı kapak görsellerini listeler.
+  // Site haritası yazı ve eser adreslerini, ayrıca eser/kitap/portre/yazı kapak görsellerini listeler.
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => SITEMAP_TAGS.includes(t))) paths.add('/sitemap.xml')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_TAGS.includes(t))) paths.add('/llms.txt')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => LLMS_FULL_TAGS.includes(t))) paths.add('/llms-full.txt')
   if ((TAGS_BY_SOURCE[source] ?? []).some((t) => AJAN_TAGS.includes(t))) paths.add('/ajan.json')
-  const slugs = [...publishedSlugs]
+  const ySlugs = [...publishedSlugs]
   if (source === 'yazilar') {
-    for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) slugs.push(d.slug)
+    for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) ySlugs.push(d.slug)
   }
-  for (const slug of slugs) for (const locale of LOCALES) paths.add(yaziPath(slug, locale))
+  for (const slug of ySlugs) for (const locale of LOCALES) paths.add(yaziPath(slug, locale))
+
+  const eSlugs = [...eserSlugs]
+  if (source === 'eserler') {
+    for (const d of [doc, previousDoc]) if (typeof d?.slug === 'string' && d.slug) eSlugs.push(d.slug)
+  }
+  for (const slug of eSlugs) for (const locale of LOCALES) paths.add(eserPath(slug, locale))
   return [...paths]
 }
 
@@ -105,9 +112,17 @@ export function pathsForChange(
  */
 export const YAZI_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'yazilar', 'kitaplar', 'bulten', 'yorumlar', 'yorumMetinleri']
 
+/** Tags whose data every eser detail page (`/eserler/[slug]`) renders. */
+export const ESER_DETAIL_TAGS: Tag[] = ['ayarlar', 'ui', 'media', 'eserler', 'turler', 'bulten']
+
 /** Whether a save to this source changes data shown on every published yazı detail page. */
 export function rendersYaziDetail(source: string): boolean {
   return (TAGS_BY_SOURCE[source] ?? []).some((t) => YAZI_DETAIL_TAGS.includes(t))
+}
+
+/** Whether a save to this source changes data shown on every eser detail page. */
+export function rendersEserDetail(source: string): boolean {
+  return (TAGS_BY_SOURCE[source] ?? []).some((t) => ESER_DETAIL_TAGS.includes(t))
 }
 
 /**
@@ -120,6 +135,28 @@ async function publishedYaziSlugs(req: PayloadRequest | undefined): Promise<stri
     const res = await req.payload.find({
       collection: 'yazilar',
       where: { yayinda: { equals: true } },
+      select: { slug: true },
+      depth: 0,
+      pagination: false,
+      limit: 0,
+      req,
+    })
+    return res.docs.map((d) => d.slug).filter((s): s is string => typeof s === 'string' && s.length > 0)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Eser slugs, read inside the save's own request/transaction when shared layout/UI/taxonomy tags change.
+ * When saving a single `eserler` doc (`source === 'eserler'`), only that work's old/new slug needs warming
+ * unless its neighbours in prev/next navigation changed; warming all works keeps prev/next titles fresh too.
+ */
+async function allEserSlugs(req: PayloadRequest | undefined): Promise<string[]> {
+  if (!req?.payload?.collections?.eserler) return []
+  try {
+    const res = await req.payload.find({
+      collection: 'eserler',
       select: { slug: true },
       depth: 0,
       pagination: false,
@@ -149,7 +186,8 @@ async function invalidate(
   }
 
   const published = rendersYaziDetail(source) ? await publishedYaziSlugs(req) : []
-  const paths = pathsForChange(source, doc, previousDoc, published)
+  const eserler = rendersEserDetail(source) ? await allEserSlugs(req) : []
+  const paths = pathsForChange(source, doc, previousDoc, published, eserler)
   if (paths.length === 0) return
 
   // Ordering matters: the hook runs before Payload commits its DB transaction, and

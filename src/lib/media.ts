@@ -10,3 +10,17 @@ export function mediaUrl(m: Pick<Media, 'filename' | 'url'> | null | undefined):
   if (m.url && /^https?:\/\//.test(m.url)) return m.url
   return m.filename ? `/media/${encodeURIComponent(m.filename)}` : null
 }
+
+/** Blob adresini kendi alan adımızdaki kanonik `/media/<dosya>` yoluna çevirir (sitemap, OG ve JSON-LD için). */
+export function kanonikGorselYolu(src: string): string {
+  const m = /^https:\/\/[^/]+\.public\.blob\.vercel-storage\.com\/(.+)$/.exec(src)
+  return m ? `/media/${m[1]}` : src
+}
+
+/** Bir medya kaydının kendi alan adımızdaki kanonik yolu (`/media/<dosya>`). */
+export function kanonikMediaUrl(m: Pick<Media, 'filename' | 'url'> | null | undefined): string | null {
+  if (!m) return null
+  if (m.filename) return `/media/${encodeURIComponent(m.filename)}`
+  const u = mediaUrl(m)
+  return u ? kanonikGorselYolu(u) : null
+}

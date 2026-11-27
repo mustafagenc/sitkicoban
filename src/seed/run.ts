@@ -16,7 +16,10 @@ if (process.env.SEED_ONLY === 'yazilar' || process.argv.includes('--yazilar')) {
   const yazilar = await seedYazilar(payload)
   console.log(`yazilar: ${yazilar}`)
 } else if (process.env.SEED_ONLY === 'eserler' || process.argv.includes('--eserler')) {
-  const eserler = await seedEserler(payload, { sadeceYeni: process.env.SEED_SADECE_YENI === 'evet' })
+  const eserler = await seedEserler(payload, {
+    sadeceYeni: process.env.SEED_SADECE_YENI === 'evet',
+    sadeceCeviri: process.env.SEED_SADECE_CEVIRI === 'evet',
+  })
   console.log(`eserler: ${eserler}`)
 } else {
   const result = await seed(payload)

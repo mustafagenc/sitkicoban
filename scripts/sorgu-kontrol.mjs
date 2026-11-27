@@ -34,6 +34,7 @@ const YOLLAR = {
 const onEk = (l) => (l === 'tr' ? '' : `/${l}`)
 const SAYFALAR = Object.entries(YOLLAR).flatMap(([l, yollar]) => yollar.map((y) => `${onEk(l)}/${y}`.replace(/\/$/, '') || '/'))
 const YAZILAR = { tr: 'yazilar', en: 'writings', ar: 'writings' }
+const ESERLER_YOLU = { tr: 'eserler', en: 'works', ar: 'works' }
 const ANASAYFA = ['/', '/en', '/ar']
 // Sayfa olmayan, sorgusuz sunulması gereken dosyalar (bülten: service worker ve web app manifest).
 const DURAGAN = ['/sw.js', '/manifest.webmanifest']
@@ -219,11 +220,16 @@ async function main() {
   const yazi = (await oku(token, '/api/yazilar?where[yayinda][equals]=true&sort=-tarih&limit=1&depth=0')).docs?.[0]
   if (!yazi) hata('yayında yazı yok')
   const yaziSayfalari = Object.entries(YAZILAR).map(([l, y]) => `${onEk(l)}/${y}/${yazi.slug}`)
+  const tumEserler = (await oku(token, '/api/eserler?limit=1000&depth=0&locale=tr')).docs ?? []
+  const eserSluglari = tumEserler.map((e) => e.slug).filter(Boolean)
+  const ilkEserDetay = eserSluglari[0]
+    ? Object.entries(ESERLER_YOLU).map(([l, y]) => `${onEk(l)}/${y}/${eserSluglari[0]}`)
+    : []
   await sessizlikBekle()
 
   // 1) Ziyaretçi gezintisi: sıfır sorgu.
   writeFileSync(SORGU_LOG, '')
-  const gezilen = [...SAYFALAR, ...yaziSayfalari, '/llms.txt', '/llms-full.txt', '/ajan.json', ...DURAGAN]
+  const gezilen = [...SAYFALAR, ...yaziSayfalari, ...ilkEserDetay, '/llms.txt', '/llms-full.txt', '/ajan.json', ...DURAGAN]
   for (const p of gezilen) for (let i = 0; i < 3; i++) await getHtml(p)
   const gezinti = sorgular(0)
   if (gezinti.length) hata(`gezinti sırasında ${gezinti.length} sorgu:\n${gezinti.join('\n')}`)
@@ -240,10 +246,14 @@ async function main() {
   const yeniBaslik = `${eski} (test)`
 
   let asilHata
+  const eserDetayBeklenen = eserSluglari.flatMap((slug) =>
+    Object.entries(ESERLER_YOLU).map(([l, y]) => `${onEk(l)}/${y}/${slug}`),
+  )
+  const beklenenEserYenileme = [...BEKLENEN_YENILEME, ...eserDetayBeklenen]
   try {
     const yollar = await kaydetVeBekle(token, eser.id, yeniBaslik)
-    const fazla = yollar.filter((y) => !BEKLENEN_YENILEME.includes(y))
-    const eksik = BEKLENEN_YENILEME.filter((y) => !yollar.includes(y))
+    const fazla = yollar.filter((y) => !beklenenEserYenileme.includes(y))
+    const eksik = beklenenEserYenileme.filter((y) => !yollar.includes(y))
     if (fazla.length || eksik.length) hata(`yenilenen yollar beklenenden farklı: ${yollar.join(', ')}`)
     if (yollar.some((y) => y === '/kitaplar' || y.endsWith('/books'))) hata('Kitaplar yeniden üretildi')
     console.log(`yenilendi: ${yollar.join(', ')}`)

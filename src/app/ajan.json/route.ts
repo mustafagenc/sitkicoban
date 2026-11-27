@@ -1,6 +1,6 @@
 import { toBooks } from '@/components/books'
 import { toWorks } from '@/components/works'
-import { localizedPath, yaziPath } from '@/i18n/config'
+import { eserPath, localizedPath, yaziPath } from '@/i18n/config'
 import { getDersler, getEserler, getKitaplar, getSiteAyarlari, getYazilar } from '@/lib/data'
 import { mediaUrl } from '@/lib/media'
 import { mutlak } from '@/lib/seo'
@@ -36,8 +36,8 @@ export async function GET(): Promise<Response> {
       yaziTurleri: w.yaziTurleri,
       tur: w.tur,
       yil: w.yil,
-      gorsel: mutlak(w.src),
-      sayfa: base + localizedPath('eserler', 'tr'),
+      gorsel: mutlak(w.kanonikSrc),
+      sayfa: base + eserPath(w.slug, 'tr'),
     })),
     kitaplar: toBooks(kitaplar).map((b) => ({
       baslik: b.baslik,

@@ -1,0 +1,232 @@
+/* Eser detay sayfası stilleri (.eser-detay-sayfa altında kapsanır). */
+.eser-detay-sayfa {
+  display: contents;
+
+  .eser-detay {
+    padding: 36px 0 88px;
+  }
+
+  .crumb {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 22px;
+  }
+
+  .crumb a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .eser-izgara {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.95fr);
+    gap: 52px;
+    align-items: start;
+  }
+
+  .eser-cerceve {
+    margin: 0;
+    background: var(--paper);
+    outline: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    position: relative;
+  }
+
+  .eser-cerceve::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+
+  .eser-tetik {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: zoom-in;
+    position: relative;
+    z-index: 1;
+  }
+
+  .eser-tetik img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 78vh;
+    object-fit: contain;
+    margin: 0 auto;
+    transition: transform 0.45s ease;
+  }
+
+  .eser-tetik:hover img {
+    transform: scale(1.012);
+  }
+
+  .eser-ipucu {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  .eser-bilgi h1 {
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.2;
+  }
+
+  .eser-hattat {
+    margin-top: 8px;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .eser-etiketler {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .eser-etiket {
+    border: 1px solid var(--line-strong);
+    border-radius: 20px;
+    padding: 2px 13px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .eser-ar {
+    margin: 26px 0 0;
+    padding: 18px 20px;
+    background: var(--paper);
+    border-inline-start: 2px solid var(--gold);
+    font-family: var(--f-ar, 'Amiri', serif);
+    font-size: 28px;
+    line-height: 1.85;
+    direction: rtl;
+    text-align: right;
+    color: var(--head);
+  }
+
+  .eser-anlam {
+    margin: 18px 0 0;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--head);
+    line-height: 1.6;
+  }
+
+  .eser-kaynak {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .eser-aciklama {
+    margin: 18px 0 0;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+
+  .eser-kunye {
+    margin: 24px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 20px;
+    font-size: 15px;
+  }
+
+  .eser-kunye dt {
+    color: var(--ink-soft);
+  }
+
+  .eser-kunye dd {
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .eser-sor {
+    display: inline-block;
+    margin-top: 26px;
+    border: 1px solid var(--line-strong);
+    padding: 10px 22px;
+    font-size: 15px;
+    transition: 0.2s;
+  }
+
+  .eser-sor:hover {
+    background: var(--head);
+    border-color: var(--head);
+    color: var(--bg);
+  }
+
+  .eser-gezinti {
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .eser-gezinti a {
+    display: block;
+    padding: 14px 0;
+    transition: color 0.2s;
+  }
+
+  .eser-gezinti a:hover {
+    color: var(--gold);
+  }
+
+  .eser-gezinti a.next {
+    text-align: end;
+  }
+
+  .eser-gezinti small {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .eser-gezinti b {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--head);
+  }
+
+  @media (max-width: 900px) {
+    .eser-izgara {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .eser-cerceve {
+      padding: 14px;
+    }
+
+    .eser-gezinti {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .eser-gezinti a.next {
+      text-align: start;
+    }
+  }
+}

@@ -58,12 +58,15 @@ describe('pathsForTags', () => {
     expect(new Set(pathsForTags(['yazilar']))).toContain('/en/books')
   })
 
-  it('pathsForChange adds yazi detail paths for old and new slug', () => {
+  it('pathsForChange adds yazi and eser detail paths for old and new slug', () => {
     const paths = pathsForChange('yazilar', { slug: 'b' }, { slug: 'a' })
     for (const p of ['/yazilar/a', '/yazilar/b', '/en/writings/b', '/ar/writings/a', '/yazilar'])
       expect(paths).toContain(p)
     expect(paths.length).toBe(new Set(paths).size)
-    expect(pathsForChange('eserler', { slug: 'b' })).not.toContain('/yazilar/b')
+    const eserPaths = pathsForChange('eserler', { slug: 'b' }, { slug: 'a' })
+    expect(eserPaths).not.toContain('/yazilar/b')
+    for (const p of ['/eserler/a', '/eserler/b', '/en/works/b', '/ar/works/a', '/eserler'])
+      expect(eserPaths).toContain(p)
   })
 
   it('re-renders the sitemap when published yazı slugs or indexed images can change', () => {

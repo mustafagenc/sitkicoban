@@ -9,6 +9,7 @@ import { SEED_BULTEN } from './bulten'
 import { SEED_VIDEO_METINLERI } from './video-metinleri'
 import { SEED_YORUM_METINLERI } from './yorum-metinleri'
 import { SEED_DERSLER } from './dersler'
+import { ESER_CEVIRILERI, ESER_TURU_CEVIRILERI, YAZI_TURU_CEVIRILERI, type CeviriDili } from './eserler-ceviri'
 import { SEED_HAYATI, SEED_HOCALAR, SEED_PORTRE } from './hayati'
 import { SEED_ILETISIM } from './iletisim'
 import { SEED_VIDEO_KATEGORILERI, SEED_VIDEOLAR } from './videolar'
@@ -191,55 +192,103 @@ export async function seedYazilar(payload: Payload, opts: { root?: string } = {}
 
 export async function seedEserler(
   payload: Payload,
-  opts: { root?: string; sadeceYeni?: boolean } = {},
+  opts: { root?: string; sadeceYeni?: boolean; sadeceCeviri?: boolean } = {},
 ): Promise<number> {
   const root = opts.root ?? 'tasarim'
   const design = readDesign(root)
+  const ceviriDilleri: CeviriDili[] = ['en', 'ar']
 
-  // Taxonomies, in first-seen order.
+  // Taxonomies, in first-seen order (with EN/AR translations).
   const yaziIds = new Map<string, number | string>()
   const turIds = new Map<string, number | string>()
   for (const e of design.eserler) {
     for (const y of e.yazi) {
-      if (!yaziIds.has(y)) yaziIds.set(y, await upsertByAd(payload, 'yazi-turleri', y, { sira: yaziIds.size }))
+      if (!yaziIds.has(y)) {
+        const id = await upsertByAd(payload, 'yazi-turleri', y, { sira: yaziIds.size })
+        yaziIds.set(y, id)
+        const ceviri = YAZI_TURU_CEVIRILERI[y]
+        if (ceviri) {
+          for (const dil of ceviriDilleri) {
+            await payload.update({ collection: 'yazi-turleri', id, data: { ad: ceviri[dil] }, locale: dil, context: ctx() })
+          }
+        }
+      }
     }
-    if (e.tur && !turIds.has(e.tur)) turIds.set(e.tur, await upsertByAd(payload, 'eser-turleri', e.tur))
+    if (e.tur && !turIds.has(e.tur)) {
+      const id = await upsertByAd(payload, 'eser-turleri', e.tur)
+      turIds.set(e.tur, id)
+      const ceviri = ESER_TURU_CEVIRILERI[e.tur]
+      if (ceviri) {
+        for (const dil of ceviriDilleri) {
+          await payload.update({ collection: 'eser-turleri', id, data: { ad: ceviri[dil] }, locale: dil, context: ctx() })
+        }
+      }
+    }
   }
 
   // Works
   const eserSlugs = slugsFor(design.eserler.map((e) => e.t))
   for (const [i, e] of design.eserler.entries()) {
-    if (opts.sadeceYeni) {
-      const mevcut = await payload.find({
-        collection: 'eserler',
-        where: { slug: { equals: eserSlugs[i] } },
-        locale: LOCALE,
-        limit: 1,
-        depth: 0,
-      })
-      if (mevcut.docs[0]) continue
-    }
-    const gorsel = await upsertMedia(payload, root, e.f, e.t)
-    const homeIdx = HOME_WORKS.indexOf(e.f)
-    await upsertBySlug(payload, 'eserler', eserSlugs[i], {
-      baslik: e.t,
-      gorsel,
-      yaziTurleri: e.yazi.map((y) => yaziIds.get(y)),
-      tur: e.tur ? turIds.get(e.tur) : null,
-      yil: e.y ?? null,
-      metin: e.ar ?? null,
-      anlam: e.mean ?? null,
-      kaynak: e.src ?? null,
-      aciklama: e.desc ?? null,
-      olcu: e.olcu ?? null,
-      malzeme: e.malzeme ?? null,
-      // The design uses "Bilgi girilecek" as a placeholder; the UI string covers empty values.
-      tezhip: e.tezhip && e.tezhip !== 'Bilgi girilecek' ? e.tezhip : null,
-      ebru: e.ebru ?? null,
-      sira: i,
-      anasayfadaGoster: homeIdx !== -1,
-      anasayfaSira: homeIdx !== -1 ? homeIdx : null,
+    const slug = eserSlugs[i]
+    const mevcut = await payload.find({
+      collection: 'eserler',
+      where: { slug: { equals: slug } },
+      locale: LOCALE,
+      limit: 1,
+      depth: 0,
     })
+    let eserId: number | string | undefined = mevcut.docs[0]?.id
+
+    if (!eserId || (!opts.sadeceYeni && !opts.sadeceCeviri)) {
+      const gorsel = await upsertMedia(payload, root, e.f, e.t)
+      const homeIdx = HOME_WORKS.indexOf(e.f)
+      const trVeri = {
+        baslik: e.t,
+        slug,
+        gorsel,
+        yaziTurleri: e.yazi.map((y) => yaziIds.get(y)),
+        tur: e.tur ? turIds.get(e.tur) : null,
+        yil: e.y ?? null,
+        metin: e.ar ?? null,
+        anlam: e.mean ?? null,
+        kaynak: e.src ?? null,
+        aciklama: e.desc ?? null,
+        olcu: e.olcu ?? null,
+        malzeme: e.malzeme ?? null,
+        // The design uses "Bilgi girilecek" as a placeholder; the UI string covers empty values.
+        tezhip: e.tezhip && e.tezhip !== 'Bilgi girilecek' ? e.tezhip : null,
+        ebru: e.ebru ?? null,
+        sira: i,
+        anasayfadaGoster: homeIdx !== -1,
+        anasayfaSira: homeIdx !== -1 ? homeIdx : null,
+      }
+      if (eserId) {
+        await payload.update({ collection: 'eserler', id: eserId, data: trVeri as never, locale: LOCALE, context: ctx() })
+      } else {
+        const created = await payload.create({ collection: 'eserler', data: trVeri as never, locale: LOCALE, context: ctx() })
+        eserId = created.id
+      }
+    }
+
+    // İngilizce ve Arapça yerel alanlar (sadeceCeviri modunda Türkçe panel düzenlemelerine hiç dokunmaz).
+    const ceviri = ESER_CEVIRILERI[e.f]
+    if (eserId && ceviri) {
+      for (const dil of ceviriDilleri) {
+        const c = ceviri[dil]
+        await payload.update({
+          collection: 'eserler',
+          id: eserId,
+          data: {
+            baslik: c.baslik,
+            anlam: c.anlam ?? null,
+            kaynak: c.kaynak ?? null,
+            aciklama: c.aciklama ?? null,
+          },
+          locale: dil,
+          context: ctx(),
+        })
+      }
+    }
   }
   return design.eserler.length
 }

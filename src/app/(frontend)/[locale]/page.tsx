@@ -38,7 +38,7 @@ import {
 
 import '../styles/anasayfa.css'
 import { sayfaMeta } from '@/lib/seo'
-import { JsonLd, kisi, webSayfasi } from '@/lib/jsonld'
+import { JsonLd, eserListesi, kisi, webSayfasi } from '@/lib/jsonld'
 import { portreUrl } from '@/components/hayati'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -70,6 +70,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const yazilar = toYazilar(yazilarDocs, ui, locale)
   const videolar = toVideolar(videoDocs, vm, locale)
   const anaVideo = anasayfaVideosu(videolar)
+  const secmeEserler = toWorks(secme)
 
   return (
     // Ana sayfaya özgü ölçüler (.wrap 1180px, alt bilgi vb.) yalnızca .home altında geçerlidir.
@@ -90,6 +91,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           aciklama: anasayfa.metaAciklama ?? hayati.girisCumlesi,
         })}
       />
+      {secmeEserler.length > 0 && <JsonLd data={eserListesi(secmeEserler, locale)} />}
 
       <HomeHero
         images={toWorks(eserler).map((w) => ({ src: w.src, oran: w.oran }))}
@@ -111,7 +113,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {ui.tumEserlerOk}
             </Link>
           </div>
-          <HomeWorks works={toWorks(secme)} ui={ui} locale={locale} />
+          <HomeWorks works={secmeEserler} ui={ui} locale={locale} />
         </div>
       </section>
 
