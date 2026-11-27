@@ -26,6 +26,22 @@
     { f:'e-besmele-levha.png',  r:1.78, t:'Besmele',                       yazi:['Sülüs'],         tur:'Levha' },
     { f:'e-besmele-talik.png',  r:3.61, t:"Ta'lik Besmele",                yazi:["Ta'lik"],        tur:'Levha', y:'1444',
       ar:'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ', mean:"Rahmân ve Rahîm olan Allah'ın adıyla." },
+    { f:'e-kisi-sevdigiyle-beraberdir.jpg', r:2.06, t:'Kişi Sevdiğiyle Beraberdir', yazi:['Nesih'], tur:'Levha', y:'1446',
+      ar:'الْمَرْءُ مَعَ مَنْ أَحَبَّ', mean:'Kişi sevdiği ile beraberdir.', src:'Hadîs-i Şerif (Buhârî, Edeb, 96; Müslim, Birr, 165)' },
+    { f:'e-ikra.jpg',           r:.7,   t:'İkra',                          yazi:['Celî Sülüs'],    tur:'Levha', y:'1447',
+      ar:'اقْرَأْ', mean:'Oku!', src:'Alak Sûresi, 1. âyet', desc:'Lâle formunda müsenna (aynalı) istif.' },
+    { f:'e-beni-anin.jpg',      r:2.27, t:'Beni Anın ki Ben de Sizi Anayım', yazi:['Celî Sülüs'],  tur:'Âyet',  y:'1442',
+      ar:'فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ', mean:'Öyleyse yalnız beni anın ki ben de sizi anayım. Bana şükredin, sakın nankörlük etmeyin.', src:'Bakara Sûresi, 152. âyet' },
+    { f:'e-adaletle-hukmedin.jpg', r:2.01, t:'İnsanlar Arasında Adaletle Hükmedin', yazi:['Celî Sülüs'], tur:'Âyet', y:'1442',
+      ar:'وَإِذَا حَكَمْتُمْ بَيْنَ النَّاسِ أَنْ تَحْكُمُوا بِالْعَدْلِ', mean:'İnsanlar arasında hükmettiğiniz zaman adaletle hükmedin.', src:'Nisâ Sûresi, 58. âyet' },
+    { f:'e-cifte-vav.jpg',      r:1,    t:'Çifte Vav — Celle Celâlühû',    yazi:['Celî Sülüs','Sülüs'], tur:'Levha', y:'1440',
+      ar:'جَلَّ جَلَالُهُ', mean:'Onun şânı ve yüceliği her şeyin üstündedir.', desc:'Karşılıklı (müsenna) vav harfleri ortasında sülüs “Celle Celâlühû” istifi.' },
+    { f:'e-tevekkeltu-alallah.jpg', r:2.68, t:'Tevekkeltü Alellâh',        yazi:['Nesih'],         tur:'Levha', y:'1442',
+      ar:'تَوَكَّلْتُ عَلَى اللّٰهِ', mean:"Allah'a tevekkül ettim.", src:'Hûd Sûresi, 56. âyet; Şûrâ Sûresi, 10. âyet' },
+    { f:'e-gazel-niyazi-misri.jpg', r:1.42, t:'Gazel-i Niyâzî-i Mısrî',    yazi:["Rik'a",'Sülüs'], tur:"Kıt'a", y:'1447',
+      src:'Niyâzî-i Mısrî', desc:'“Halk içre bir âyîneyim herkes bakar bir ân görür / Her ne görür kendi yüzün ger yahşi ger yaman görür” matla’lı sekiz beyitlik gazel.' },
+    { f:'e-su-kasidesi.jpg',    r:.38,  t:'Su Kasîdesi',                   yazi:["Rik'a",'Sülüs'], tur:"Kıt'a", y:'1441',
+      src:'Fuzûlî', desc:"Fuzûlî'nin Peygamber Efendimiz (s.a.v.) için kaleme aldığı “Saçma ey göz eşkden gönlümdeki odlara su” matla’lı otuz iki beyitlik meşhur na't-ı şerîfi." },
   ];
 
 (() => {

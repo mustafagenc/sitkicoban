@@ -6,12 +6,25 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
+/** Vercel Blob mağaza adresi: kanonik /media/* isteklerini kendi alan adımızdan sunmak için. */
+function blobHedefi(): string | null {
+  const m = /^vercel_blob_rw_([a-z0-9]+)_/i.exec(process.env.BLOB_READ_WRITE_TOKEN ?? '')
+  return m ? `https://${m[1].toLowerCase()}.public.blob.vercel-storage.com` : null
+}
+
 const nextConfig: NextConfig = {
   images: {
     // /_next/image ile küçültülecek kaynaklar: yerel medya ve logo, Vercel Blob.
     localPatterns: [{ pathname: '/media/**' }, { pathname: '/imza.png' }],
     remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
     formats: ['image/avif', 'image/webp'],
+  },
+  // Blob açıkken /media/<dosya> istekleri kendi alan adımızdan Blob'a yönlendirilir (sitemap, JSON-LD ve OG uyumu).
+  async rewrites() {
+    const hedef = blobHedefi()
+    return {
+      afterFiles: hedef ? [{ source: '/media/:dosya*', destination: `${hedef}/:dosya*` }] : [],
+    }
   },
   // Eski statik adresler (.html, eski img yolu) kalıcı olarak (308) kanonik yollarına yönlendirilir.
   async redirects() {

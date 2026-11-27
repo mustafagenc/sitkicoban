@@ -3,22 +3,16 @@
 import Link from 'next/link'
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
-import { localizedPath, type Locale } from '@/i18n/config'
+import { eserPath, localizedPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
 
-import { type Work } from './works'
+import { tarih, workAlt, type Work } from './works'
 import '../app/(frontend)/styles/eser-lb.css'
 
 /** Görüntüleyicinin açılışı: gezilecek eserlerin `works` içindeki sıraları ve açılacak eser. */
 export type LightboxOpen = { list: number[]; index: number }
 
-/** Hicrî yıl + karşılık gelen miladî yıllar: 1442 -> "1442 (2020–21)". Sayı değilse olduğu gibi. */
-export function tarih(y: string): string {
-  if (!/^\d{3,4}$/.test(y)) return y
-  const n = +y
-  const a = Math.floor((n - 1) * 0.970229 + 622.5)
-  return `${n} (${a}–${String(a + 1).slice(2)})`
-}
+export { tarih }
 
 type Z = { s: number; x: number; y: number; w: number; h: number; max: number }
 
@@ -32,12 +26,15 @@ export function WorkLightbox({
   ui,
   locale,
   onClose,
+  syncUrl = false,
 }: {
   works: Work[]
   open: LightboxOpen | null
   ui: UiMetinleri
   locale: Locale
   onClose: () => void
+  /** Açıkken adres çubuğunu `/eserler/<slug>` olarak günceller; kapatınca eski adrese döner. */
+  syncUrl?: boolean
 }) {
   const [session, setSession] = useState<LightboxOpen | null>(null)
   const [cur, setCur] = useState(0)
@@ -48,6 +45,8 @@ export function WorkLightbox({
   const stageRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const baseUrlRef = useRef<string | null>(null)
+  const pushedRef = useRef(false)
   const z = useRef<Z>({ s: 1, x: 0, y: 0, w: 0, h: 0, max: 4 })
   const isOpen = open !== null
 
@@ -62,6 +61,38 @@ export function WorkLightbox({
 
   const list = session?.list ?? []
   const work: Work | undefined = list.length ? works[list[Math.min(cur, list.length - 1)]] : undefined
+
+  // Galeri ve ana sayfada açılan eserin gerçek adresini tarayıcı çubuğunda göster (paylaşılabilir URL).
+  useEffect(() => {
+    if (!syncUrl) return
+    if (isOpen && work) {
+      const target = eserPath(work.slug, locale)
+      if (!pushedRef.current) {
+        baseUrlRef.current = window.location.pathname + window.location.search + window.location.hash
+        window.history.pushState({ eserLb: true }, '', target)
+        pushedRef.current = true
+      } else if (window.location.pathname !== target) {
+        window.history.replaceState({ eserLb: true }, '', target)
+      }
+    } else if (!isOpen && pushedRef.current) {
+      pushedRef.current = false
+      if (baseUrlRef.current && window.location.pathname !== baseUrlRef.current) {
+        window.history.replaceState(null, '', baseUrlRef.current)
+      }
+      baseUrlRef.current = null
+    }
+  }, [syncUrl, isOpen, work, locale])
+
+  useEffect(() => {
+    if (!syncUrl || !isOpen) return
+    const onPopState = () => {
+      pushedRef.current = false
+      baseUrlRef.current = null
+      onClose()
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [syncUrl, isOpen, onClose])
 
   const render = useCallback((anim?: boolean) => {
     const stage = stageRef.current
@@ -263,7 +294,7 @@ export function WorkLightbox({
         onDoubleClick={onDouble}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={imgRef} id="lb-img" alt={work?.baslik ?? ''} draggable={false} />
+        <img ref={imgRef} id="lb-img" alt={work ? workAlt(work, locale) : ''} draggable={false} />
         <div className="lb-hint">{ui.eserIpucu}</div>
         <button
           type="button"

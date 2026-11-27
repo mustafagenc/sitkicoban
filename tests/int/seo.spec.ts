@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { localizedPath } from '@/i18n/config'
-import { eserListesi, webSayfasi } from '@/lib/jsonld'
+import { eserPath, localizedPath } from '@/i18n/config'
+import { workAlt } from '@/components/works'
+import { eserListesi, eserTekil, kisi, webSayfasi } from '@/lib/jsonld'
 import { sayfaMeta } from '@/lib/seo'
 
 const savedSiteUrl = process.env.SITE_URL
@@ -101,6 +102,38 @@ describe('seo ve arama önizleme görseli', () => {
           },
         },
       ],
+    })
+  })
+
+  it('Blob adreslerini kanonik /media/ yoluna çevirir, eserTekil ve workAlt sanatçı adını içerir', () => {
+    process.env.SITE_URL = 'https://sitkicoban.com'
+    const ld = eserTekil(
+      {
+        slug: 'su-kasidesi',
+        baslik: 'Su Kasîdesi',
+        src: 'https://wjn36w8xqs8fmndf.public.blob.vercel-storage.com/e-su-kasidesi.jpg',
+        width: 695,
+        height: 1846,
+        yaziTurleri: ["Rik'a", 'Sülüs'],
+        tur: "Kıt'a",
+        yil: '1441',
+      },
+      'tr',
+    )
+    expect(ld).toMatchObject({
+      '@type': 'VisualArtwork',
+      url: `https://sitkicoban.com${eserPath('su-kasidesi', 'tr')}`,
+      creditText: 'Hattat Sıtkı Çoban',
+      image: {
+        url: 'https://sitkicoban.com/media/e-su-kasidesi.jpg',
+        contentUrl: 'https://sitkicoban.com/media/e-su-kasidesi.jpg',
+      },
+    })
+    expect(
+      workAlt({ baslik: 'Su Kasîdesi', yaziTurleri: ["Rik'a"], tur: "Kıt'a", yil: '1441' }, 'tr'),
+    ).toBe("Su Kasîdesi — Hattat Sıtkı Çoban (Rik'a · Kıt'a · 1441)")
+    expect(kisi({ locale: 'tr', ayarlar: { instagram: null, facebook: null, youtube: null } })).toMatchObject({
+      knowsAbout: expect.arrayContaining(['Hüsn-i Hat', 'Celî Sülüs']),
     })
   })
 })

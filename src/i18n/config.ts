@@ -48,27 +48,39 @@ export function yaziPath(slug: string, l: Locale): string {
   return `${localizedPath('yazilar', l)}/${slug}`
 }
 
+/** Public URL path of a single calligraphy work. */
+export function eserPath(slug: string, l: Locale): string {
+  return `${localizedPath('eserler', l)}/${slug}`
+}
+
 export type Resolved =
   | { locale: Locale; key: PageKey }
-  | { locale: Locale; key: 'yazi'; slug: string }
+  | { locale: Locale; key: 'yazi' | 'eser'; slug: string }
   | { redirect: string }
 
 /**
- * Matches the segments against pages and the writing detail route. A default-locale
+ * Matches the segments against pages and detail routes (writings and works). A default-locale
  * prefix (`/tr/...`) is only valid as a redirect to the bare canonical path.
  */
 function match(segments: string[], l: Locale, prefixed: boolean): Resolved | null {
   const joined = segments.join('/')
   const key = keyFor(joined, l)
-  const slug =
-    segments.length === 2 && segments[0] === ROUTES.yazilar[l] && SLUG_RE.test(segments[1])
-      ? segments[1]
+  const detailKey =
+    segments.length === 2 && SLUG_RE.test(segments[1])
+      ? segments[0] === ROUTES.yazilar[l]
+        ? ('yazi' as const)
+        : segments[0] === ROUTES.eserler[l]
+          ? ('eser' as const)
+          : null
       : null
-  if (!key && slug === null) return null
+  const slug = detailKey ? segments[1] : null
+  if (!key && !detailKey) return null
   if (prefixed && l === DEFAULT_LOCALE) {
-    return { redirect: key ? localizedPath(key, l) : yaziPath(slug!, l) }
+    return {
+      redirect: key ? localizedPath(key, l) : detailKey === 'yazi' ? yaziPath(slug!, l) : eserPath(slug!, l),
+    }
   }
-  return key ? { locale: l, key } : { locale: l, key: 'yazi', slug: slug! }
+  return key ? { locale: l, key } : { locale: l, key: detailKey!, slug: slug! }
 }
 
 /**
@@ -83,8 +95,9 @@ export function resolvePath(pathname: string): Resolved | null {
 }
 
 /** Internal (rewrite target) route of a resolved page. */
-export function internalPath(r: { locale: Locale; key: PageKey | 'yazi'; slug?: string }): string {
+export function internalPath(r: { locale: Locale; key: PageKey | 'yazi' | 'eser'; slug?: string }): string {
   if (r.key === 'yazi') return `/${r.locale}/yazilar/${r.slug}`
+  if (r.key === 'eser') return `/${r.locale}/eserler/${r.slug}`
   if (r.key === 'home') return `/${r.locale}`
   if (r.key === 'aydinlatma') return `/${r.locale}/iletisim/aydinlatma`
   if (r.key === 'bultenOnay') return `/${r.locale}/bulten/onay`

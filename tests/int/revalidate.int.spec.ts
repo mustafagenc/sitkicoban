@@ -125,7 +125,10 @@ describe('revalidation hooks', () => {
     expect(tagCalls()).not.toContain('kitaplar')
     expect(warmCalls()).toHaveLength(0) // deferred until after the response
     runAfter()
-    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
+    const eserDetailUrls = [`/eserler/${e.slug}`, `/en/works/${e.slug}`, `/ar/works/${e.slug}`].map(
+      (p) => `http://localhost:3999${p}`,
+    )
+    expect(warmCalls().sort()).toEqual([...EXPECTED_URLS, ...eserDetailUrls].sort())
 
     vi.mocked(revalidateTag).mockClear()
     fetchMock.mockClear()
@@ -134,7 +137,7 @@ describe('revalidation hooks', () => {
     expect(tagCalls()).not.toContain('kitaplar')
     expect(warmCalls()).toHaveLength(0) // deferred until after the response
     runAfter()
-    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
+    expect(warmCalls().sort()).toEqual([...EXPECTED_URLS, ...eserDetailUrls].sort())
   })
 
   // The yazilar collection arrives in a later task; exercise its hook directly.
@@ -197,7 +200,10 @@ describe('revalidation hooks', () => {
     eserIds.push(e.id)
     await payload.update({ collection: 'eserler', id: e.id, data: { yil: '2025' } })
     runAfter()
-    expect(warmCalls().sort()).toEqual(EXPECTED_URLS)
+    const urls = warmCalls()
+    for (const u of detailUrls('rv-ilgisiz')) expect(urls).not.toContain(u)
+    for (const p of [`/eserler/${e.slug}`, `/en/works/${e.slug}`, `/ar/works/${e.slug}`])
+      expect(urls).toContain(`http://localhost:3999${p}`)
   })
 
   it('warms a deleted yazi detail paths', async () => {

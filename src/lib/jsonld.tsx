@@ -1,4 +1,5 @@
-import { localizedPath, type Locale } from '@/i18n/config'
+import { eserPath, localizedPath, type Locale } from '@/i18n/config'
+import { kanonikGorselYolu } from '@/lib/media'
 import { mutlak, SITE_NAME, THUMBNAIL_DEFAULT } from '@/lib/seo'
 import { siteUrl } from '@/lib/site'
 import type { SiteAyarlari } from '@/payload-types'
@@ -30,12 +31,24 @@ export function kisi(opts: {
     '@type': 'Person',
     '@id': `${siteUrl()}/#kisi`,
     name: SITE_NAME,
+    alternateName: ['Hattat Sıtkı Çoban', 'سيتكي تشوبان'],
     url: siteUrl() + localizedPath('home', opts.locale),
     ...(opts.unvanlar
       ? { jobTitle: opts.unvanlar.split('·').map((s) => s.trim()).filter(Boolean) }
       : {}),
     ...(opts.aciklama ? { description: opts.aciklama } : {}),
-    ...(opts.portre ? { image: mutlak(opts.portre) } : {}),
+    ...(opts.portre ? { image: mutlak(kanonikGorselYolu(opts.portre)) } : {}),
+    knowsAbout: [
+      'Hüsn-i Hat',
+      'İslam Hat Sanatı',
+      'Islamic Calligraphy',
+      'Celî Sülüs',
+      'Sülüs',
+      'Nesih',
+      "Ta'lik",
+      "Rik'a",
+      'Hilye-i Şerif',
+    ],
     sameAs: sosyal(opts.ayarlar),
   }
 }
@@ -90,53 +103,73 @@ export function makale(opts: {
   }
 }
 
-/** Eserler sayfası için VisualArtwork listesi; Google Görseller'de eser, hattat ve hat türünü ilişkilendirir. */
-export function eserListesi(
-  eserler: {
-    baslik: string
-    src: string
-    width?: number | null
-    height?: number | null
-    yaziTurleri?: string[]
-    tur?: string | null
-    yil?: string | null
-    malzeme?: string | null
-    aciklama?: string | null
-    anlam?: string | null
-  }[],
-  locale: Locale,
-): Record<string, unknown> {
-  const sanatci = { '@type': 'Person', '@id': `${siteUrl()}/#kisi`, name: SITE_NAME, url: siteUrl() }
+type EserVerisi = {
+  slug?: string | null
+  baslik: string
+  src: string
+  width?: number | null
+  height?: number | null
+  yaziTurleri?: string[]
+  tur?: string | null
+  yil?: string | null
+  malzeme?: string | null
+  aciklama?: string | null
+  anlam?: string | null
+}
+
+function eserNesnesi(e: EserVerisi, locale: Locale): Record<string, unknown> {
+  const base = siteUrl()
+  const sanatci = { '@type': 'Person', '@id': `${base}/#kisi`, name: SITE_NAME, url: base }
+  const gorselUrl = mutlak(kanonikGorselYolu(e.src))
+  const sayfaUrl = e.slug ? base + eserPath(e.slug, locale) : undefined
+  const bicimler = [e.tur, ...(e.yaziTurleri ?? [])].filter((x): x is string => Boolean(x))
+  const tanim = e.aciklama || e.anlam
+  return {
+    '@type': 'VisualArtwork',
+    ...(sayfaUrl ? { '@id': `${sayfaUrl}#eser`, url: sayfaUrl, mainEntityOfPage: sayfaUrl } : {}),
+    name: e.baslik,
+    creator: sanatci,
+    creditText: `Hattat ${SITE_NAME}`,
+    copyrightNotice: `© ${SITE_NAME}`,
+    inLanguage: locale,
+    image: {
+      '@type': 'ImageObject',
+      url: gorselUrl,
+      contentUrl: gorselUrl,
+      creator: sanatci,
+      creditText: `Hattat ${SITE_NAME}`,
+      copyrightNotice: `© ${SITE_NAME}`,
+      acquireLicensePage: `${base}${localizedPath('iletisim', locale)}?eser=${encodeURIComponent(e.baslik)}`,
+      ...(e.width ? { width: e.width } : {}),
+      ...(e.height ? { height: e.height } : {}),
+    },
+    ...(bicimler.length > 0 ? { artform: bicimler } : {}),
+    ...(e.malzeme ? { artMedium: e.malzeme } : {}),
+    ...(e.yil ? { dateCreated: e.yil } : {}),
+    ...(tanim ? { description: tanim } : {}),
+  }
+}
+
+/** Eser detay sayfası için tekil VisualArtwork şeması. */
+export function eserTekil(eser: EserVerisi, locale: Locale): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    ...eserNesnesi(eser, locale),
+  }
+}
+
+/** Eserler sayfası ve ana sayfa seçkisi için VisualArtwork listesi; Google Görseller'de eser ve hattatı ilişkilendirir. */
+export function eserListesi(eserler: EserVerisi[], locale: Locale): Record<string, unknown> {
+  const base = siteUrl()
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: eserler.map((e, i) => {
-      const url = mutlak(e.src)
-      const bicimler = [e.tur, ...(e.yaziTurleri ?? [])].filter((x): x is string => Boolean(x))
-      const tanim = e.aciklama || e.anlam
-      return {
-        '@type': 'ListItem',
-        position: i + 1,
-        item: {
-          '@type': 'VisualArtwork',
-          name: e.baslik,
-          creator: sanatci,
-          inLanguage: locale,
-          image: {
-            '@type': 'ImageObject',
-            url,
-            contentUrl: url,
-            creator: sanatci,
-            ...(e.width ? { width: e.width } : {}),
-            ...(e.height ? { height: e.height } : {}),
-          },
-          ...(bicimler.length > 0 ? { artform: bicimler } : {}),
-          ...(e.malzeme ? { artMedium: e.malzeme } : {}),
-          ...(e.yil ? { dateCreated: e.yil } : {}),
-          ...(tanim ? { description: tanim } : {}),
-        },
-      }
-    }),
+    itemListElement: eserler.map((e, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      ...(e.slug ? { url: base + eserPath(e.slug, locale) } : {}),
+      item: eserNesnesi(e, locale),
+    })),
   }
 }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { dir, internalPath, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
+import { dir, eserPath, internalPath, localizedPath, resolvePath, yaziPath } from '@/i18n/config'
 
 describe('i18n routing', () => {
   it('localizedPath', () => {
@@ -44,6 +44,13 @@ describe('i18n routing', () => {
     expect(resolvePath('/en/contact/privacy')).toEqual({ locale: 'en', key: 'aydinlatma' })
     expect(resolvePath('/tr/iletisim/aydinlatma')).toEqual({ redirect: '/iletisim/aydinlatma' })
     expect(resolvePath('/en/contact/x')).toBeNull()
+    expect(eserPath('su-kasidesi', 'tr')).toBe('/eserler/su-kasidesi')
+    expect(eserPath('su-kasidesi', 'en')).toBe('/en/works/su-kasidesi')
+    expect(eserPath('su-kasidesi', 'ar')).toBe('/ar/works/su-kasidesi')
+    expect(resolvePath('/eserler/su-kasidesi')).toEqual({ locale: 'tr', key: 'eser', slug: 'su-kasidesi' })
+    expect(resolvePath('/en/works/su-kasidesi')).toEqual({ locale: 'en', key: 'eser', slug: 'su-kasidesi' })
+    expect(resolvePath('/tr/eserler/su-kasidesi')).toEqual({ redirect: '/eserler/su-kasidesi' })
+    expect(internalPath({ locale: 'en', key: 'eser', slug: 'su-kasidesi' })).toBe('/en/eserler/su-kasidesi')
   })
   it('newsletter pages (two-segment confirm path)', () => {
     expect(localizedPath('bulten', 'tr')).toBe('/bulten')

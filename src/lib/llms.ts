@@ -1,7 +1,7 @@
 import { toBooks, type BookRole } from '@/components/books'
 import { aktifDersler } from '@/components/dersler'
 import { toWorks } from '@/components/works'
-import { LOCALES, localizedPath, yaziPath, type Locale, type PageKey } from '@/i18n/config'
+import { LOCALES, eserPath, localizedPath, yaziPath, type Locale, type PageKey } from '@/i18n/config'
 import { SITE_NAME } from '@/lib/seo'
 import { youtubeId, youtubeWatch } from '@/lib/youtube'
 import type {
@@ -388,6 +388,7 @@ export function llmsFullTxt(v: LlmsFullVeri): string {
     for (const w of eserler) {
       out.push(`### ${satir(w.baslik)}`, '')
       const ust = [
+        `- URL: ${base}${eserPath(w.slug, 'tr')}`,
         ...alan('Script', w.yaziTurleri.join(', ')),
         ...alan('Type', w.tur),
         ...alan('Year', w.yil),

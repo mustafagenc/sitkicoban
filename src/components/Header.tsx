@@ -20,9 +20,12 @@ export function Header({
   activeKey = 'home',
   glintOnLoad = true,
   yaziSlug,
+  eserSlug,
 }: Omit<LayoutProps, 'ayarlar'> & {
   /** Yazı sayfasında dil menüsü aynı yazıya gider. */
   yaziSlug?: string
+  /** Eser sayfasında dil menüsü aynı esere gider. */
+  eserSlug?: string
   /** Logo açılışta bir kez parlasın mı (ana sayfada kapalı). */
   glintOnLoad?: boolean
 }) {
@@ -65,7 +68,13 @@ export function Header({
                 labelPause={ui.duaDurdur ?? ''}
                 description={ui.duaAciklama ?? ''}
               />
-              <LangMenu locale={locale} activeKey={activeKey} label={ui.dilSec ?? ''} yaziSlug={yaziSlug} />
+              <LangMenu
+                locale={locale}
+                activeKey={activeKey}
+                label={ui.dilSec ?? ''}
+                yaziSlug={yaziSlug}
+                eserSlug={eserSlug}
+              />
               <ThemeToggle label={ui.temaDegistir ?? ''} labelDark={ui.temaGunduz ?? ''} />
               <button
                 ref={menuBtn}

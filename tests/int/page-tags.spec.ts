@@ -6,16 +6,17 @@ import { describe, expect, it, vi } from 'vitest'
 vi.mock('@/payload.config', () => ({ default: {} }))
 
 import * as data from '@/lib/data'
-import { LLMS_FULL_TAGS, LLMS_TAGS, PAGES_BY_TAG, SITEMAP_TAGS, YAZI_DETAIL_TAGS } from '@/lib/cache/revalidate'
+import { ESER_DETAIL_TAGS, LLMS_FULL_TAGS, LLMS_TAGS, PAGES_BY_TAG, SITEMAP_TAGS, YAZI_DETAIL_TAGS } from '@/lib/cache/revalidate'
 import type { PageKey } from '@/i18n/config'
 import type { Tag } from '@/lib/cache/tags'
 
 const ROOT = path.join(process.cwd(), 'src/app/(frontend)/[locale]')
 
 /** Source file of each page; its `get*` calls are scanned, so a new getter cannot slip in unnoticed. */
-const PAGE_FILES: Record<PageKey | 'yazi', string> = {
+const PAGE_FILES: Record<PageKey | 'yazi' | 'eser', string> = {
   home: 'page.tsx',
   eserler: 'eserler/page.tsx',
+  eser: 'eserler/[slug]/page.tsx',
   kitaplar: 'kitaplar/page.tsx',
   yazilar: 'yazilar/page.tsx',
   videolar: 'videolar/page.tsx',
@@ -50,7 +51,11 @@ describe('page cache tags are covered by the revalidation map', () => {
       expect(pairs.length).toBeGreaterThan(0)
       for (const { tag, getter } of pairs) {
         const covered =
-          page === 'yazi' ? YAZI_DETAIL_TAGS.includes(tag) : PAGES_BY_TAG[tag].includes(page as PageKey)
+          page === 'yazi'
+            ? YAZI_DETAIL_TAGS.includes(tag)
+            : page === 'eser'
+              ? ESER_DETAIL_TAGS.includes(tag)
+              : PAGES_BY_TAG[tag].includes(page as PageKey)
         expect(covered, `${page} reads tag "${tag}" via ${getter}() but a save to it would not warm ${page}`).toBe(true)
       }
     })

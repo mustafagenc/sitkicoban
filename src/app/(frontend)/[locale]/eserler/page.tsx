@@ -12,11 +12,26 @@ import '../../styles/eserler.css'
 import { sayfaMeta } from '@/lib/seo'
 import { JsonLd, eserListesi } from '@/lib/jsonld'
 
+const SAYFA_BASLIGI = {
+  tr: 'Hat Eserleri',
+  en: 'Calligraphy Works',
+  ar: 'أعمال الخط العربي',
+} as const
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
-  const ui = await getUi(locale)
-  return sayfaMeta({ locale, yol: (l) => localizedPath('eserler', l), baslik: ui.navEserler, aciklama: ui.eserlerAciklama })
+  const [ui, eserler] = await Promise.all([getUi(locale), getEserler(locale)])
+  const ilk = toWorks(eserler)[0]
+  return sayfaMeta({
+    locale,
+    yol: (l) => localizedPath('eserler', l),
+    baslik: SAYFA_BASLIGI[locale] || ui.navEserler,
+    aciklama: ui.eserlerAciklama,
+    gorsel: ilk
+      ? { url: ilk.kanonikSrc, width: ilk.width ?? undefined, height: ilk.height ?? undefined, alt: ilk.baslik }
+      : null,
+  })
 }
 
 export default async function EserlerPage({ params }: { params: Promise<{ locale: string }> }) {

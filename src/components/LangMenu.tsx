@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { LOCALES, localizedPath, yaziPath, type Locale, type PageKey } from '@/i18n/config'
+import { LOCALES, eserPath, localizedPath, yaziPath, type Locale, type PageKey } from '@/i18n/config'
 
 export const LANGUAGE_NAMES: Record<Locale, string> = { tr: 'Türkçe', en: 'English', ar: 'العربية' }
 
@@ -12,10 +12,12 @@ type Props = {
   label: string
   /** Yazı sayfasında: diğer dillerde aynı yazıya gider. */
   yaziSlug?: string
+  /** Eser sayfasında: diğer dillerde aynı esere gider. */
+  eserSlug?: string
 }
 
 /** Dil seçici: daire içinde kısa kod; açılan listede aynı sayfanın diğer dillerdeki adresi. */
-export function LangMenu({ locale, activeKey, label, yaziSlug }: Props) {
+export function LangMenu({ locale, activeKey, label, yaziSlug, eserSlug }: Props) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const btn = useRef<HTMLButtonElement>(null)
@@ -56,7 +58,7 @@ export function LangMenu({ locale, activeKey, label, yaziSlug }: Props) {
         {LOCALES.map((l) => (
           <li key={l}>
             <a
-              href={yaziSlug ? yaziPath(yaziSlug, l) : localizedPath(activeKey, l)}
+              href={yaziSlug ? yaziPath(yaziSlug, l) : eserSlug ? eserPath(eserSlug, l) : localizedPath(activeKey, l)}
               role="menuitem"
               hrefLang={l}
               lang={l}

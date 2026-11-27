@@ -2,12 +2,12 @@
 
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import type { Locale } from '@/i18n/config'
+import { eserPath, type Locale } from '@/i18n/config'
 import type { UiMetinleri } from '@/payload-types'
 
 import { type LightboxOpen, WorkLightbox } from './WorkLightbox'
 import { workMeta } from './workMeta'
-import type { Work } from './works'
+import { workAlt, type Work } from './works'
 import { duyarli } from '@/lib/img'
 
 type Layout = 'a' | 'b' | 'c'
@@ -161,36 +161,39 @@ export function WorksGallery({
                 <a
                   key={w.id}
                   className={`card${visible.includes(i) ? '' : ' hide'}`}
-                  href="#"
+                  href={eserPath(w.slug, locale)}
                   data-r={w.oran}
                   style={{ '--r': w.oran } as React.CSSProperties}
                   onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
                     e.preventDefault()
                     setOpen({ list: visible, index: i })
                   }}
                 >
-                  <div className="mat">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      {...duyarli(w.src, '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 400px')}
-                      alt={w.baslik}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  <div className="cap">
-                    <h3>{w.baslik}</h3>
-                    {meta.length > 0 && (
-                      <div className="meta">
-                        {meta.map((m, k) => (
-                          <Fragment key={k}>
-                            {k > 0 && <span className="dot">❖</span>}
-                            {m}
-                          </Fragment>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <figure style={{ display: 'contents', margin: 0 }}>
+                    <div className="mat">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        {...duyarli(w.src, '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 400px')}
+                        alt={workAlt(w, locale)}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <figcaption className="cap">
+                      <h3>{w.baslik}</h3>
+                      {meta.length > 0 && (
+                        <div className="meta">
+                          {meta.map((m, k) => (
+                            <Fragment key={k}>
+                              {k > 0 && <span className="dot">❖</span>}
+                              {m}
+                            </Fragment>
+                          ))}
+                        </div>
+                      )}
+                    </figcaption>
+                  </figure>
                 </a>
               )
             })}
@@ -228,7 +231,7 @@ export function WorksGallery({
         ))}
       </div>
 
-      <WorkLightbox works={works} open={open} ui={ui} locale={locale} onClose={close} />
+      <WorkLightbox works={works} open={open} ui={ui} locale={locale} onClose={close} syncUrl />
     </div>
   )
 }

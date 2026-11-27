@@ -42,6 +42,37 @@ export const getEserler = cached('eserler', ['eserler', 'turler', 'media'], asyn
   return res.docs
 })
 
+export async function findEser(payload: Payload, slug: string, locale: Locale) {
+  const res = await payload.find({
+    collection: 'eserler',
+    where: { slug: { equals: slug } },
+    limit: 1,
+    pagination: false,
+    ...opts(locale),
+  })
+  return res.docs[0] ?? null
+}
+
+export async function findEserSluglari(payload: Payload) {
+  const res = await payload.find({
+    collection: 'eserler',
+    sort: 'sira',
+    select: { slug: true },
+    depth: 0,
+    limit: 1000,
+    pagination: false,
+  })
+  return res.docs.map((d) => d.slug).filter((s): s is string => typeof s === 'string' && s.length > 0)
+}
+
+export const getEser = cached('eser', ['eserler', 'turler', 'media'], async (slug: string, locale: Locale) =>
+  findEser(await getPayload({ config }), slug, locale),
+)
+
+export const getEserSluglari = cached('eser-sluglari', ['eserler'], async () =>
+  findEserSluglari(await getPayload({ config })),
+)
+
 export const getYaziTurleri = cached('yazi-turleri', ['turler'], async (locale: Locale) => {
   const payload = await getPayload({ config })
   const res = await payload.find({
