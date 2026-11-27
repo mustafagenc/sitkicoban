@@ -12,7 +12,7 @@ import { LOGO_SRC } from './logo'
 import type { LayoutProps } from './types'
 
 const CREDIT_NAME = 'Mustafa Genç'
-const CREDIT_URL = 'https://mustafagenc.info'
+const CREDIT_URL = 'https://mustafagenc.com'
 
 /** "Tasarım ve geliştirme: Mustafa Genç" metnindeki adı bağlantıya çevirir. */
 function Credit({ text }: { text: string }) {
